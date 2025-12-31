@@ -12,8 +12,9 @@ public class CarbonXApplication {
 
 	public static void main(String[] args) {
 		Class<?>[] runner = new Class<?>[]{
-			TestSetup.class
-	};
+			TestSetup.class,
+			CarbonXApplication.class
+		};
 		// System.exit(SpringApplication.exit(SpringApplication.run(runner, args)));
 
 		SpringApplication.run(runner, args);

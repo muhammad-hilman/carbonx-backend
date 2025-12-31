@@ -3,13 +3,13 @@ package com.ecapybara.carbonx.model;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 
+import com.arangodb.serde.jackson.Id;
 import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.Relations;
-
 @Document("products")
 @PersistentIndex(fields = {"name"})
 public class Product {
@@ -26,30 +26,38 @@ public class Product {
   private Properties functionalProperties;
   private DigitalProductPassport DPP;
 
-  @Relations(edges = Output.class, lazy = true)
+  @Relations(edges = Output.class, lazy=true)
   private Collection<Process> procedure;
+  @Relations(edges = Input.class, lazy=true)
+  private Collection<Process> usedIn;
   
   // Additional fields for inventory management
   private String userId; // User who owns this product
   private String uploadedFile; // Filename of uploaded BOM file
 
   // constructors
+  public Product() {
+    super();
+  }
+
   public Product(final String productNature) {
     super();
     this.productNature = productNature;
   }
-
+  
+  @PersistenceCreator
   public Product(final String productNature, final String name) {
     super();
     this.name = name;
     this.productNature = productNature;
   }
 
-  public Product(final String productNature, final String name, final Properties functionalProperties, Properties nonFunctionalProperties) {
+  public Product(final String productNature, final String name, final Properties functionalProperties, DigitalProductPassport DPP) {
     super();
     this.name = name;
     this.productNature = productNature;
     this.functionalProperties = functionalProperties;
+    this.DPP = DPP;
   }
 
   // getters & setters
@@ -67,7 +75,8 @@ public class Product {
   public void setFunctionalProperties(Properties functionalProperties) {this.functionalProperties = functionalProperties;}
   public DigitalProductPassport getDPP() {return DPP;}
   public void setDPP(DigitalProductPassport DPP) {this.DPP = DPP;}
-  public Collection<Process> getChildren() {return procedure;}
+  public Collection<Process> getProcedure() {return procedure;}
+  public Collection<Process> getUsedIn() {return usedIn;}
   
   // Getters and setters for inventory fields
   public String getUserId() {return userId;}

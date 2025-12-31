@@ -1,12 +1,14 @@
 package com.ecapybara.carbonx.runner;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ComponentScan;
 
 import com.arangodb.springframework.core.ArangoOperations;
+
 import com.ecapybara.carbonx.model.Product;
 import com.ecapybara.carbonx.model.Process;
 import com.ecapybara.carbonx.model.Input;
@@ -36,82 +38,99 @@ public class TestSetup implements CommandLineRunner {
     operations.dropDatabase();
 
     // Create and save products
-    Product spaghetti = new Product("dish", "spaghetti");
-    Product rawPasta = new Product("ingredient", "rawPasta");
-    Product pasta = new Product("ingredient", "pasta");
-    Product tomatoSauce = new Product("ingredient", "tomato sauce");
-    Product hotDogs = new Product("ingredient", "hot dogs");
-    Product salt = new Product("ingredient", "salt");
-    Product pepper = new Product("ingredient", "pepper");
-    Product sugar = new Product("ingredient", "sugar");
-    Product garlic = new Product("ingredient", "garlic");
-    Product onions = new Product("ingredient", "onions");
-    Product cheese = new Product("ingredient", "cheese");
-    Product tomatoPaste = new Product("ingredient", "tomato paste");
-    Product oliveOil = new Product("ingredient", "olive oil");
-    Product cleanWater = new Product("ingredient", "clean water");
-    Product wasteWater = new Product("waste", "waste water");
-    
-    productRepository.saveAll(Arrays.asList(
-      spaghetti,
-      rawPasta,
-      pasta,
-      tomatoSauce,
-      hotDogs,
-      salt,
-      pepper,
-      sugar,
-      garlic,
-      onions,
-      cheese,
-      tomatoPaste,
-      oliveOil,
-      cleanWater
-    ));
+    Collection<Product> createProducts = createProducts();
+    productRepository.saveAll(createProducts);
 
     long count = productRepository.count();
-    System.out.println(String.format("%s PRODUCT entries created", count));
+    System.out.println(String.format("-> %s PRODUCT entries created", count));
 
     // Create and save processes
-    Process boiling = new Process("cooking", "boiling");
-    Process simmering = new Process("cooking", "simmering");
-    Process combining = new Process("cooking", "combining");
-    
-    
-    processRepository.saveAll(Arrays.asList(
-      boiling,
-      simmering,
-      combining
-    ));
+    Collection<Process> createProcesses = createProcesses();
+    processRepository.saveAll(createProcesses);
 
     count = processRepository.count();
-    System.out.println(String.format("%s PROCESS entries created", count));
+    System.out.println(String.format("-> %s PROCESS entries created", count));
 
     // Create and save input relationships between entities
-    inputRepository.saveAll(Arrays.asList(
-      new Input(rawPasta, boiling),
-      new Input(cleanWater, boiling),
-      new Input(cleanWater, simmering),
-      new Input(tomatoPaste, simmering),
-      new Input(salt, simmering),
-      new Input(sugar, simmering),
-      new Input(pepper, simmering),
-      new Input(garlic, simmering),
-      new Input(onions, simmering),
-      new Input(tomatoSauce, combining),
-      new Input(pasta, combining),
-      new Input(hotDogs, combining),
-      new Input(cheese, combining),
-      new Input(oliveOil, combining)
-    ));
+    Product spaghetti = productRepository.findByName("spaghetti").get(0);
+    Product rawPasta = productRepository.findByName("raw pasta").get(0);
+    Product pasta = productRepository.findByName("pasta").get(0);
+    Product tomatoSauce = productRepository.findByName("tomato sauce").get(0);
+    Product hotDogs = productRepository.findByName("hot dogs").get(0);
+    Product salt = productRepository.findByName("salt").get(0);
+    Product pepper = productRepository.findByName("pepper").get(0);
+    Product sugar = productRepository.findByName("sugar").get(0);
+    Product garlic = productRepository.findByName("garlic").get(0);
+    Product onions = productRepository.findByName("onions").get(0);
+    Product cheese = productRepository.findByName("cheese").get(0);
+    Product tomatoPaste = productRepository.findByName("tomato paste").get(0);
+    Product oliveOil = productRepository.findByName("olive oil").get(0);
+    Product cleanWater = productRepository.findByName("clean water").get(0);
+    Product wasteWater = productRepository.findByName("waste water").get(0);
 
-    outputRepository.saveAll(Arrays.asList(
-      new Output(boiling, pasta),
-      new Output(boiling, wasteWater),
-      new Output(simmering, tomatoSauce),
-      new Output(combining, spaghetti)
-    ));
+    System.out.println("-> PRODUCT object assignments completed");
+
+    Process boiling = processRepository.findByName("boiling").get(0);
+    Process simmering = processRepository.findByName("simmering").get(0);
+    Process combining = processRepository.findByName("combining").get(0);
+    
+    System.out.println("-> PROCESS object assignments completed");
+
+    Input test = new Input(rawPasta, boiling);
+    inputRepository.save(test);
+    inputRepository.save(new Input(cleanWater, boiling));
+    inputRepository.save(new Input(cleanWater, simmering));
+    inputRepository.save(new Input(tomatoPaste, simmering));
+    inputRepository.save(new Input(salt, simmering));
+    inputRepository.save(new Input(sugar, simmering));
+    inputRepository.save(new Input(pepper, simmering));
+    inputRepository.save(new Input(garlic, simmering));
+    inputRepository.save(new Input(onions, simmering));
+    inputRepository.save(new Input(tomatoSauce, combining));
+    inputRepository.save(new Input(pasta, combining));
+    inputRepository.save(new Input(hotDogs, combining));
+    inputRepository.save(new Input(cheese, combining));
+    inputRepository.save(new Input(oliveOil, combining));
+
+    count = inputRepository.count();
+    System.out.println(String.format("-> %s INPUT edges created", count));
+
+    outputRepository.save(new Output(boiling, pasta));
+    outputRepository.save(new Output(boiling, wasteWater));
+    outputRepository.save(new Output(simmering, tomatoSauce));
+    outputRepository.save(new Output(combining, spaghetti));
+
+    count = outputRepository.count();
+    System.out.println(String.format("-> %s OUTPUT edges created", count));
 
     System.out.println("------------- # SETUP COMPLETE # -------------");    
+  }
+
+  public static Collection<Product> createProducts() {
+    return Arrays.asList(
+      new Product("dish", "spaghetti"),
+      new Product("ingredient", "raw pasta"),
+      new Product("ingredient", "pasta"),
+      new Product("ingredient", "tomato sauce"),
+      new Product("ingredient", "hot dogs"),
+      new Product("ingredient", "salt"),
+      new Product("ingredient", "pepper"),
+      new Product("ingredient", "sugar"),
+      new Product("ingredient", "garlic"),
+      new Product("ingredient", "onions"),
+      new Product("ingredient", "cheese"),
+      new Product("ingredient", "tomato paste"),
+      new Product("ingredient", "olive oil"),
+      new Product("ingredient", "clean water"),
+      new Product("waste", "waste water")
+    );
+  }
+
+  public static Collection<Process> createProcesses() {
+    return Arrays.asList(
+      new Process("cooking", "boiling"),
+      new Process("cooking", "simmering"),
+      new Process("cooking", "combining")
+    );
   }
 }

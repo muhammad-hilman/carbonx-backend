@@ -2,9 +2,9 @@ package com.ecapybara.carbonx.model;
 
 import java.util.Collection;
 import java.util.Properties;
+import org.springframework.data.annotation.PersistenceCreator;
 
-import org.springframework.data.annotation.Id;
-
+import com.arangodb.serde.jackson.Id;
 import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
@@ -24,14 +24,17 @@ public class Process {
   private Properties functionalProperties;
   private Properties nonFunctionalProperties;
 
-  @Relations(edges = Input.class, lazy=true)
+  @Relations(edges = Input.class, lazy = true)
   private Collection<Product> inputs;
+  @Relations(edges = Output.class, lazy=true)
+  private Collection<Product> outputs;
 
   // constructors
   public Process(String name) {
     this.name = name;
   }
 
+  @PersistenceCreator
   public Process(String processType, String name) {
     this.name = name;
     this.processType = processType;
