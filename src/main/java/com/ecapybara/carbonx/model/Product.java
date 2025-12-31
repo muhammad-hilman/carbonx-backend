@@ -1,13 +1,14 @@
 package com.ecapybara.carbonx.model;
 
+import java.util.Collection;
 import java.util.Properties;
-import java.util.List;
 
 import org.springframework.data.annotation.Id;
 
 import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
+import com.arangodb.springframework.annotation.Relations;
 
 @Document("products")
 @PersistentIndex(fields = {"name"})
@@ -24,8 +25,9 @@ public class Product {
   private String productOrigin; // e.g supplier/user
   private Properties functionalProperties;
   private DigitalProductPassport DPP;
-  private List<Process> usedInProcessAsInput;
-  private List<Process> usedInProcessAsOutput;
+
+  @Relations(edges = Output.class, lazy = true)
+  private Collection<Process> procedure;
   
   // Additional fields for inventory management
   private String userId; // User who owns this product
@@ -65,6 +67,7 @@ public class Product {
   public void setFunctionalProperties(Properties functionalProperties) {this.functionalProperties = functionalProperties;}
   public DigitalProductPassport getDPP() {return DPP;}
   public void setDPP(DigitalProductPassport DPP) {this.DPP = DPP;}
+  public Collection<Process> getChildren() {return procedure;}
   
   // Getters and setters for inventory fields
   public String getUserId() {return userId;}
@@ -72,10 +75,8 @@ public class Product {
   public String getUploadedFile() {return uploadedFile;}
   public void setUploadedFile(String uploadedFile) {this.uploadedFile = uploadedFile;}
 
-  public List<Process> getUsedInProcessAsInput() {return usedInProcessAsInput;}
-  public void setUsedInProcessAsInput(List<Process> usedInProcessAsInput) {this.usedInProcessAsInput = usedInProcessAsInput;}
-  public List<Process> getUsedInProcessAsOutput() {return usedInProcessAsOutput;}
-  public void setUsedInProcessAsOutput(List<Process> usedInProcessAsOutput) {this.usedInProcessAsOutput = usedInProcessAsOutput;}
-
-  
+  @Override
+  public String toString() {
+    return "Product [id=" + id + ", name=" + name + ", productNature=" + productNature + ", productOrigin=" + productOrigin + "]";
+  }
 }

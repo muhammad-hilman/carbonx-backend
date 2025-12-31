@@ -14,20 +14,22 @@ import com.ecapybara.carbonx.repository.ProductRepository;
 public class ProductController {
 
   @Autowired
-  private ProductRepository repo;
+  private ProductRepository productRepository;
   
   /*
   @Autowired
   private OpenLCAService openLCAService;
   */
 
+  // Setup product database to 
+
   // Get all OpenLCA processes, or filter by name
   @GetMapping
   public Iterable<Product> getProducts(@RequestParam(name = "query", required = false) String query) {
     if (query != null && !query.isEmpty()) {
-        return repo.findByName(query);
+        return productRepository.findByName(query);
     }
-    return repo.findAll();
+    return productRepository.findAll();
   }
 
   /*

@@ -1,11 +1,17 @@
 package com.ecapybara.carbonx.model;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Properties;
 
 import org.springframework.data.annotation.Id;
 
 import com.arangodb.springframework.annotation.ArangoId;
+import com.arangodb.springframework.annotation.Document;
+import com.arangodb.springframework.annotation.PersistentIndex;
+import com.arangodb.springframework.annotation.Relations;
 
+@Document("processes")
+@PersistentIndex(fields = {"name"})
 public class Process {
   @Id // db document field: _key
   private String id;
@@ -15,16 +21,18 @@ public class Process {
 
   private String name;
   private String processType;
-  private List<Product> inputs;
-  private List<Product> outputs;
+  private Properties functionalProperties;
+  private Properties nonFunctionalProperties;
 
+  @Relations(edges = Input.class, lazy=true)
+  private Collection<Product> inputs;
 
   // constructors
   public Process(String name) {
     this.name = name;
   }
 
-  public Process(String name, String processType) {
+  public Process(String processType, String name) {
     this.name = name;
     this.processType = processType;
   }
@@ -38,9 +46,14 @@ public class Process {
   public void setName(String name) {this.name = name;}
   public String getProcessType() {return processType;}
   public void setProcessType(String processType) {this.processType = processType;}
-  public List<Product> getInputs() {return inputs;}
-  public void setInputs(List<Product> inputs) {this.inputs = inputs;}
-  public List<Product> getOutputs() {return outputs;}
-  public void setOutputs(List<Product> outputs) {this.outputs = outputs;}
-  
+  public Properties getFunctionalProperties() {return functionalProperties;}
+  public void setFunctionalProperties(Properties functionalProperties) {this.functionalProperties = functionalProperties;}
+  public Properties getNonFunctionalProperties() {return nonFunctionalProperties;}
+  public void setNonFunctionalProperties(Properties nonFunctionalProperties) {this.nonFunctionalProperties = nonFunctionalProperties;}
+  public Collection<Product> getInputs() { return inputs; }
+
+  @Override
+  public String toString() {
+    return "Process [id=" + id + ", name=" + name + ", processType= " + processType + "]";
+  }
 }
