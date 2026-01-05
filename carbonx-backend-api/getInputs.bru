@@ -1,0 +1,21 @@
+meta {
+  name: getInputs
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{host}}/api/inputs?to=simmering
+  body: none
+  auth: inherit
+}
+
+params:query {
+  to: simmering
+  ~from: salt
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

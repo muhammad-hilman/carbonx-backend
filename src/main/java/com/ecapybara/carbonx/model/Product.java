@@ -3,17 +3,19 @@ package com.ecapybara.carbonx.model;
 import java.util.Collection;
 import java.util.Properties;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 
-import com.arangodb.serde.jackson.Id;
+
 import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.Relations;
-@Document("products")
-@PersistentIndex(fields = {"name"})
-public class Product {
 
+@Document("products")
+@PersistentIndex(fields = {"id","name","productNature","productOrigin","userId"})
+public class Product {
+  
   @ArangoId // db document field: _id
   private String arangoId;
 
@@ -28,8 +30,10 @@ public class Product {
 
   @Relations(edges = Output.class, lazy=true)
   private Collection<Process> procedure;
+  /* 
   @Relations(edges = Input.class, lazy=true)
   private Collection<Process> usedIn;
+  */
   
   // Additional fields for inventory management
   private String userId; // User who owns this product
@@ -76,7 +80,7 @@ public class Product {
   public DigitalProductPassport getDPP() {return DPP;}
   public void setDPP(DigitalProductPassport DPP) {this.DPP = DPP;}
   public Collection<Process> getProcedure() {return procedure;}
-  public Collection<Process> getUsedIn() {return usedIn;}
+  /*public Collection<Process> getUsedIn() {return usedIn;}*/
   
   // Getters and setters for inventory fields
   public String getUserId() {return userId;}

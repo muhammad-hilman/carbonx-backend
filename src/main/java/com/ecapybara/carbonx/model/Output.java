@@ -1,32 +1,56 @@
 package com.ecapybara.carbonx.model;
 
+import org.springframework.data.annotation.Id;
 
+import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Edge;
 import com.arangodb.springframework.annotation.From;
 import com.arangodb.springframework.annotation.To;
 
 @Edge("outputs")
 public class Output {
+  @ArangoId // db document field: _id
+  private String arangoId;
+
+  @Id // db document field: _key
+  private String id;
+
   @From
   private Process process;
+  private String processName;
 
   @To
   private Product product;
+  private String productName;
 
   public Output(final Process process, final Product product) {
     super();
     this.product = product;
+    this.productName = product.getName();
     this.process = process;
+    this.processName = process.getName();
   }
   
   @Override
   public String toString() {
-      return "Produces [process=" + process + ", product=" + product + "]";
+      return "Output [id=" + id + ", process=" + process + ", product=" + product + "]";
   }
 
   // setter & getter
+  public String getArangoId() { return arangoId; }
+  public void setArangoId(String arangoId) { this.arangoId = arangoId; }
+  public String getId() { return id; }
+  public void setId(String id) { this.id = id; }
   public Process getProcess() { return process; }
-  public void setProcess(Process process) { this.process = process; }
+  public String getProcessName() { return processName; }
+  public void setProcess(Process process) {
+    this.process = process;
+    this.processName = process.getName();
+  }
   public Product getProduct() { return product; }
-  public void setProduct(Product product) { this.product = product; }  
+  public String getProductName() { return productName; }
+  public void setProduct(Product product) { 
+    this.product = product;
+    this.productName = product.getName();
+  }  
 }

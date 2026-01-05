@@ -2,16 +2,18 @@ package com.ecapybara.carbonx.model;
 
 import java.util.Collection;
 import java.util.Properties;
+
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 
-import com.arangodb.serde.jackson.Id;
+
 import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.Relations;
 
 @Document("processes")
-@PersistentIndex(fields = {"name"})
+@PersistentIndex(fields = {"name", "processType"})
 public class Process {
   @Id // db document field: _key
   private String id;
@@ -26,8 +28,10 @@ public class Process {
 
   @Relations(edges = Input.class, lazy = true)
   private Collection<Product> inputs;
+  /*
   @Relations(edges = Output.class, lazy=true)
   private Collection<Product> outputs;
+  */
 
   // constructors
   public Process(String name) {
