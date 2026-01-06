@@ -1,18 +1,18 @@
 meta {
   name: getOutputs
   type: http
-  seq: 7
+  seq: 11
 }
 
 get {
-  url: {{host}}/api/outputs?from=boiling
+  url: {{host}}/api/outputs?from=combining&to=cucumber
   body: none
   auth: inherit
 }
 
 params:query {
-  from: boiling
-  ~to: waste water
+  from: combining
+  to: cucumber
 }
 
 settings {

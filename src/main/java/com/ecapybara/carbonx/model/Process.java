@@ -28,20 +28,30 @@ public class Process {
 
   @Relations(edges = Input.class, lazy = true)
   private Collection<Product> inputs;
-  /*
-  @Relations(edges = Output.class, lazy=true)
-  private Collection<Product> outputs;
-  */
 
   // constructors
+  public Process() {
+    super();
+  }
+
   public Process(String name) {
+    super();
     this.name = name;
   }
 
   @PersistenceCreator
   public Process(String processType, String name) {
+    super();
     this.name = name;
     this.processType = processType;
+  }
+
+  public Process(String processType, String name, Properties functionalProperties, Properties nonFunctionalProperties) {
+    super();
+    this.name = name;
+    this.processType = processType;
+    this.functionalProperties = functionalProperties;
+    this.nonFunctionalProperties = nonFunctionalProperties;
   }
 
   // setters and getters

@@ -1,0 +1,42 @@
+meta {
+  name: createOutput
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{host}}/api/outputs
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "process": {
+      "id": "79797",
+      "arangoId": "processes/79797",
+      "name": "combining",
+      "processType": "mixing",
+      "functionalProperties": null,
+      "nonFunctionalProperties": null,
+      "inputs": []
+    },
+    "product": {
+      "arangoId": "products/79647",
+      "id": "79647",
+      "name": "cucumber",
+      "productNature": "ingredient",
+      "productOrigin": null,
+      "functionalProperties": null,
+      "procedure": [],
+      "userId": null,
+      "uploadedFile": null,
+      "dpp": null
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

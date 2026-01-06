@@ -1,0 +1,28 @@
+meta {
+  name: createProduct
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{host}}/api/products
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "productNature": "ingredient",
+    "name": "cucumber",
+    "productOrigin": null,
+    "functionalProperties": null,
+    "dpp": null,
+    "userId": null,
+    "uploadedFile": null
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

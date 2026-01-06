@@ -1,13 +1,16 @@
 package com.ecapybara.carbonx.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 
 import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Edge;
 import com.arangodb.springframework.annotation.From;
+import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.To;
 
 @Edge("outputs")
+@PersistentIndex(fields = {"id","processName","productName"})
 public class Output {
   @ArangoId // db document field: _id
   private String arangoId;
@@ -23,6 +26,11 @@ public class Output {
   private Product product;
   private String productName;
 
+  public Output() {
+    super();
+  }
+
+  @PersistenceCreator
   public Output(final Process process, final Product product) {
     super();
     this.product = product;
@@ -33,7 +41,7 @@ public class Output {
   
   @Override
   public String toString() {
-      return "Output [id=" + id + ", process=" + process + ", product=" + product + "]";
+      return "Output [id=" + id + ", process=" + processName + ", product=" + productName + "]";
   }
 
   // setter & getter

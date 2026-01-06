@@ -1,17 +1,17 @@
 meta {
   name: getProducts
   type: http
-  seq: 1
+  seq: 2
 }
 
 get {
-  url: {{host}}/api/products
+  url: {{host}}/api/products?productName=cucumber
   body: none
   auth: inherit
 }
 
 params:query {
-  ~productName: salt
+  productName: cucumber
 }
 
 settings {

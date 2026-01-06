@@ -1,18 +1,18 @@
 meta {
   name: getInputs
   type: http
-  seq: 5
+  seq: 8
 }
 
 get {
-  url: {{host}}/api/inputs?to=simmering
+  url: {{host}}/api/inputs?to=combining&from=cucumber
   body: none
   auth: inherit
 }
 
 params:query {
-  to: simmering
-  ~from: salt
+  to: combining
+  from: cucumber
 }
 
 settings {

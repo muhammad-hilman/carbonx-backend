@@ -6,6 +6,8 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 import com.arangodb.springframework.core.ArangoOperations;
 
@@ -52,27 +54,28 @@ public class TestSetup implements CommandLineRunner {
     System.out.println(String.format("-> %s PROCESS entries created", count));
 
     // Create and save input relationships between entities
-    Product spaghetti = productRepository.findByName("spaghetti").get(0);
-    Product rawPasta = productRepository.findByName("raw pasta").get(0);
-    Product pasta = productRepository.findByName("pasta").get(0);
-    Product tomatoSauce = productRepository.findByName("tomato sauce").get(0);
-    Product hotDogs = productRepository.findByName("hot dogs").get(0);
-    Product salt = productRepository.findByName("salt").get(0);
-    Product pepper = productRepository.findByName("pepper").get(0);
-    Product sugar = productRepository.findByName("sugar").get(0);
-    Product garlic = productRepository.findByName("garlic").get(0);
-    Product onions = productRepository.findByName("onions").get(0);
-    Product cheese = productRepository.findByName("cheese").get(0);
-    Product tomatoPaste = productRepository.findByName("tomato paste").get(0);
-    Product oliveOil = productRepository.findByName("olive oil").get(0);
-    Product cleanWater = productRepository.findByName("clean water").get(0);
-    Product wasteWater = productRepository.findByName("waste water").get(0);
+    final Sort sort = Sort.by(Direction.DESC, "id");
+    Product spaghetti = productRepository.findByName(sort,"spaghetti").get(0);
+    Product rawPasta = productRepository.findByName(sort,"raw pasta").get(0);
+    Product pasta = productRepository.findByName(sort,"pasta").get(0);
+    Product tomatoSauce = productRepository.findByName(sort,"tomato sauce").get(0);
+    Product hotDogs = productRepository.findByName(sort,"hot dogs").get(0);
+    Product salt = productRepository.findByName(sort,"salt").get(0);
+    Product pepper = productRepository.findByName(sort,"pepper").get(0);
+    Product sugar = productRepository.findByName(sort,"sugar").get(0);
+    Product garlic = productRepository.findByName(sort,"garlic").get(0);
+    Product onions = productRepository.findByName(sort,"onions").get(0);
+    Product cheese = productRepository.findByName(sort,"cheese").get(0);
+    Product tomatoPaste = productRepository.findByName(sort,"tomato paste").get(0);
+    Product oliveOil = productRepository.findByName(sort,"olive oil").get(0);
+    Product cleanWater = productRepository.findByName(sort,"clean water").get(0);
+    Product wasteWater = productRepository.findByName(sort,"waste water").get(0);
 
     System.out.println("-> PRODUCT object assignments completed");
 
-    Process boiling = processRepository.findByName("boiling").get(0);
-    Process simmering = processRepository.findByName("simmering").get(0);
-    Process combining = processRepository.findByName("combining").get(0);
+    Process boiling = processRepository.findByName(sort, "boiling").get(0);
+    Process simmering = processRepository.findByName(sort, "simmering").get(0);
+    Process combining = processRepository.findByName(sort, "combining").get(0);
     
     System.out.println("-> PROCESS object assignments completed");
 

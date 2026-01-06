@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
 
 import com.arangodb.springframework.repository.ArangoRepository;
@@ -11,8 +12,7 @@ import com.arangodb.springframework.repository.ArangoRepository;
 import com.ecapybara.carbonx.model.Product;
 
 public interface ProductRepository extends ArangoRepository<Product, String>{
-  
-  List<Product> findByName(String name);
+  List<Product> findByName(Sort sort, String name);
 
   @NonNull Optional<Product> findById(@NonNull String id);
 

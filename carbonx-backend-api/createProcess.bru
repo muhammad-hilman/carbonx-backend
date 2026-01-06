@@ -1,0 +1,25 @@
+meta {
+  name: createProcess
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{host}}/api/processes
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "combining",
+    "processType": "mixing",
+    "functionalProperties": null,
+    "nonFunctionalProperties": null
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

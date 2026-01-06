@@ -6,8 +6,12 @@ Goal: Do LCA for a pasta (pasta->spaghetti, tomato sauce, meatballs -> ... -> sa
 
 - [x] Step 3: Create API endpoints and functionality to read database
 
-- [ ] Step 4: Create API endpoint to write and update data into database.
+- [x] Step 4: Create API endpoint to create data into database.
+  - [ ] implement findByProcessType for ProcessRepository interface
+  - [ ] implement creation of a LIST of products and processes
 
-- [ ] Step 5: Create scripts to automate and standardise test environment for database
+- [ ] Step 5: Create API endpoint to update data into database.
 
-- [ ] Step 6: Create tools and functions to manipulate extracted data from database. Document them in the GitHub page
+- [ ] Step 6: Create scripts to automate and standardise test environment for database
+
+- [ ] Step 7: Create tools and functions to manipulate extracted data from database. Document them in the GitHub page

@@ -1,17 +1,17 @@
 meta {
   name: getProcesses
   type: http
-  seq: 3
+  seq: 5
 }
 
 get {
-  url: {{host}}/api/processes?processName=boiling
+  url: {{host}}/api/processes?processName=combining
   body: none
   auth: inherit
 }
 
 params:query {
-  processName: boiling
+  processName: combining
 }
 
 settings {

@@ -3,14 +3,22 @@ package com.ecapybara.carbonx.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.ecapybara.carbonx.model.Product;
 import com.ecapybara.carbonx.repository.ProductRepository;
+
 
 @RestController
 @RequestMapping("/api/products")
@@ -19,10 +27,12 @@ public class ProductController {
   @Autowired
   private ProductRepository productRepository;
 
+  final Sort sort = Sort.by(Direction.DESC, "id");
+
   @GetMapping
   public Iterable<Product> getProducts(@RequestParam(name = "productName", required = false) String productName) {
     if (productName != null && !productName.isEmpty()) {
-      return productRepository.findByName(productName);
+      return productRepository.findByName(sort, productName);
     }
     return productRepository.findAll();
   }
@@ -30,5 +40,19 @@ public class ProductController {
   @GetMapping("/{id}")
   public Optional<Product> getProduct(@PathVariable String id) {
     return productRepository.findById(id);
+  }
+
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(value = HttpStatus.CREATED)
+  public Product createProduct(@RequestBody Product product) {
+    System.out.println("New product created:");
+    System.out.println(product.toString());
+
+    productRepository.save(product);
+    product = productRepository.findByName(sort, product.getName()).get(0);
+    System.out.println("Created product saved into product database:");
+    System.out.println(product.toString());
+    
+    return product;
   }
 }
