@@ -1,6 +1,5 @@
 package com.ecapybara.carbonx.controller;
 
-import java.util.Optional;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.ecapybara.carbonx.model.Product;
@@ -46,14 +46,9 @@ public class ProductController {
     }
   }
 
-  @GetMapping("/{id}")
-  public Optional<Product> getProduct(@PathVariable String id) {
-    return productRepository.findById(id);
-  }
-
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.CREATED)
-  public List<Product> createProduct(@RequestBody List<Product> productsList) {
+  public List<Product> createProducts(@RequestBody List<Product> productsList) {
     
     for (Product product : productsList) {
       System.out.println("----- New product created:");
@@ -66,5 +61,37 @@ public class ProductController {
     }
 
     return productsList;
+  }
+
+  @PutMapping
+  public List<Product> editProducts(@RequestBody List<Product> revisedProducts) {
+    for (Product productRevision : revisedProducts) {
+      Product product = editProduct(productRevision.getId(), productRevision);
+      productRevision = product; //replace the list element with the new entity from database
+    }
+    return revisedProducts;
+  }
+
+  @GetMapping("/{id}")
+  public Product getProduct(@PathVariable String id) {
+    return productRepository.findById(id).orElse(null);
+  }
+
+  @PutMapping("/{id}")
+  public Product editProduct(@PathVariable String id, @RequestBody Product revisedProduct) {
+    Product product = productRepository.findById(id).orElse(null);
+    
+    if (product != null) {
+      product.setName(revisedProduct.getName());
+      product.setProductNature(revisedProduct.getProductNature());
+      product.setProductOrigin(revisedProduct.getProductOrigin());
+      product.setFunctionalProperties(revisedProduct.getFunctionalProperties());
+      product.setDPP(revisedProduct.getDPP());
+      product.setUserId(revisedProduct.getUserId());
+      product.setUploadedFile(revisedProduct.getUploadedFile());
+      productRepository.save(product);
+    }
+    
+    return productRepository.findById(id).orElse(null);
   }
 }

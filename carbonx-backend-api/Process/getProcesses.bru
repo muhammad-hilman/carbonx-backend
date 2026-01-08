@@ -1,18 +1,18 @@
 meta {
   name: getProcesses
   type: http
-  seq: 5
+  seq: 2
 }
 
 get {
-  url: {{host}}/api/processes?processName=combining&processType=mixing
+  url: {{host}}/api/processes?processType=drink mixing
   body: none
   auth: inherit
 }
 
 params:query {
-  processName: combining
-  processType: mixing
+  processType: drink mixing
+  ~processName: combining
 }
 
 settings {

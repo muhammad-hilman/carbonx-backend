@@ -1,13 +1,17 @@
 meta {
-  name: getProcess
+  name: getInput
   type: http
-  seq: 6
+  seq: 2
 }
 
 get {
-  url: {{host}}/api/processes/1
+  url: {{host}}/api/inputs/:id
   body: none
   auth: inherit
+}
+
+params:path {
+  id: 1
 }
 
 settings {

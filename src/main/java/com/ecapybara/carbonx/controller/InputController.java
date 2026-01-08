@@ -1,6 +1,5 @@
 package com.ecapybara.carbonx.controller;
 
-import java.util.Optional;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecapybara.carbonx.model.Input;
 import com.ecapybara.carbonx.repository.InputRepository;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/api/inputs")
@@ -47,14 +48,9 @@ public class InputController {
     }
   }
 
-  @GetMapping("/{id}")
-  public Optional<Input> getInput(@PathVariable String id) {
-    return inputRepository.findById(id);
-  }
-
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.CREATED)
-  public List<Input> createInput(@RequestBody List<Input> inputsList) {
+  public List<Input> createInputs(@RequestBody List<Input> inputsList) {
     for (Input input : inputsList) {
       System.out.println("New input created:");
       System.out.println(input.toString());
@@ -65,5 +61,32 @@ public class InputController {
       System.out.println(input.toString());
     }
     return inputsList;
+  }
+
+  @PutMapping
+  public List<Input> editInputs(@RequestBody List<Input> revisedInputs) {
+    for (Input inputRevision : revisedInputs) {
+      Input input = editInput(inputRevision.getId(), inputRevision);
+      inputRevision = input;
+    }
+    return revisedInputs;
+  }
+
+  @GetMapping("/{id}")
+  public Input getInput(@PathVariable String id) {
+    return inputRepository.findById(id).orElse(null);
+  }
+
+  @PutMapping("/{id}")
+  public Input editInput(@PathVariable String id, @RequestBody Input inputRevision) {
+    Input input = inputRepository.findById(id).orElse(null);
+
+    if (input != null) {
+      input.setProduct(inputRevision.getProduct());
+      input.setProcess(inputRevision.getProcess());
+      inputRepository.save(input);
+    }
+    
+    return inputRepository.findById(id).orElse(null);
   }
 }

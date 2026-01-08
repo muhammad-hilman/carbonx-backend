@@ -1,6 +1,5 @@
 package com.ecapybara.carbonx.controller;
 
-import java.util.Optional;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecapybara.carbonx.model.Process;
 import com.ecapybara.carbonx.repository.ProcessRepository;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/api/processes")
@@ -45,14 +46,9 @@ public class ProcessController {
     }
   }
 
-  @GetMapping("/{id}")
-  public Optional<Process> getProcess(@PathVariable String id) {
-    return processRepository.findById(id);
-  }
-
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.CREATED)
-  public List<Process> createProcess(@RequestBody List<Process> processesList) {
+  public List<Process> createProcesses(@RequestBody List<Process> processesList) {
     
     for (Process process : processesList) {
       System.out.println("----- New process created:");
@@ -65,5 +61,34 @@ public class ProcessController {
     }
     
     return processesList;
+  }
+
+  @PutMapping
+  public List<Process> editProcesses(@RequestBody List<Process> revisedProcesses) {
+    for (Process processRevision : revisedProcesses) {
+      Process process = editProcess(processRevision.getId(), processRevision);
+      processRevision = process;
+    }
+    return revisedProcesses;
+  }
+
+  @GetMapping("/{id}")
+  public Process getProcess(@PathVariable String id) {
+    return processRepository.findById(id).orElse(null);
+  }
+
+  @PutMapping("/{id}")
+  public Process editProcess(@PathVariable String id, @RequestBody Process revisedProcess) {
+    Process process = processRepository.findById(id).orElse(null);
+
+    if (process != null) {
+      process.setName(revisedProcess.getName());
+      process.setProcessType(revisedProcess.getProcessType());
+      process.setFunctionalProperties(revisedProcess.getFunctionalProperties());
+      process.setNonFunctionalProperties(revisedProcess.getNonFunctionalProperties());
+      processRepository.save(process);
+    }
+    
+    return processRepository.findById(id).orElse(null);
   }
 }

@@ -1,18 +1,17 @@
 meta {
-  name: getInputs
+  name: getOutput
   type: http
-  seq: 8
+  seq: 2
 }
 
 get {
-  url: {{host}}/api/inputs
+  url: {{host}}/api/outputs/:id
   body: none
   auth: inherit
 }
 
-params:query {
-  ~to: combining
-  ~from: lemon juice
+params:path {
+  id: 1
 }
 
 settings {

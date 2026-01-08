@@ -1,6 +1,5 @@
 package com.ecapybara.carbonx.controller;
 
-import java.util.Optional;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,23 +47,45 @@ public class OutputController {
     }
   }
 
-  @GetMapping("/{id}")
-  public Optional<Output> getOutput(@PathVariable String id) {
-    return outputRepository.findById(id);
-  }
-
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.CREATED)
-  public List<Output> createOutput(@RequestBody List<Output> outputsList) {
+  public List<Output> createOutputs(@RequestBody List<Output> outputsList) {
     for (Output output : outputsList) {
       System.out.println("New output created:");
       System.out.println(output.toString());
 
       outputRepository.save(output);
       output = outputRepository.findByProcessNameAndProductName(sort, output.getProcessName(), output.getProductName()).get(0);
-      System.out.println("Created input saved into input database:");
+      System.out.println("Created output saved into output database:");
       System.out.println(output.toString());
     } 
     return outputsList;
+  }
+
+  @PutMapping
+  public List<Output> editOutputs(@RequestBody List<Output> revisedOutputs) {
+    for (Output outputRevision : revisedOutputs) {
+      Output output = editOutput(outputRevision.getId(), outputRevision);
+      outputRevision = output;
+    }
+    return revisedOutputs;
+  }
+
+  @GetMapping("/{id}")
+  public Output getOutput(@PathVariable String id) {
+    return outputRepository.findById(id).orElse(null);
+  }
+
+  @PutMapping("/{id}")
+  public Output editOutput(@PathVariable String id, @RequestBody Output outputRevision) {
+    Output output = outputRepository.findById(id).orElse(null);
+
+    if (output != null) {
+      output.setProcess(outputRevision.getProcess());
+      output.setProduct(outputRevision.getProduct());      
+      outputRepository.save(output);
+    }
+    
+    return outputRepository.findById(id).orElse(null);
   }
 }

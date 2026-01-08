@@ -1,0 +1,21 @@
+meta {
+  name: getInputs
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/api/inputs?to=combining&from=sugar
+  body: none
+  auth: inherit
+}
+
+params:query {
+  to: combining
+  from: sugar
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

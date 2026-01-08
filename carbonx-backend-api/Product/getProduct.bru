@@ -1,13 +1,17 @@
 meta {
-  name: getInput
+  name: getProduct
   type: http
-  seq: 9
+  seq: 2
 }
 
 get {
-  url: {{host}}/api/inputs/1
+  url: {{host}}/api/products/:id
   body: none
   auth: inherit
+}
+
+params:path {
+  id: 1
 }
 
 settings {
