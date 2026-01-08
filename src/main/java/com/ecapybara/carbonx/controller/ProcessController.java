@@ -1,6 +1,7 @@
 package com.ecapybara.carbonx.controller;
 
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -29,11 +30,19 @@ public class ProcessController {
   final Sort sort = Sort.by(Direction.DESC, "id");
 
   @GetMapping
-  public Iterable<Process> getProcesses(@RequestParam(name = "processName", required = false) String processName) {
-    if (processName != null && !processName.isEmpty()) {
-        return processRepository.findByName(sort, processName);
+  public Iterable<Process> getProcesses(@RequestParam(name = "processName", required = false) String processName, @RequestParam(name = "processType", required = false) String processType) {
+    if (processName!=null && !processName.isEmpty() && processType!=null && !processType.isEmpty()) {
+      return processRepository.findByNameAndProcessType(sort, processName, processType);
     }
-    return processRepository.findAll();
+    else if (processName!=null && !processName.isEmpty()) {
+      return processRepository.findByName(sort, processName);
+    }
+    else if (processType!=null && !processType.isEmpty()) {
+      return processRepository.findByProcessType(sort, processType);
+    }
+    else {
+      return processRepository.findAll();
+    }
   }
 
   @GetMapping("/{id}")
@@ -43,15 +52,18 @@ public class ProcessController {
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.CREATED)
-  public Process createProcess(@RequestBody Process process) {
-    System.out.println("New process created:");
-    System.out.println(process.toString());
-
-    processRepository.save(process);
-    process = processRepository.findByName(sort, process.getName()).get(0);
-    System.out.println("Created process saved into process database:");
-    System.out.println(process.toString());
+  public List<Process> createProcess(@RequestBody List<Process> processesList) {
     
-    return process;
+    for (Process process : processesList) {
+      System.out.println("----- New process created:");
+      System.out.println(process.toString());
+
+      processRepository.save(process);
+      process = processRepository.findByNameAndProcessType(sort, process.getName(), process.getProcessType()).get(0);
+      System.out.println("Created process saved into process database:");
+      System.out.println(process.toString());
+    }
+    
+    return processesList;
   }
 }

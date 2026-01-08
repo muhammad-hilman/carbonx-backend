@@ -13,9 +13,13 @@ import com.ecapybara.carbonx.model.Process;
 
 public interface ProcessRepository extends ArangoRepository<Process, String>{
   
+  @NonNull Optional<Process> findById(@NonNull String id);
+
   List<Process> findByName(Sort sort, String name);
 
-  @NonNull Optional<Process> findById(@NonNull String id);
+  List<Process> findByProcessType(Sort sort, String processType);
+
+  List<Process> findByNameAndProcessType(Sort sort, String name, String processType);
 
   Collection<Process> findByNameContainingIgnoreCase(String name); //check whether ArangoDB supports this search format criteria by default
 }

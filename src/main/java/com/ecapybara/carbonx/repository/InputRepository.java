@@ -12,11 +12,11 @@ import com.ecapybara.carbonx.model.Input;
 
 public interface InputRepository extends ArangoRepository<Input, String> {
 
+  @NonNull Optional<Input> findById(@NonNull String id);
+
   List<Input> findByProductName(Sort sort, String productName);
 
   List<Input> findByProcessName(Sort sort, String processName);
 
   List<Input> findByProductNameAndProcessName(Sort sort, String fromProductName, String toProcessName);
-
-  @NonNull Optional<Input> findById(@NonNull String id);
 }

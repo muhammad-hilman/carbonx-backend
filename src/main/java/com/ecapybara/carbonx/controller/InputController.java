@@ -1,6 +1,7 @@
 package com.ecapybara.carbonx.controller;
 
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -53,15 +54,16 @@ public class InputController {
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.CREATED)
-  public Input createInput(@RequestBody Input input) {
-    System.out.println("New input created:");
-    System.out.println(input.toString());
+  public List<Input> createInput(@RequestBody List<Input> inputsList) {
+    for (Input input : inputsList) {
+      System.out.println("New input created:");
+      System.out.println(input.toString());
 
-    inputRepository.save(input);
-    input = inputRepository.findByProductNameAndProcessName(sort, input.getProductName(), input.getProcessName()).get(0);
-    System.out.println("Created input saved into input database:");
-    System.out.println(input.toString());
-    
-    return input;
+      inputRepository.save(input);
+      input = inputRepository.findByProductNameAndProcessName(sort, input.getProductName(), input.getProcessName()).get(0);
+      System.out.println("Created input saved into input database:");
+      System.out.println(input.toString());
+    }
+    return inputsList;
   }
 }

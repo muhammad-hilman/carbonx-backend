@@ -5,13 +5,14 @@ meta {
 }
 
 get {
-  url: {{host}}/api/products?productName=cucumber
+  url: {{host}}/api/products?productName=lemonade
   body: none
   auth: inherit
 }
 
 params:query {
-  productName: cucumber
+  productName: lemonade
+  ~productNature: ingredient
 }
 
 settings {

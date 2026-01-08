@@ -1,6 +1,7 @@
 package com.ecapybara.carbonx.controller;
 
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -30,11 +31,19 @@ public class ProductController {
   final Sort sort = Sort.by(Direction.DESC, "id");
 
   @GetMapping
-  public Iterable<Product> getProducts(@RequestParam(name = "productName", required = false) String productName) {
-    if (productName != null && !productName.isEmpty()) {
+  public Iterable<Product> getProducts(@RequestParam(name = "productName", required = false) String productName,@RequestParam(name = "productNature", required = false) String productNature) {
+    if (productName != null && !productName.isEmpty() && productNature!=null && !productNature.isEmpty()) {
+      return productRepository.findByNameAndProductNature(sort, productName, productNature);
+    }
+    else if (productName != null && !productName.isEmpty()) {
       return productRepository.findByName(sort, productName);
     }
-    return productRepository.findAll();
+    else if (productNature != null && !productNature.isEmpty()) {
+      return productRepository.findByProductNature(sort, productNature);
+    }
+    else {
+      return productRepository.findAll();
+    }
   }
 
   @GetMapping("/{id}")
@@ -44,15 +53,18 @@ public class ProductController {
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.CREATED)
-  public Product createProduct(@RequestBody Product product) {
-    System.out.println("New product created:");
-    System.out.println(product.toString());
-
-    productRepository.save(product);
-    product = productRepository.findByName(sort, product.getName()).get(0);
-    System.out.println("Created product saved into product database:");
-    System.out.println(product.toString());
+  public List<Product> createProduct(@RequestBody List<Product> productsList) {
     
-    return product;
+    for (Product product : productsList) {
+      System.out.println("----- New product created:");
+      System.out.println(product.toString());
+
+      productRepository.save(product);
+      product = productRepository.findByNameAndProductNature(sort, product.getName(), product.getProductNature()).get(0);
+      System.out.println("Created product saved into product database:");
+      System.out.println(product.toString());
+    }
+
+    return productsList;
   }
 }

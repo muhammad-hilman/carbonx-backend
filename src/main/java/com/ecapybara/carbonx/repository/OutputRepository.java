@@ -12,11 +12,11 @@ import com.ecapybara.carbonx.model.Output;
 
 public interface OutputRepository extends ArangoRepository<Output, String> {
 
+  @NonNull Optional<Output> findById(@NonNull String id);
+  
   List<Output> findByProcessName(Sort sort, String processName);
 
   List<Output> findByProductName(Sort sort, String productName);
 
   List<Output> findByProcessNameAndProductName(Sort sort, String fromProcessName, String toProductName);
-
-  @NonNull Optional<Output> findById(@NonNull String id);
 }

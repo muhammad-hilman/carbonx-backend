@@ -5,13 +5,14 @@ meta {
 }
 
 get {
-  url: {{host}}/api/processes?processName=combining
+  url: {{host}}/api/processes?processName=combining&processType=mixing
   body: none
   auth: inherit
 }
 
 params:query {
   processName: combining
+  processType: mixing
 }
 
 settings {

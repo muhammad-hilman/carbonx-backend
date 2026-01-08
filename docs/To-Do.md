@@ -7,8 +7,8 @@ Goal: Do LCA for a pasta (pasta->spaghetti, tomato sauce, meatballs -> ... -> sa
 - [x] Step 3: Create API endpoints and functionality to read database
 
 - [x] Step 4: Create API endpoint to create data into database.
-  - [ ] implement findByProcessType for ProcessRepository interface
-  - [ ] implement creation of a LIST of products and processes
+  - [x] implement findByProcessType for ProcessRepository interface
+  - [x] implement creation of a LIST of products, processes, inputs, outputs
 
 - [ ] Step 5: Create API endpoint to update data into database.
 

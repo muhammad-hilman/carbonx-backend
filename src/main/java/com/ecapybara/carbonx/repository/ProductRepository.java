@@ -12,9 +12,14 @@ import com.arangodb.springframework.repository.ArangoRepository;
 import com.ecapybara.carbonx.model.Product;
 
 public interface ProductRepository extends ArangoRepository<Product, String>{
-  List<Product> findByName(Sort sort, String name);
 
   @NonNull Optional<Product> findById(@NonNull String id);
+
+  List<Product> findByName(Sort sort, String name);
+
+  List<Product> findByProductNature(Sort sort, String productNature);
+
+  List<Product> findByNameAndProductNature(Sort sort, String name, String productNature);
 
   Collection<Product> findByNameContainingIgnoreCase(String name); //check whether ArangoDB supports this search format criteria by default
 }
