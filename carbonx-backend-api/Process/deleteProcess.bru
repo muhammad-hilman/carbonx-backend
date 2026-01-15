@@ -1,17 +1,17 @@
 meta {
-  name: getInput
+  name: deleteProcess
   type: http
-  seq: 2
+  seq: 6
 }
 
-get {
-  url: {{host}}/api/inputs/:id
+delete {
+  url: {{host}}/api/processes/:id
   body: none
   auth: inherit
 }
 
 params:path {
-  id: 110273
+  id: 1
 }
 
 settings {

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -90,5 +91,20 @@ public class ProcessController {
     }
     
     return processRepository.findById(id).orElse(null);
+  }
+
+  @DeleteMapping("/{id}")
+  public String deleteProcess(@PathVariable String id) {
+    Process process = processRepository.findById(id).orElse(null);
+
+    if (process != null) {
+      processRepository.deleteById(id);
+      System.out.println(String.format("Process %s successfully deleted from the database", id));
+      return process.toString();
+    }
+
+    else {
+      return String.format("Process %s does not exist in database!", id);
+    }
   }
 }

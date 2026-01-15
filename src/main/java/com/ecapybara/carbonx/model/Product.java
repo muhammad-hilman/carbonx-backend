@@ -13,7 +13,7 @@ import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.Relations;
 
 @Document("products")
-@PersistentIndex(fields = {"id","name","productNature","productOrigin","userId"})
+@PersistentIndex(fields = {"arangoId", "id","name","productNature","productOrigin","userId"})
 public class Product {
   
   @ArangoId // db document field: _id

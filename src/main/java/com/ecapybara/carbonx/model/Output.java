@@ -10,7 +10,7 @@ import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.To;
 
 @Edge("outputs")
-@PersistentIndex(fields = {"id","processName","productName"})
+@PersistentIndex(fields = {"arangoId","id","processName","productName"})
 public class Output {
   @ArangoId // db document field: _id
   private String arangoId;

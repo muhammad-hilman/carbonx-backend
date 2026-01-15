@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.ecapybara.carbonx.model.Product;
+import com.ecapybara.carbonx.model.Input;
+import com.ecapybara.carbonx.model.Output;
 import com.ecapybara.carbonx.repository.ProductRepository;
+import com.ecapybara.carbonx.repository.InputRepository;
+import com.ecapybara.carbonx.repository.OutputRepository;
 
 
 @RestController
@@ -27,6 +32,10 @@ public class ProductController {
 
   @Autowired
   private ProductRepository productRepository;
+  @Autowired
+  private InputRepository inputRepository;
+  @Autowired
+  private OutputRepository outputRepository;
 
   final Sort sort = Sort.by(Direction.DESC, "id");
 
@@ -93,5 +102,35 @@ public class ProductController {
     }
     
     return productRepository.findById(id).orElse(null);
+  }
+
+  @DeleteMapping("/{id}")
+  public String removeProduct(@PathVariable String id) {
+    Product product = productRepository.findById(id).orElse(null);
+    if (product != null) {
+      System.out.println(product.getArangoId());
+      /* EDGES NEED TO BE DELETED FIRST SO AS TO PREVENT SYSTEM CRASH */
+      List<Input> connectedInputs = inputRepository.findByProduct(sort, product);
+      System.out.println(connectedInputs.toString());
+      for (Input input : connectedInputs) { 
+        inputRepository.removeById(input.getId());
+        System.out.println(String.format("Input %s successfully removed from the database", input.getId()));
+      }
+      List<Output> connectedOutputs = outputRepository.findByProduct(sort, product);
+      System.out.println(connectedOutputs);
+      for (Output output : connectedOutputs) { 
+        outputRepository.removeById(output.getId());
+        System.out.println(String.format("Output %s successfully removed from the database", output.getId()));
+      }
+      
+      /* DOCUMENT NODE IS DELETED AFTER EDGES ARE REMOVED */
+      productRepository.removeById(id);
+      System.out.println(String.format("Product %s successfully deleted from the database", id));
+      return product.toString();
+    }
+
+    else {
+      return String.format("Product %s does not exist in database!", id);
+    }
   }
 }

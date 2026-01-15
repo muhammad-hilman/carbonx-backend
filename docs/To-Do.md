@@ -12,8 +12,21 @@ Goal: Do LCA for a pasta (pasta->spaghetti, tomato sauce, meatballs -> ... -> sa
 
 - [x] Step 5: Create API endpoint to update data into database.
 
-- [x] Step 6: Create API endpoints to delete data from database.
+- [ ] Step 6: Create a Webclient service to send HTTP requests to the ArangoDB database
 
-- [ ] Step 7: Create scripts to automate and standardise test environment for database
+- [ ] Step 7: Port over all functionalities via HTTP requests
 
-- [ ] Step 8: Create tools and functions to manipulate extracted data from database. Document them in the GitHub page
+- [ ] Step 8: Create graph
+
+- [ ] Step 9: Create API endpoints to delete data from database.
+
+- [ ] Step 10: Create scripts to automate and standardise test environment for database
+
+- [ ] Step 11: Create tools and functions to manipulate extracted data from database. Document them in the GitHub page
+
+- [ ] Step 12: ...
+
+
+Improvements:
+- [ ] Create backend HTTP response/request handlers to standardise response format to frontend
+- [ ] ...

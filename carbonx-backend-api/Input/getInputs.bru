@@ -1,18 +1,18 @@
 meta {
   name: getInputs
   type: http
-  seq: 2
+  seq: 1
 }
 
 get {
-  url: {{host}}/api/inputs?to=combining&from=sugar
+  url: {{host}}/api/inputs?from=sugar
   body: none
   auth: inherit
 }
 
 params:query {
-  to: combining
   from: sugar
+  ~to: combining
 }
 
 settings {
