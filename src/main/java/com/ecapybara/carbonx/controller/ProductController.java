@@ -111,6 +111,7 @@ public class ProductController {
     return productRepository.findById(id).orElse(null);
   }
 
+  // Proper document deletion require the use of ArangoDB's Graph API since AQL does not cleanly delete hanging edges. Trust me, I've tried
   @DeleteMapping("/{id}")
   public Mono<Boolean> removeProduct(@PathVariable String id) {
     return graphService.deleteDocuments("products", id);
