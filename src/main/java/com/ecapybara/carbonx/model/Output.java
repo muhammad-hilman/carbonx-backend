@@ -8,21 +8,26 @@ import com.arangodb.springframework.annotation.Edge;
 import com.arangodb.springframework.annotation.From;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.To;
+import com.fasterxml.jackson.annotation.JsonAlias;
 
 @Edge("outputs")
 @PersistentIndex(fields = {"arangoId","id","processName","productName"})
 public class Output {
   @ArangoId // db document field: _id
-  private String arangoId;
-
-  @Id // db document field: _key
+  @JsonAlias({"_id"})
   private String id;
 
+  @Id // db document field: _key
+  @JsonAlias({"_key"})
+  private String key;
+
   @From
+  @JsonAlias({"_from"})
   private Process process;
   private String processName;
 
   @To
+  @JsonAlias({"_to"})
   private Product product;
   private String productName;
 
@@ -45,10 +50,10 @@ public class Output {
   }
 
   // setter & getter
-  public String getArangoId() { return arangoId; }
-  public void setArangoId(String arangoId) { this.arangoId = arangoId; }
   public String getId() { return id; }
   public void setId(String id) { this.id = id; }
+  public String getKey() { return key; }
+  public void setKey(String key) { this.key = key; }
   public Process getProcess() { return process; }
   public String getProcessName() { return processName; }
   public void setProcess(Process process) {

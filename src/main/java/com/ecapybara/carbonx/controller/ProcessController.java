@@ -2,6 +2,8 @@ package com.ecapybara.carbonx.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -11,15 +13,20 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecapybara.carbonx.config.AppLogger;
 import com.ecapybara.carbonx.model.Process;
 import com.ecapybara.carbonx.repository.ProcessRepository;
-import org.springframework.web.bind.annotation.PutMapping;
+import com.ecapybara.carbonx.service.DocumentService;
+import com.ecapybara.carbonx.service.GraphService;
+
+import reactor.core.publisher.Mono;
 
 
 @RestController
@@ -27,8 +34,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class ProcessController {
 
   @Autowired
+  private DocumentService documentService;
+  @Autowired
+  private GraphService graphService;
+  @Autowired
   private ProcessRepository processRepository;
 
+  private static final Logger log = LoggerFactory.getLogger(AppLogger.class);
   final Sort sort = Sort.by(Direction.DESC, "id");
 
   @GetMapping
@@ -74,8 +86,10 @@ public class ProcessController {
   }
 
   @GetMapping("/{id}")
-  public Process getProcess(@PathVariable String id) {
-    return processRepository.findById(id).orElse(null);
+  public Mono<Process> getProcess(@PathVariable String id) {
+    return documentService.getDocuments("processes", id)
+            .bodyToMono(Process.class)
+            .doOnNext(body -> log.info("API Response:\n{}", body));
   }
 
   @PutMapping("/{id}")
@@ -94,17 +108,7 @@ public class ProcessController {
   }
 
   @DeleteMapping("/{id}")
-  public String deleteProcess(@PathVariable String id) {
-    Process process = processRepository.findById(id).orElse(null);
-
-    if (process != null) {
-      processRepository.deleteById(id);
-      System.out.println(String.format("Process %s successfully deleted from the database", id));
-      return process.toString();
-    }
-
-    else {
-      return String.format("Process %s does not exist in database!", id);
-    }
+  public Mono<Boolean> deleteProcess(@PathVariable String id) {
+    return graphService.deleteDocuments("processes", id);
   }
 }

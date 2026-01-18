@@ -11,15 +11,18 @@ import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.Relations;
+import com.fasterxml.jackson.annotation.JsonAlias;
 
 @Document("processes")
-@PersistentIndex(fields = {"arangoId","id","name", "processType"})
+@PersistentIndex(fields = {"id","key","name", "processType"})
 public class Process {
-  @Id // db document field: _key
+  @ArangoId // db document field: _id
+  @JsonAlias({"_id"})
   private String id;
 
-  @ArangoId // db document field: _id
-  private String arangoId;
+  @Id // db document field: _key
+  @JsonAlias({"_key"})
+  private String key;
 
   private String name;
   private String processType;
@@ -57,8 +60,8 @@ public class Process {
   // setters and getters
   public String getId() {return id;}
   public void setId(String id) {this.id = id;}
-  public String getArangoId() {return arangoId;}
-  public void setArangoId(String arangoId) {this.arangoId = arangoId;}
+  public String getKey() {return key;}
+  public void setKey(String key) {this.key = key;}
   public String getName() {return name;}
   public void setName(String name) {this.name = name;}
   public String getProcessType() {return processType;}

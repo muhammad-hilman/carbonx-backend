@@ -2,7 +2,10 @@ package com.ecapybara.carbonx.runner;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,12 +16,16 @@ import com.arangodb.springframework.core.ArangoOperations;
 
 import com.ecapybara.carbonx.model.Product;
 import com.ecapybara.carbonx.model.Process;
+import com.ecapybara.carbonx.config.AppLogger;
+import com.ecapybara.carbonx.model.EdgeDefinition;
+import com.ecapybara.carbonx.model.Graph;
 import com.ecapybara.carbonx.model.Input;
 import com.ecapybara.carbonx.model.Output;
 import com.ecapybara.carbonx.repository.InputRepository;
 import com.ecapybara.carbonx.repository.OutputRepository;
 import com.ecapybara.carbonx.repository.ProcessRepository;
 import com.ecapybara.carbonx.repository.ProductRepository;
+import com.ecapybara.carbonx.service.GraphService;
 
 @ComponentScan("com.ecapybara.carbonx")
 public class TestSetup implements CommandLineRunner {
@@ -32,6 +39,10 @@ public class TestSetup implements CommandLineRunner {
   private InputRepository inputRepository;
   @Autowired
   private OutputRepository outputRepository;
+  @Autowired
+  private GraphService graphService;
+
+  private static final Logger log = LoggerFactory.getLogger(AppLogger.class);
   
   @Override
   public void run(final String... args) throws Exception {
@@ -106,7 +117,16 @@ public class TestSetup implements CommandLineRunner {
     count = outputRepository.count();
     System.out.println(String.format("-> %s OUTPUT edges created", count));
 
-    System.out.println("------------- # SETUP COMPLETE # -------------");    
+    // Create graph
+    EdgeDefinition inputs = new EdgeDefinition("inputs", List.of("products"), List.of("processes"));
+    EdgeDefinition outputs = new EdgeDefinition("outputs", List.of("processes"), List.of("products"));
+    Graph defaultGraph = new Graph("default", List.of (inputs, outputs));
+    graphService.createGraph(defaultGraph)
+        .doOnSuccess(graph -> log.info("Graph created: {}", graph))
+        .doOnError(error -> log.error("Failed to create graph", error))
+        .block();  // Wait for completion (OK in CommandLineRunner); // IMPORTANT NOTE: I don't know why it works, but the .subscribe() is crucial to make the graph
+
+    System.out.println("------------- # SETUP COMPLETED # -------------");
   }
 
   public static Collection<Product> createProducts() {

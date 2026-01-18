@@ -6,21 +6,24 @@ import java.util.Properties;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 
-
 import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.Relations;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 @Document("products")
-@PersistentIndex(fields = {"arangoId", "id","name","productNature","productOrigin","userId"})
+@PersistentIndex(fields = {"id", "key","name","productNature","productOrigin","userId"})
 public class Product {
   
   @ArangoId // db document field: _id
-  private String arangoId;
+  @JsonAlias({"_id"})
+  private String id;
 
   @Id // db document field: _key
-  private String id;
+  @JsonAlias({"_key"})
+  private String key;
 
   private String name; // e.g Tesla
   private String productNature; // e.g Car
@@ -65,10 +68,10 @@ public class Product {
   }
 
   // getters & setters
-  public String getArangoId() {return arangoId;}
-  public void setArangoId(String arangoId) {this.arangoId = arangoId;}
-  public String getId() {return id;  }
+  public String getId() {return id;}
   public void setId(String id) {this.id = id;}
+  public String getKey() {return key;  }
+  public void setKey(String key) {this.key = key;}
   public String getName() {return name;}
   public void setName(String name) {this.name = name;}
   public String getProductNature() {return productNature;}
@@ -87,9 +90,4 @@ public class Product {
   public void setUserId(String userId) {this.userId = userId;}  
   public String getUploadedFile() {return uploadedFile;}
   public void setUploadedFile(String uploadedFile) {this.uploadedFile = uploadedFile;}
-
-  @Override
-  public String toString() {
-    return "Product [id=" + id + ", name=" + name + ", productNature=" + productNature + ", productOrigin=" + productOrigin + "]";
-  }
 }

@@ -1,20 +1,15 @@
 meta {
-  name: getProduct
+  name: getGraph
   type: http
   seq: 2
 }
 
 get {
-  url: {{host}}/api/products/:id
+  url: 
   body: none
   auth: inherit
 }
 
-params:path {
-  id: 157396
-}
-
 settings {
   encodeUrl: true
-  timeout: 0
 }
