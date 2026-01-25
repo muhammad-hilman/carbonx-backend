@@ -68,7 +68,7 @@ public class ProcessController {
       System.out.println(process.toString());
 
       processRepository.save(process);
-      process = processRepository.findByNameAndProcessType(sort, process.getName(), process.getProcessType()).get(0);
+      process = processRepository.findByNameAndProcessType(sort, process.getName(), process.getType()).get(0);
       System.out.println("Created process saved into process database:");
       System.out.println(process.toString());
     }
@@ -98,9 +98,9 @@ public class ProcessController {
 
     if (process != null) {
       process.setName(revisedProcess.getName());
-      process.setProcessType(revisedProcess.getProcessType());
+      process.setType(revisedProcess.getType());
       process.setFunctionalProperties(revisedProcess.getFunctionalProperties());
-      process.setNonFunctionalProperties(revisedProcess.getNonFunctionalProperties());
+      process.setDPP(revisedProcess.getDPP());
       processRepository.save(process);
     }
     

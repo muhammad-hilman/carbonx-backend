@@ -1,35 +1,18 @@
 package com.ecapybara.carbonx.model;
 
 import java.util.Collection;
-import java.util.Properties;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 
-import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.Relations;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-
 @Document("products")
-@PersistentIndex(fields = {"id", "key","name","productNature","productOrigin","userId"})
-public class Product {
+@PersistentIndex(fields = {"id", "key","name","type","productOrigin","userId"})
+public class Product extends Node {
   
-  @ArangoId // db document field: _id
-  @JsonAlias({"_id"})
-  private String id;
-
-  @Id // db document field: _key
-  @JsonAlias({"_key"})
-  private String key;
-
-  private String name; // e.g Tesla
-  private String productNature; // e.g Car
   private String productOrigin; // e.g supplier/user
-  private Properties functionalProperties;
-  private DigitalProductPassport DPP;
 
   @Relations(edges = Output.class, lazy=true)
   private Collection<Process> procedure;
@@ -48,40 +31,17 @@ public class Product {
   }
 
   public Product(final String productNature) {
-    super();
-    this.productNature = productNature;
+    super(productNature);
   }
   
   @PersistenceCreator
   public Product(final String productNature, final String name) {
-    super();
-    this.name = name;
-    this.productNature = productNature;
-  }
-
-  public Product(final String productNature, final String name, final Properties functionalProperties, DigitalProductPassport DPP) {
-    super();
-    this.name = name;
-    this.productNature = productNature;
-    this.functionalProperties = functionalProperties;
-    this.DPP = DPP;
+    super(productNature, name);
   }
 
   // getters & setters
-  public String getId() {return id;}
-  public void setId(String id) {this.id = id;}
-  public String getKey() {return key;  }
-  public void setKey(String key) {this.key = key;}
-  public String getName() {return name;}
-  public void setName(String name) {this.name = name;}
-  public String getProductNature() {return productNature;}
-  public void setProductNature(String productNature) {this.productNature = productNature;}
-  public String getProductOrigin() {return productOrigin;}
+  public String getProductOrigin() { return productOrigin;}
   public void setProductOrigin(String productOrigin) {this.productOrigin = productOrigin;}
-  public Properties getFunctionalProperties() {return functionalProperties;}
-  public void setFunctionalProperties(Properties functionalProperties) {this.functionalProperties = functionalProperties;}
-  public DigitalProductPassport getDPP() {return DPP;}
-  public void setDPP(DigitalProductPassport DPP) {this.DPP = DPP;}
   public Collection<Process> getProcedure() {return procedure;}
   /*public Collection<Process> getUsedIn() {return usedIn;}*/
   

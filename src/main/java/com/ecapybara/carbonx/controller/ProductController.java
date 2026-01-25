@@ -1,7 +1,6 @@
 package com.ecapybara.carbonx.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +21,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.ecapybara.carbonx.config.AppLogger;
+import com.ecapybara.carbonx.model.DigitalProductPassport;
 import com.ecapybara.carbonx.model.Product;
 import com.ecapybara.carbonx.repository.ProductRepository;
 import com.ecapybara.carbonx.service.DocumentService;
 import com.ecapybara.carbonx.service.GraphService;
+import com.ecapybara.carbonx.service.LCAService;
 
 import reactor.core.publisher.Mono;
 
@@ -69,7 +70,7 @@ public class ProductController {
       System.out.println(product.toString());
 
       productRepository.save(product);
-      product = productRepository.findByNameAndProductNature(sort, product.getName(), product.getProductNature()).get(0);
+      product = productRepository.findByNameAndProductNature(sort, product.getName(), product.getType()).get(0);
       System.out.println("Created product saved into product database:");
       System.out.println(product.toString());
     }
@@ -99,7 +100,7 @@ public class ProductController {
     
     if (product != null) {
       product.setName(revisedProduct.getName());
-      product.setProductNature(revisedProduct.getProductNature());
+      product.setType(revisedProduct.getType());
       product.setProductOrigin(revisedProduct.getProductOrigin());
       product.setFunctionalProperties(revisedProduct.getFunctionalProperties());
       product.setDPP(revisedProduct.getDPP());
@@ -115,5 +116,11 @@ public class ProductController {
   @DeleteMapping("/{id}")
   public Mono<Boolean> removeProduct(@PathVariable String id) {
     return graphService.deleteDocuments("products", id);
+  }
+
+  @GetMapping("/{id}/calculate")
+  public Mono<?> calculateProduct(@PathVariable String id) {
+    Product product = productRepository.findById(id).orElse(null);
+    return LCAService.calculate(product);
   }
 }

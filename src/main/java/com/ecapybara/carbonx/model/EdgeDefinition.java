@@ -2,6 +2,7 @@ package com.ecapybara.carbonx.model;
 
 import java.util.List;
 
+// used to define and create graphs
 public class EdgeDefinition {
 
   private String collection;

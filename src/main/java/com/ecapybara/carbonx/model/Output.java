@@ -1,9 +1,7 @@
 package com.ecapybara.carbonx.model;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 
-import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Edge;
 import com.arangodb.springframework.annotation.From;
 import com.arangodb.springframework.annotation.PersistentIndex;
@@ -12,14 +10,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 
 @Edge("outputs")
 @PersistentIndex(fields = {"arangoId","id","processName","productName"})
-public class Output {
-  @ArangoId // db document field: _id
-  @JsonAlias({"_id"})
-  private String id;
-
-  @Id // db document field: _key
-  @JsonAlias({"_key"})
-  private String key;
+public class Output extends com.ecapybara.carbonx.model.Edge{
 
   @From
   @JsonAlias({"_from"})
@@ -46,14 +37,10 @@ public class Output {
   
   @Override
   public String toString() {
-      return "Output [id=" + id + ", process=" + processName + ", product=" + productName + "]";
+      return "Output [id=" + this.getId() + ", process=" + processName + ", product=" + productName + "]";
   }
 
   // setter & getter
-  public String getId() { return id; }
-  public void setId(String id) { this.id = id; }
-  public String getKey() { return key; }
-  public void setKey(String key) { this.key = key; }
   public Process getProcess() { return process; }
   public String getProcessName() { return processName; }
   public void setProcess(Process process) {

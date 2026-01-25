@@ -21,7 +21,5 @@ public interface ProductRepository extends ArangoRepository<Product, String>{
 
   List<Product> findByNameAndProductNature(Sort sort, String name, String productNature);
 
-  Collection<Product> findByNameContainingIgnoreCase(String name); //check whether ArangoDB supports this search format criteria by default
-
   void removeById(String id);
 }
