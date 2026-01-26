@@ -6,6 +6,7 @@ import java.util.Properties;
 import org.springframework.data.annotation.Id;
 
 import com.arangodb.springframework.annotation.ArangoId;
+import com.ecapybara.carbonx.model.emissions.EmissionChart;
 import com.fasterxml.jackson.annotation.JsonAlias;
 
 public class Node {
@@ -112,6 +113,6 @@ public class Node {
   }
 
   public void setDPP(DigitalProductPassport dPP) {
-    DPP = dPP;
+    this.DPP = dPP;
   }  
 }

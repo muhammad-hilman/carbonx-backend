@@ -1,9 +1,9 @@
-package com.ecapybara.carbonx.model;
+package com.ecapybara.carbonx.model.emissions;
 
 import java.util.Collection;
 
 public class EmissionChart {
-  private String chartType; // eg. "Scope 1"
+  private String chartType; // eg. "Scope 3, Category 1"
   private String ProductOrProcessName; // e.g "Toyota Forerunner"
   private String variant; //e.g "diesel fuel"
   private Collection<Emission> emissions; 

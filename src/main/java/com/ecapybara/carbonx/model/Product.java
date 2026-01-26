@@ -41,9 +41,9 @@ public class Product extends Node {
 
   // getters & setters
   public String getProductOrigin() { return productOrigin;}
-  public void setProductOrigin(String productOrigin) {this.productOrigin = productOrigin;}
-  public Collection<Process> getProcedure() {return procedure;}
-  /*public Collection<Process> getUsedIn() {return usedIn;}*/
+  public void setProductOrigin(String productOrigin) { this.productOrigin = productOrigin; }
+  public Collection<Process> getProcedure() { return procedure; }
+  public void serProcedure(Collection<Process> procedure)  {this.procedure = procedure; }
   
   // Getters and setters for inventory fields
   public String getUserId() {return userId;}

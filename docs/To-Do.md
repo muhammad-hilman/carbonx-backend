@@ -22,7 +22,7 @@ Goal: Do LCA for a pasta (pasta->spaghetti, tomato sauce, meatballs -> ... -> sa
   - [x] update constructors, getters & setters for Process class (quantifiableUnit, quantityValue, emissionInformation)
 
 - [ ] Step 11: Create functionality to import CSV and JSON into database
-  - [ ] I. Create documents for "spaghetti" and "ships" samples
+  - [x] I. Create documents for "spaghetti" and "ships" samples
   - [ ] II. Read JSON and CSV documents
   - [ ] III. Import them via HTTP REST API
 
