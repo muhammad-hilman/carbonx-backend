@@ -1,18 +1,8 @@
 package com.ecapybara.carbonx.model;
 
-import org.springframework.data.annotation.Id;
-
-import com.arangodb.springframework.annotation.ArangoId;
-
 public class Metric {
-  @Id // db document field: _key
-  private String id;
-
-  @ArangoId // db document field: _id
-  private String arangoId;
-
-  private String unit;
   private Double value;
+  private String unit;
 
   // constructors
   public Metric() {
@@ -26,22 +16,6 @@ public class Metric {
   }
 
   // setters and getters
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getArangoId() {
-    return arangoId;
-  }
-
-  public void setArangoId(String arangoId) {
-    this.arangoId = arangoId;
-  }
-
   public String getUnit() {
     return unit;
   }

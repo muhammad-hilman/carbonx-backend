@@ -130,9 +130,9 @@ public class ProductController {
   */
 
   // Experimental endpoint to call for backend import function for products
-  @GetMapping("/import")
+  @PostMapping("/import")
   public Mono<?> testImport() {
-    List<String> files = List.of("clean water.json","raw pasta.json","tomato sauce.json");
+    List<String> files = List.of("mushroom.json");
     
     return Flux.fromIterable(files)
         .flatMap(filename -> importService.importJSON("products", filename))

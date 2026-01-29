@@ -10,7 +10,7 @@ public class Emission {
   public Emission() {
     super();
   }
-  public Emission(String name, Metric metric, String unit) {
+  public Emission(String name, Metric metric) {
     super();
     this.name = name;
     this.metric = metric;

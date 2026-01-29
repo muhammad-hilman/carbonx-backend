@@ -1,11 +1,11 @@
 package com.ecapybara.carbonx.runner;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,7 +16,6 @@ import com.arangodb.springframework.core.ArangoOperations;
 
 import com.ecapybara.carbonx.model.Product;
 import com.ecapybara.carbonx.model.Process;
-import com.ecapybara.carbonx.config.AppLogger;
 import com.ecapybara.carbonx.model.EdgeDefinition;
 import com.ecapybara.carbonx.model.Graph;
 import com.ecapybara.carbonx.model.Input;
@@ -27,6 +26,7 @@ import com.ecapybara.carbonx.repository.ProcessRepository;
 import com.ecapybara.carbonx.repository.ProductRepository;
 import com.ecapybara.carbonx.service.GraphService;
 
+@Slf4j
 @ComponentScan("com.ecapybara.carbonx")
 public class TestSetup implements CommandLineRunner {
   @Autowired
@@ -41,8 +41,6 @@ public class TestSetup implements CommandLineRunner {
   private OutputRepository outputRepository;
   @Autowired
   private GraphService graphService;
-
-  private static final Logger log = LoggerFactory.getLogger(AppLogger.class);
   
   @Override
   public void run(final String... args) throws Exception {
@@ -131,29 +129,29 @@ public class TestSetup implements CommandLineRunner {
 
   public static Collection<Product> createProducts() {
     return Arrays.asList(
-      new Product("dish", "spaghetti"),
-      new Product("ingredient", "raw pasta"),
-      new Product("ingredient", "pasta"),
-      new Product("ingredient", "tomato sauce"),
-      new Product("ingredient", "hot dogs"),
-      new Product("ingredient", "salt"),
-      new Product("ingredient", "pepper"),
-      new Product("ingredient", "sugar"),
-      new Product("ingredient", "garlic"),
-      new Product("ingredient", "onions"),
-      new Product("ingredient", "cheese"),
-      new Product("ingredient", "tomato paste"),
-      new Product("ingredient", "olive oil"),
-      new Product("ingredient", "clean water"),
-      new Product("waste", "waste water")
+      Product.builder().name("spaghetti").type("dish").build(),
+      Product.builder().name("raw pasta").type("ingredient").build(),
+      Product.builder().name("pasta").type("ingredient").build(),
+      Product.builder().name("tomato sauce").type("ingredient").build(),
+      Product.builder().name("hot dogs").type("ingredient").build(),
+      Product.builder().name("salt").type("ingredient").build(),
+      Product.builder().name("pepper").type("ingredient").build(),
+      Product.builder().name("sugar").type("ingredient").build(),
+      Product.builder().name("garlic").type("ingredient").build(),
+      Product.builder().name("onions").type("ingredient").build(),
+      Product.builder().name("cheese").type("ingredient").build(),
+      Product.builder().name("tomato paste").type("ingredient").build(),
+      Product.builder().name("olive oil").type("ingredient").build(),
+      Product.builder().name("clean water").type("ingredient").build(),
+      Product.builder().name("waste water").type("waste").build()
     );
   }
 
   public static Collection<Process> createProcesses() {
     return Arrays.asList(
-      new Process("cooking", "boiling"),
-      new Process("cooking", "simmering"),
-      new Process("cooking", "combining")
+      Process.builder().name("boiling").type("cooking").build(),
+      Process.builder().name("simmering").type("cooking").build(),
+      Process.builder().name("combining").type("cooking").build()
     );
   }
 }
