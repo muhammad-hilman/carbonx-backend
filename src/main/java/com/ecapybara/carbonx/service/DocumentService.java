@@ -25,7 +25,7 @@ public class DocumentService {
   //--- Unfinished ---
   public Mono<String> createDocuments(Map<?,?> request) {
     return webClient.post()
-            .uri("/document/{collection}")
+            .uri("/document/{collection}") // uncompleted "collection" variable assignment
             .bodyValue(request)
             .retrieve()
             .bodyToMono(String.class);

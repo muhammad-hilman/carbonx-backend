@@ -25,7 +25,9 @@ import com.ecapybara.carbonx.model.Product;
 import com.ecapybara.carbonx.repository.ProductRepository;
 import com.ecapybara.carbonx.service.DocumentService;
 import com.ecapybara.carbonx.service.GraphService;
+import com.ecapybara.carbonx.service.ImportService;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
@@ -34,11 +36,14 @@ import reactor.core.publisher.Mono;
 public class ProductController {
   
   @Autowired
+  private ImportService importService;
+  @Autowired
   private DocumentService documentService;
   @Autowired
   private GraphService graphService;
   @Autowired
   private ProductRepository productRepository;
+  
 
   private static final Logger log = LoggerFactory.getLogger(AppLogger.class);
   final Sort sort = Sort.by(Direction.DESC, "id");
@@ -123,4 +128,15 @@ public class ProductController {
     return LCAService.calculate(product);
   }
   */
+
+  // Experimental endpoint to call for backend import function for products
+  @GetMapping("/import")
+  public Mono<?> testImport() {
+    List<String> files = List.of("clean water.json","raw pasta.json","tomato sauce.json");
+    
+    return Flux.fromIterable(files)
+        .flatMap(filename -> importService.importJSON("products", filename))
+        .then(Mono.just("Successfully imported JSON files!"))
+        .onErrorReturn("Import failed - check logs");
+  }
 }
