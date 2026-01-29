@@ -44,15 +44,15 @@ public class ProcessController {
   final Sort sort = Sort.by(Direction.DESC, "id");
 
   @GetMapping
-  public Iterable<Process> getProcesses(@RequestParam(name = "processName", required = false) String processName, @RequestParam(name = "processType", required = false) String processType) {
-    if (processName!=null && !processName.isEmpty() && processType!=null && !processType.isEmpty()) {
-      return processRepository.findByNameAndProcessType(sort, processName, processType);
+  public Iterable<Process> getProcesses(@RequestParam(name = "name", required = false) String name, @RequestParam(name = "type", required = false) String type) {
+    if (name!=null && !name.isEmpty() && type!=null && !type.isEmpty()) {
+      return processRepository.findByNameAndType(sort, name, type);
     }
-    else if (processName!=null && !processName.isEmpty()) {
-      return processRepository.findByName(sort, processName);
+    else if (name!=null && !name.isEmpty()) {
+      return processRepository.findByName(sort, name);
     }
-    else if (processType!=null && !processType.isEmpty()) {
-      return processRepository.findByProcessType(sort, processType);
+    else if (type!=null && !type.isEmpty()) {
+      return processRepository.findByType(sort, type);
     }
     else {
       return processRepository.findAll();
@@ -68,7 +68,7 @@ public class ProcessController {
       System.out.println(process.toString());
 
       processRepository.save(process);
-      process = processRepository.findByNameAndProcessType(sort, process.getName(), process.getType()).get(0);
+      process = processRepository.findByNameAndType(sort, process.getName(), process.getType()).get(0);
       System.out.println("Created process saved into process database:");
       System.out.println(process.toString());
     }

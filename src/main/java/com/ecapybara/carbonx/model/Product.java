@@ -30,13 +30,13 @@ public class Product extends Node {
     super();
   }
 
-  public Product(final String productNature) {
-    super(productNature);
+  public Product(final String type) {
+    super(type);
   }
   
   @PersistenceCreator
-  public Product(final String productNature, final String name) {
-    super(productNature, name);
+  public Product(final String type, final String name) {
+    super(type, name);
   }
 
   // getters & setters

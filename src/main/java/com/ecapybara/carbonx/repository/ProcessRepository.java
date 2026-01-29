@@ -17,9 +17,9 @@ public interface ProcessRepository extends ArangoRepository<Process, String>{
 
   List<Process> findByName(Sort sort, String name);
 
-  List<Process> findByProcessType(Sort sort, String processType);
+  List<Process> findByType(Sort sort, String type);
 
-  List<Process> findByNameAndProcessType(Sort sort, String name, String processType);
+  List<Process> findByNameAndType(Sort sort, String name, String type);
 
   Collection<Process> findByNameContainingIgnoreCase(String name); //check whether ArangoDB supports this search format criteria by default
 }

@@ -28,8 +28,8 @@ public class Process extends Node {
   }
 
   @PersistenceCreator
-  public Process(String processType, String name) {
-    super(processType, name);
+  public Process(String type, String name) {
+    super(type, name);
   }
 
   // setters and getters

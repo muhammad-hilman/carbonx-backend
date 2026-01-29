@@ -21,12 +21,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.ecapybara.carbonx.config.AppLogger;
-import com.ecapybara.carbonx.model.DigitalProductPassport;
 import com.ecapybara.carbonx.model.Product;
 import com.ecapybara.carbonx.repository.ProductRepository;
 import com.ecapybara.carbonx.service.DocumentService;
 import com.ecapybara.carbonx.service.GraphService;
-import com.ecapybara.carbonx.service.LCAService;
 
 import reactor.core.publisher.Mono;
 
@@ -46,15 +44,15 @@ public class ProductController {
   final Sort sort = Sort.by(Direction.DESC, "id");
 
   @GetMapping
-  public Iterable<Product> getProducts(@RequestParam(name = "productName", required = false) String productName,@RequestParam(name = "productNature", required = false) String productNature) {
-    if (productName != null && !productName.isEmpty() && productNature!=null && !productNature.isEmpty()) {
-      return productRepository.findByNameAndProductNature(sort, productName, productNature);
+  public Iterable<Product> getProducts(@RequestParam(name = "name", required = false) String name,@RequestParam(name = "type", required = false) String type) {
+    if (name != null && !name.isEmpty() && type!=null && !type.isEmpty()) {
+      return productRepository.findByNameAndType(sort, name, type);
     }
-    else if (productName != null && !productName.isEmpty()) {
-      return productRepository.findByName(sort, productName);
+    else if (name != null && !name.isEmpty()) {
+      return productRepository.findByName(sort, name);
     }
-    else if (productNature != null && !productNature.isEmpty()) {
-      return productRepository.findByProductNature(sort, productNature);
+    else if (type != null && !type.isEmpty()) {
+      return productRepository.findByType(sort, type);
     }
     else {
       return productRepository.findAll();
@@ -70,7 +68,7 @@ public class ProductController {
       System.out.println(product.toString());
 
       productRepository.save(product);
-      product = productRepository.findByNameAndProductNature(sort, product.getName(), product.getType()).get(0);
+      product = productRepository.findByNameAndType(sort, product.getName(), product.getType()).get(0);
       System.out.println("Created product saved into product database:");
       System.out.println(product.toString());
     }
@@ -118,9 +116,11 @@ public class ProductController {
     return graphService.deleteDocuments("products", id);
   }
 
+  /*
   @GetMapping("/{id}/calculate")
   public Mono<?> calculateProduct(@PathVariable String id) {
     Product product = productRepository.findById(id).orElse(null);
     return LCAService.calculate(product);
   }
+  */
 }
