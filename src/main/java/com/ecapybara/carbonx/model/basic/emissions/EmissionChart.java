@@ -1,4 +1,4 @@
-package com.ecapybara.carbonx.model.emissions;
+package com.ecapybara.carbonx.model.basic.emissions;
 
 import java.util.List;
 

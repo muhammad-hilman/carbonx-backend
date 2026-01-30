@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecapybara.carbonx.config.AppLogger;
-import com.ecapybara.carbonx.model.Process;
+import com.ecapybara.carbonx.model.basic.Process;
 import com.ecapybara.carbonx.repository.ProcessRepository;
 import com.ecapybara.carbonx.service.DocumentService;
 import com.ecapybara.carbonx.service.GraphService;

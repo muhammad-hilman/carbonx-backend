@@ -13,13 +13,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import com.arangodb.springframework.core.ArangoOperations;
-
-import com.ecapybara.carbonx.model.Product;
-import com.ecapybara.carbonx.model.Process;
-import com.ecapybara.carbonx.model.EdgeDefinition;
-import com.ecapybara.carbonx.model.Graph;
-import com.ecapybara.carbonx.model.Input;
-import com.ecapybara.carbonx.model.Output;
+import com.ecapybara.carbonx.model.basic.EdgeDefinition;
+import com.ecapybara.carbonx.model.basic.Graph;
+import com.ecapybara.carbonx.model.basic.Input;
+import com.ecapybara.carbonx.model.basic.Output;
+import com.ecapybara.carbonx.model.basic.Process;
+import com.ecapybara.carbonx.model.basic.Product;
 import com.ecapybara.carbonx.repository.InputRepository;
 import com.ecapybara.carbonx.repository.OutputRepository;
 import com.ecapybara.carbonx.repository.ProcessRepository;
