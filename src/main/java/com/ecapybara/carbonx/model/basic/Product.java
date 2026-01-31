@@ -11,12 +11,16 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@Data @EqualsAndHashCode(callSuper = true) @NoArgsConstructor @SuperBuilder(toBuilder = true) 
+@Data @NoArgsConstructor @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true)
 @Document("products")
 @PersistentIndex(fields = {"id", "key","name","type","productOrigin","userId"})
 public class Product extends Node {
   
   private String productOrigin; // e.g supplier/user
+
+  // Additional fields for inventory management
+  private String userId; // User who owns this product
+  private String uploadedFile; // Filename of uploaded BOM file
 
   @Relations(edges = Output.class, lazy=true)
   private Collection<Process> procedure;
@@ -24,8 +28,4 @@ public class Product extends Node {
   @Relations(edges = Input.class, lazy=true)
   private Collection<Process> usedIn;
   */
-  
-  // Additional fields for inventory management
-  private String userId; // User who owns this product
-  private String uploadedFile; // Filename of uploaded BOM file
 }

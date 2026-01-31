@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@Data @EqualsAndHashCode(callSuper = true) @NoArgsConstructor @SuperBuilder(toBuilder = true) 
+@Data @NoArgsConstructor @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true) 
 @Document("processes")
 @PersistentIndex(fields = {"id","key","name", "type", "serviceProvider"})
 public class Process extends Node {

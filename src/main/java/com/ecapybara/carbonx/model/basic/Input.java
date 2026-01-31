@@ -8,47 +8,49 @@ import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.To;
 import com.fasterxml.jackson.annotation.JsonAlias;
 
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
+@Data @NoArgsConstructor @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true)
 @Edge("inputs")
 @PersistentIndex(fields = {"id","key","productName","processName"})
 public class Input extends com.ecapybara.carbonx.model.basic.Edge {  
+  @NonNull
   @From
   @JsonAlias({"_from"})
   private Product product;
+  
+  @Setter(AccessLevel.NONE)
   private String productName;
 
+  @NonNull
   @To
   @JsonAlias({"_to"})
   private Process process;
+  
+  @Setter(AccessLevel.NONE)
   private String processName;
 
-  public Input() {
-    super();
-  }
-
   @PersistenceCreator
-  public Input(final Product product, final Process process) {
+  public Input(Product product, Process process) {
     super();
     this.product = product;
     this.productName = product.getName();
     this.process = process;
     this.processName = process.getName();
   }
-  
-  @Override
-  public String toString() {
-    return "Input [id=" + this.getId() + ", product=" + productName + ", process=" + processName + "]";
-  }
 
-  // setter and getter
-  public Product getProduct() { return product; }
-  public String getProductName() { return productName; }
+  //custom setters
   public void setProduct(Product product) { 
     this.product = product;
     this.productName = product.getName();
   }
-  public Process getProcess() { return process; }
-  public String getProcessName() { return processName; }
-  public void setProcess(Process process) { 
+  public void setProcess(Process process) {
     this.process = process;
     this.processName = process.getName();
   }
