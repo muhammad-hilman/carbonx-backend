@@ -16,7 +16,7 @@ public class DocumentService {
   @Autowired
   private WebClient webClient;
 
-  public ResponseSpec getDocuments(String collection, String key) {
+  public ResponseSpec getDocument(String collection, String key) {
     return webClient.get()
             .uri("/document/{collection}/{key}", collection, key)
             .retrieve();

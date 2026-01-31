@@ -87,7 +87,7 @@ public class ProcessController {
 
   @GetMapping("/{id}")
   public Mono<Process> getProcess(@PathVariable String id) {
-    return documentService.getDocuments("processes", id)
+    return documentService.getDocument("processes", id)
             .bodyToMono(Process.class)
             .doOnNext(body -> log.info("API Response:\n{}", body));
   }

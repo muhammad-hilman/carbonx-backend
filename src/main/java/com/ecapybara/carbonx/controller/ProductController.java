@@ -92,7 +92,7 @@ public class ProductController {
 
   @GetMapping("/{id}")
   public Mono<Product> getProduct(@PathVariable String id) {
-    return documentService.getDocuments("products", id)
+    return documentService.getDocument("products", id)
             .bodyToMono(Product.class)
             .doOnNext(body -> log.info("API Response:\n{}", body));
   }
@@ -132,10 +132,10 @@ public class ProductController {
   // Experimental endpoint to call for backend import function for products
   @PostMapping("/import")
   public Mono<?> testImport() {
-    List<String> files = List.of("mushroom.json");
+    List<String> files = List.of("templates.csv");
     
     return Flux.fromIterable(files)
-        .flatMap(filename -> importService.importJSON("products", filename))
+        .flatMap(filename -> importService.importCSV("products", filename))
         .then(Mono.just("Successfully imported JSON files!"))
         .onErrorReturn("Import failed - check logs");
   }

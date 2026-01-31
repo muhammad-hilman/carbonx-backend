@@ -5,6 +5,9 @@ import java.util.Collection;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.Relations;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
+import com.opencsv.bean.processor.PreAssignmentProcessor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,14 +17,19 @@ import lombok.experimental.SuperBuilder;
 @Data @NoArgsConstructor @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true)
 @Document("products")
 @PersistentIndex(fields = {"id", "key","name","type","productOrigin","userId"})
+
 public class Product extends Node {
-  
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String productOrigin; // e.g supplier/user
 
   // Additional fields for inventory management
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String userId; // User who owns this product
+  
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String uploadedFile; // Filename of uploaded BOM file
 
+  @CsvBindByName
   @Relations(edges = Output.class, lazy=true)
   private Collection<Process> procedure;
   /* 

@@ -9,6 +9,9 @@ import org.springframework.data.annotation.Id;
 import com.arangodb.springframework.annotation.ArangoId;
 import com.ecapybara.carbonx.model.basic.emissions.Emission;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
+import com.opencsv.bean.processor.PreAssignmentProcessor;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,13 +29,25 @@ public class Node {
   private String key;
 
   @NonNull
+  @CsvBindByName
   private String name;
-  @NonNull
-  private String type;
-  private String quantifiableUnit;
-  private Double quantityValue;
-  private Map<String,Map<String,List<Emission>>> emissionInformation; // e.g {"Scope 1" : ExtractionEmissionCharts, "Scope 2" : ProcessingEmissionCharts, "Scope 3" : TransportationEmissionCharts}
 
+  @NonNull
+  @CsvBindByName
+  private String type;
+
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
+  private String quantifiableUnit;
+
+  @CsvBindByName
+  private Double quantityValue;
+
+  @CsvBindByName
+  private Map<String,Map<String,List<Emission>>> emissionInformation; // e.g {"Scope 1" : ExtractionEmissionCharts, "Scope 2" : ProcessingEmissionCharts, "Scope 3" : TransportationEmissionCharts}
+  
+  @CsvBindByName
   private Properties functionalProperties;
+  
+  @CsvBindByName
   private DigitalProductPassport DPP;
 }

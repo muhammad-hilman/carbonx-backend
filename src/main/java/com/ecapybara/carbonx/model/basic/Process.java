@@ -5,6 +5,9 @@ import java.util.Collection;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.Relations;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
+import com.opencsv.bean.processor.PreAssignmentProcessor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,6 +19,7 @@ import lombok.experimental.SuperBuilder;
 @PersistentIndex(fields = {"id","key","name", "type", "serviceProvider"})
 public class Process extends Node {
 
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String serviceProvider;
 
   @Relations(edges = Input.class, lazy = true)
