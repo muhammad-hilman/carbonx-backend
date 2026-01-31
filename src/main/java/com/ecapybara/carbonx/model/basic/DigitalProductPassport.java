@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
-import com.ecapybara.carbonx.model.basic.emissions.CarbonFootprint;
+import com.ecapybara.carbonx.model.ghg.CarbonFootprint;
 import com.fasterxml.jackson.annotation.JsonAlias;
 
 @Document("DPPs")

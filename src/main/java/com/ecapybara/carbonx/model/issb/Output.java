@@ -1,4 +1,4 @@
-package com.ecapybara.carbonx.model.basic;
+package com.ecapybara.carbonx.model.issb;
 
 import org.springframework.data.annotation.PersistenceCreator;
 

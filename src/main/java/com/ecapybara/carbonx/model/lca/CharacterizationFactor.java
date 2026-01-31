@@ -1,4 +1,4 @@
-package com.ecapybara.carbonx.model.basic;
+package com.ecapybara.carbonx.model.lca;
 
 import java.util.Map;
 

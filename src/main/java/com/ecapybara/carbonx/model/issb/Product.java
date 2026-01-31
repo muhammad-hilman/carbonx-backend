@@ -1,10 +1,11 @@
-package com.ecapybara.carbonx.model.basic;
+package com.ecapybara.carbonx.model.issb;
 
 import java.util.Collection;
 
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.Relations;
+import com.ecapybara.carbonx.model.basic.Node;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
 import com.opencsv.bean.processor.PreAssignmentProcessor;
