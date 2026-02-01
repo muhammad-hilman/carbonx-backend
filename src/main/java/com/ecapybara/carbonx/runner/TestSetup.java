@@ -87,8 +87,7 @@ public class TestSetup implements CommandLineRunner {
     
     System.out.println("-> PROCESS object assignments completed");
 
-    Input test = new Input(rawPasta, boiling);
-    inputRepository.save(test);
+    inputRepository.save(new Input(rawPasta, boiling));
     inputRepository.save(new Input(cleanWater, boiling));
     inputRepository.save(new Input(cleanWater, simmering));
     inputRepository.save(new Input(tomatoPaste, simmering));
