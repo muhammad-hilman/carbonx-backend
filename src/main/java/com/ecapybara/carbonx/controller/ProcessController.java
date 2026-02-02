@@ -99,7 +99,6 @@ public class ProcessController {
     if (process != null) {
       process.setName(revisedProcess.getName());
       process.setType(revisedProcess.getType());
-      process.setFunctionalProperties(revisedProcess.getFunctionalProperties());
       process.setDPP(revisedProcess.getDPP());
       processRepository.save(process);
     }

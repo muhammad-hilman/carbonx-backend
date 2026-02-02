@@ -1,34 +1,17 @@
 package com.ecapybara.carbonx.model.basic;
 
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
+import com.opencsv.bean.processor.PreAssignmentProcessor;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data @NoArgsConstructor
 public class Metric {
+  @CsvBindByName
   private Double value;
+
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String unit;
-
-  // constructors
-  public Metric() {
-    super();
-  }
-
-  public Metric(Double value, String unit) {
-    super();
-    this.unit = unit;
-    this.value = value;
-  }
-
-  // setters and getters
-  public String getUnit() {
-    return unit;
-  }
-
-  public void setUnit(String unit) {
-    this.unit = unit;
-  }
-
-  public Double getValue() {
-    return value;
-  }
-
-  public void setValue(Double value) {
-    this.value = value;
-  }
 }

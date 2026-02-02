@@ -105,7 +105,6 @@ public class ProductController {
       product.setName(revisedProduct.getName());
       product.setType(revisedProduct.getType());
       product.setProductOrigin(revisedProduct.getProductOrigin());
-      product.setFunctionalProperties(revisedProduct.getFunctionalProperties());
       product.setDPP(revisedProduct.getDPP());
       product.setUserId(revisedProduct.getUserId());
       product.setUploadedFile(revisedProduct.getUploadedFile());

@@ -1,13 +1,12 @@
 package com.ecapybara.carbonx.model.basic;
 
-import java.util.Properties;
-
 import org.springframework.data.annotation.Id;
 
 import com.arangodb.springframework.annotation.ArangoId;
 import com.ecapybara.carbonx.model.ghg.EmissionInformation;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvRecurse;
 import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
 import com.opencsv.bean.processor.PreAssignmentProcessor;
 
@@ -37,15 +36,12 @@ public class Node {
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String quantifiableUnit;
 
-  @CsvBindByName
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private Double quantityValue;
 
-  @CsvBindByName
+  @CsvRecurse
   private EmissionInformation emissionInformation; // e.g {"Scope 1" : ExtractionEmissionCharts, "Scope 2" : ProcessingEmissionCharts, "Scope 3" : TransportationEmissionCharts}
   
-  @CsvBindByName
-  private Properties functionalProperties;
-  
-  @CsvBindByName
+  @CsvRecurse
   private DigitalProductPassport DPP;
 }

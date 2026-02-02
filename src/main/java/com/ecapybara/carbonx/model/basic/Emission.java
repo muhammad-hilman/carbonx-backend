@@ -1,30 +1,18 @@
 package com.ecapybara.carbonx.model.basic;
 
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvRecurse;
+import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
+import com.opencsv.bean.processor.PreAssignmentProcessor;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data @NoArgsConstructor
 public class Emission {
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String name; // eg. "CO"
+
+  @CsvRecurse
   private Metric metric; // eg. 22.5
-
-  // constructors
-  public Emission() {
-    super();
-  }
-  public Emission(String name, Metric metric) {
-    super();
-    this.name = name;
-    this.metric = metric;
-  }
-
-  // getters and setters
-  public String getName() {
-    return name;
-  }
-  public void setName(String name) {
-    this.name = name;
-  }
-  public Metric getMetric() {
-    return metric;
-  }
-  public void setMetric(Metric metric) {
-    this.metric = metric;
-  }
 }

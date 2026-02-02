@@ -7,7 +7,13 @@ import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.ecapybara.carbonx.model.ghg.CarbonFootprint;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvRecurse;
 
+import io.micrometer.common.lang.NonNull;
+import lombok.Data;
+
+@Data
 @Document("DPPs")
 @PersistentIndex(fields = {"name", "manufacturer", "serialNumber"})
 public class DigitalProductPassport {
@@ -20,36 +26,20 @@ public class DigitalProductPassport {
   @JsonAlias({"_key"})
   private String key;
 
+  @NonNull
+  @CsvBindByName
   private String name; // e.g Model X
+  
+  @NonNull
+  @CsvBindByName
   private String manufacturer; // e.g Tesla
+
+  @CsvBindByName
   private String serialNumber;
+
+  @CsvBindByName
   private String batchNumber;
+
+  @CsvRecurse
   private CarbonFootprint carbonFootprint;
-
-  //constructor
-  public DigitalProductPassport() {
-    super();
-  }
-
-  public DigitalProductPassport(String name, String manufacturer) {
-    super();
-    this.name = name;
-    this.manufacturer = manufacturer;
-  }
-
-  // getters & setters
-  public String getId() { return id; }
-  public void setId(String id) { this.id = id; }
-  public String getKey() { return key; }
-  public void setKey(String key) { this.key = key; }  
-  public String getName() { return name; }
-  public void setName(String name) { this.name = name; }
-  public String getManufacturer() { return manufacturer; }
-  public void setManufacturer(String manufacturer) { this.manufacturer = manufacturer; }
-  public String getSerialNumber() { return serialNumber; }
-  public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
-  public String getBatchNumber() { return batchNumber; }
-  public void setBatchNumber(String batchNumber) { this.batchNumber = batchNumber; }
-  public CarbonFootprint getCarbonFootprint() { return carbonFootprint; }
-  public void setCarbonFootprint(CarbonFootprint carbonFootprint) { this.carbonFootprint = carbonFootprint; }
 }
