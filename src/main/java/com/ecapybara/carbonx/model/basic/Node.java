@@ -1,12 +1,11 @@
 package com.ecapybara.carbonx.model.basic;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.springframework.data.annotation.Id;
 
 import com.arangodb.springframework.annotation.ArangoId;
+import com.ecapybara.carbonx.model.ghg.EmissionInformation;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
@@ -42,7 +41,7 @@ public class Node {
   private Double quantityValue;
 
   @CsvBindByName
-  private Map<String,Map<String,List<Emission>>> emissionInformation; // e.g {"Scope 1" : ExtractionEmissionCharts, "Scope 2" : ProcessingEmissionCharts, "Scope 3" : TransportationEmissionCharts}
+  private EmissionInformation emissionInformation; // e.g {"Scope 1" : ExtractionEmissionCharts, "Scope 2" : ProcessingEmissionCharts, "Scope 3" : TransportationEmissionCharts}
   
   @CsvBindByName
   private Properties functionalProperties;
