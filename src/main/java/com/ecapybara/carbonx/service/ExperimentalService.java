@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvRecursionException;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -133,21 +134,30 @@ public class ExperimentalService {
 
   // Test Function to export a single CSV file to the system file folder
   public Mono<?> exportComplexCSV(String filename) throws Exception {
-    String filepath = "C:/Users/mhilm/Desktop/carbonx-backend/src/main/resources/samples/" + filename;
-
+    String projectRoot = System.getProperty("user.dir");
+    log.info("Root folder identified as -> {}", projectRoot);
+    Path dir = Paths.get(projectRoot, "src\\main\\resources\\samples");
+    Files.createDirectories(dir);
+    log.info("Folder path identified as -> {}", dir);    
+    Path filepath = dir.resolve(filename);
+    log.info("Filepath identified as -> {}", filepath);
     List<Product> products = IterableUtils.toList(productRepository.findAll());
-    List<Product> productsList = IterableUtils.toList(products);
-    
-    try (Writer writer = Files.newBufferedWriter(Paths.get(filepath))) {
+    log.info("List of products loaded -> {}", products.toString().substring(0, 200) + "...");
+
+    try (Writer writer = Files.newBufferedWriter(filepath)) {        
         StatefulBeanToCsv<Product> beanToCsv =
                 new StatefulBeanToCsvBuilder<Product>(writer)
                         .withSeparator(',')
                         .build();
 
-        beanToCsv.write(productsList);
+        beanToCsv.write(products);
         return Mono.just("Successfully exported CSV file!");
     } catch (IOException e) {
         log.error("Error exporting CSV!", e);
+        return Mono.error(new RuntimeException(String.format("Failed to export CSV file: %s", filename), e));
+    } catch (CsvRecursionException e) {
+        log.error("Error exporting CSV!", e);
+        e.printStackTrace();
         return Mono.error(new RuntimeException(String.format("Failed to export CSV file: %s", filename), e));
     }
   }
