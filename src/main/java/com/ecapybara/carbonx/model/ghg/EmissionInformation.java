@@ -1,15 +1,19 @@
 package com.ecapybara.carbonx.model.ghg;
 
-import com.ecapybara.carbonx.model.basic.DetailedChart;
+import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvRecurse;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.SuperBuilder;
+import lombok.NoArgsConstructor;
 
-@Data @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true)
-public class EmissionInformation extends DetailedChart{
+@Data @NoArgsConstructor @AllArgsConstructor @Builder(toBuilder = true)
+public class EmissionInformation {
+  @Builder.Default
+  @CsvBindByName(column = "emission.description")
+  private String description = "GHG";
+  
   @Builder.Default
   @CsvRecurse
   private Scope1 scope1 = new Scope1();
@@ -21,8 +25,4 @@ public class EmissionInformation extends DetailedChart{
   @Builder.Default  
   @CsvRecurse
   private Scope3 scope3 = new Scope3();
-
-  public EmissionInformation() {
-    super("GHG");
-  }
 }

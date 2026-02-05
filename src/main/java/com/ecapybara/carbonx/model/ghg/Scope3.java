@@ -4,16 +4,15 @@ import java.util.Map;
 
 import org.apache.commons.collections4.MultiValuedMap;
 
-import com.ecapybara.carbonx.model.basic.DetailedChart;
 import com.opencsv.bean.CsvBindAndJoinByName;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.SuperBuilder;
+import lombok.NoArgsConstructor;
 
-@Data @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true)
-public class Scope3 extends DetailedChart {
+@Data @NoArgsConstructor @AllArgsConstructor @Builder(toBuilder = true)
+public class Scope3 {
   @Builder.Default
   @CsvBindAndJoinByName(column = "emissionInformation.scope2.category1.*", elementType = Map.class)
   private MultiValuedMap<String, Map<String, Double>> category1 = null;
@@ -73,8 +72,4 @@ public class Scope3 extends DetailedChart {
   @Builder.Default
   @CsvBindAndJoinByName(column = "emissionInformation.scope2.category15.*", elementType = Map.class)
   private MultiValuedMap<String, Map<String, Double>> category15 = null;
-
-  public Scope3() {
-    super("direct and indirect emissions");
-  }
 }

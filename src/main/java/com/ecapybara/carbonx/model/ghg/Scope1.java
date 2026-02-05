@@ -4,16 +4,16 @@ import java.util.Map;
 
 import org.apache.commons.collections4.MultiValuedMap;
 
-import com.ecapybara.carbonx.model.basic.DetailedChart;
 import com.opencsv.bean.CsvBindAndJoinByName;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@Data @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true)
-public class Scope1 extends DetailedChart {
+@Data @NoArgsConstructor @AllArgsConstructor @SuperBuilder(toBuilder = true)
+public class Scope1 {
   @Builder.Default
   @CsvBindAndJoinByName(column = "emissionInformation.scope1.stationaryCombustion.*", elementType = Map.class)
   private MultiValuedMap<String, Map<String, Double>> stationaryCombustion = null;
@@ -23,14 +23,10 @@ public class Scope1 extends DetailedChart {
   private MultiValuedMap<String, Map<String, Double>> mobileCombustion = null;
 
   @Builder.Default
-  @CsvBindAndJoinByName(column = "emissionInformation.scope1.mobileCombustion.*", elementType = Map.class)
+  @CsvBindAndJoinByName(column = "emissionInformation.scope1.fugitiveEmissions.*", elementType = Map.class)
   private MultiValuedMap<String, Map<String, Double>> fugitiveEmissions = null;
 
   @Builder.Default
-  @CsvBindAndJoinByName(column = "emissionInformation.scope1.mobileCombustion.*", elementType = Map.class)
+  @CsvBindAndJoinByName(column = "emissionInformation.scope1.processEmissions.*", elementType = Map.class)
   private MultiValuedMap<String, Map<String, Double>> processEmissions = null;
-
-  public Scope1() {
-    super("direct emissions");
-  }
 }

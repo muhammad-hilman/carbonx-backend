@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @Data @SuperBuilder(toBuilder = true)
 public class DetailedChart {
   @NonNull
-  @CsvBindByName
+  @CsvBindByName(column = "emissionInformation.description")
   private String description;
 
   public DetailedChart(String description) {

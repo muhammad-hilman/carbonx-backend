@@ -1,5 +1,6 @@
 package com.ecapybara.carbonx.service;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -15,15 +16,18 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.supercsv.io.dozer.CsvDozerBeanWriter;
+import org.supercsv.prefs.CsvPreference;
 
 import com.ecapybara.carbonx.model.issb.Product;
 import com.ecapybara.carbonx.repository.ProductRepository;
+import com.ecapybara.carbonx.utils.csv.CsvColumn;
+import com.ecapybara.carbonx.utils.csv.CsvColumnConfigurations;
+import com.ecapybara.carbonx.utils.csv.CsvColumnWriterWithDozer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.opencsv.bean.CsvToBeanBuilder;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvRecursionException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -136,26 +140,31 @@ public class ExperimentalService {
   public Mono<?> exportComplexCSV(String filename) throws Exception {
     String projectRoot = System.getProperty("user.dir");
     log.info("Root folder identified as -> {}", projectRoot);
-    Path dir = Paths.get(projectRoot, "src\\main\\resources\\samples");
+    Path dir = Paths.get(projectRoot, "temp");
     Files.createDirectories(dir);
     log.info("Folder path identified as -> {}", dir);    
     Path filepath = dir.resolve(filename);
-    log.info("Filepath identified as -> {}", filepath);
-    List<Product> products = IterableUtils.toList(productRepository.findAll());
-    log.info("List of products loaded -> {}", products.toString().substring(0, 200) + "...");
+    log.info("Filepath identified as -> {}", filepath.toString());
+    List<Product> productsList = IterableUtils.toList(productRepository.findAll());
+    log.info("List of products loaded -> {}", productsList.toString().substring(0, 200) + "...");
+    List<CsvColumn> productColumns = new CsvColumnConfigurations().getProductColumns();
 
-    try (Writer writer = Files.newBufferedWriter(filepath)) {        
-        StatefulBeanToCsv<Product> beanToCsv =
-                new StatefulBeanToCsvBuilder<Product>(writer)
-                        .withSeparator(',')
-                        .build();
-
-        beanToCsv.write(products);
-        return Mono.just("Successfully exported CSV file!");
-    } catch (IOException e) {
+    // Reference: https://medium.com/@carlocarlen/export-java-beans-to-csv-without-using-annotations-558389639596
+    try (Writer writer = new FileWriter(filepath.toString());
+        CsvDozerBeanWriter beanWriter = new CsvDozerBeanWriter(writer, CsvPreference.STANDARD_PREFERENCE);
+        CsvColumnWriterWithDozer writerWrapper = new CsvColumnWriterWithDozer(productColumns, beanWriter, Product.class))
+    {
+      writerWrapper.writeHeaders();
+      for (Product product : productsList) {
+        writerWrapper.writeBean(product);
+      }
+      return Mono.just("Successfully exported CSV file!");
+    }
+    catch (IOException e) {
         log.error("Error exporting CSV!", e);
         return Mono.error(new RuntimeException(String.format("Failed to export CSV file: %s", filename), e));
-    } catch (CsvRecursionException e) {
+    }
+    catch (CsvRecursionException e) {
         log.error("Error exporting CSV!", e);
         e.printStackTrace();
         return Mono.error(new RuntimeException(String.format("Failed to export CSV file: %s", filename), e));
