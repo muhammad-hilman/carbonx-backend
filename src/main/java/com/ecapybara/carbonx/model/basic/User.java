@@ -12,9 +12,9 @@ import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
-@Data @Builder
+@Data @Builder(toBuilder = true)
 @Document("users")
-@PersistentIndex(fields = {"email", "username"})
+@PersistentIndex(fields = {"email", "username", "firstName", "role"})
 public class User {
 
     @Id // db document field: _key
