@@ -11,9 +11,12 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvRecurse;
 
 import io.micrometer.common.lang.NonNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
+@Data @NoArgsConstructor @AllArgsConstructor @Builder(toBuilder = true)
 @Document("DPPs")
 @PersistentIndex(fields = {"name", "manufacturer", "serialNumber"})
 public class DigitalProductPassport {
@@ -40,6 +43,7 @@ public class DigitalProductPassport {
   @CsvBindByName
   private String batchNumber;
 
+  @Builder.Default
   @CsvRecurse
-  private CarbonFootprint carbonFootprint;
+  private CarbonFootprint carbonFootprint = new CarbonFootprint();
 }

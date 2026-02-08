@@ -2,8 +2,10 @@ package com.ecapybara.carbonx.controller;
 
 import java.util.List;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -49,7 +51,7 @@ public class ProductController {
   final Sort sort = Sort.by(Direction.DESC, "id");
 
   @GetMapping
-  public Iterable<Product> getProducts(@RequestParam(name = "name", required = false) String name,@RequestParam(name = "type", required = false) String type) {
+  public List<Product> getProducts(@RequestParam(name = "name", required = false) String name,@RequestParam(name = "type", required = false) String type) {
     if (name != null && !name.isEmpty() && type!=null && !type.isEmpty()) {
       return productRepository.findByNameAndType(sort, name, type);
     }
@@ -60,7 +62,7 @@ public class ProductController {
       return productRepository.findByType(sort, type);
     }
     else {
-      return productRepository.findAll();
+      return IterableUtils.toList(productRepository.findAll());
     }
   }
 

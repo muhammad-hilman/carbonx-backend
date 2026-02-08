@@ -1,61 +1,75 @@
 package com.ecapybara.carbonx.model.ghg;
 
-import com.ecapybara.carbonx.model.basic.DetailedChart;
-import com.ecapybara.carbonx.model.ipcc.EmissionChart;
-import com.opencsv.bean.CsvRecurse;
+import java.util.Map;
 
+import org.apache.commons.collections4.MultiValuedMap;
+
+import com.opencsv.bean.CsvBindAndJoinByName;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.SuperBuilder;
+import lombok.NoArgsConstructor;
 
-@Data @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true)
-public class Scope3 extends DetailedChart {
-  @CsvRecurse
-  private EmissionChart category_1;
+@Data @NoArgsConstructor @AllArgsConstructor @Builder(toBuilder = true)
+public class Scope3 {
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category1.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category1 = null;
 
-  @CsvRecurse
-  private EmissionChart category_2;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category2.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category2 = null;
 
-  @CsvRecurse
-  private EmissionChart category_3;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category3.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category3 = null;
 
-  @CsvRecurse
-  private EmissionChart category_4;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category4.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category4 = null;
 
-  @CsvRecurse
-  private EmissionChart category_5;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category5.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category5 = null;
 
-  @CsvRecurse
-  private EmissionChart category_6;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category6.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category6 = null;
 
-  @CsvRecurse
-  private EmissionChart category_7;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category7.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category7 = null;
 
-  @CsvRecurse
-  private EmissionChart category_8;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category8.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category8 = null;
 
-  @CsvRecurse
-  private EmissionChart category_9;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category9.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category9 = null;
 
-  @CsvRecurse
-  private EmissionChart category_10;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category10.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category10 = null;
 
-  @CsvRecurse
-  private EmissionChart category_11;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category11.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category11 = null;
 
-  @CsvRecurse
-  private EmissionChart category_12;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category12.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category12 = null;
 
-  @CsvRecurse
-  private EmissionChart category_13;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category13.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category13 = null;
 
-  @CsvRecurse
-  private EmissionChart category_14;
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category14.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category14 = null;
 
-  @CsvRecurse
-  private EmissionChart category_15;
-
-  public Scope3() {
-    super("direct and indirect emissions");
-  }
+  @Builder.Default
+  @CsvBindAndJoinByName(column = "emissionInformation.scope2.category15.*", elementType = Map.class)
+  private MultiValuedMap<String, Map<String, Double>> category15 = null;
 }
