@@ -7,7 +7,9 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ import com.ecapybara.carbonx.utils.csv.CsvColumnWriterWithDozer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.opencsv.CSVReader;
+import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvRecursionException;
 
@@ -98,10 +102,11 @@ public class ExperimentalService {
     try {      
       // Find, load and read CSV file
       log.info("Requested filename: {}", filename);
-      Resource resource = new ClassPathResource("samples/" + filename);
-      Path filePath = resource.getFile().toPath();
-      log.info("Requested filepath: {}", filePath);
-      Reader reader = Files.newBufferedReader(filePath);
+      String projectRoot = System.getProperty("user.dir");
+      Path dir = Paths.get(projectRoot, "temp");
+      Path filepath = dir.resolve(filename);
+      log.info("Requested filepath: {}", filepath);
+      Reader reader = Files.newBufferedReader(filepath);
 
       // Convert CSV to product objects
       List<Product> products = new CsvToBeanBuilder<Product>(reader)
@@ -113,11 +118,11 @@ public class ExperimentalService {
       // Convert CSV file to JSON string (future implementation: JSON String received via HTTP)
       mapper.enable(SerializationFeature.INDENT_OUTPUT);
       String jsonContent = mapper.writeValueAsString(products);
-      log.info("JSON String loaded: {}", jsonContent);
+      log.info("JSON String loaded: {}", jsonContent.substring(0,100) + " ...");
 
       // Use object mapper to convert JSON String content to Product objects
       List<Product> listOfProducts = mapper.readValue(jsonContent, new TypeReference<List<Product>>(){});
-      log.info("List of products: {}", listOfProducts.toString());
+      log.info("List of products: {}", listOfProducts.toString().substring(0,100) + " ...");
     
       // Save new object into ProductRepository
       for (Product product: listOfProducts) {
@@ -131,8 +136,12 @@ public class ExperimentalService {
       return Mono.error(new RuntimeException(String.format("Failed to load CSV file: %s", filename), e));
     }
   }
+
+  public String exportCSV(String filename) {
+    return "Export successful!";
+  }
   // ------- Test Function to import a single CSV file within system folder
-  public Mono<?> importComplexCSV(String targetCollection, String filename) {
+  public String importComplexCSV(String targetCollection, String filename) {
     String projectRoot = System.getProperty("user.dir");
     log.info("Root folder identified as -> {}", projectRoot);
     Path dir = Paths.get(projectRoot, "temp");
@@ -145,8 +154,9 @@ public class ExperimentalService {
 
       // Convert CSV to product objects
       List<Product> products = new CsvToBeanBuilder<Product>(reader)
-            .withType(Product.class)
             .withIgnoreLeadingWhiteSpace(true)
+            .withIgnoreEmptyLine(true)
+            .withType(Product.class)
             .build()
             .parse();
 
@@ -156,16 +166,16 @@ public class ExperimentalService {
             // Save products into productRepository
             productRepository.save(product);
           }
-          return Mono.just(String.format("%s successfully imported into %s", filename, targetCollection));        
+          return String.format("%s successfully imported into %s", filename, targetCollection);        
         
         default:
           log.error("Target collection not recognised: {}", targetCollection);
-          return Mono.just(String.format("Target collection not recognised: %s", targetCollection));
+          return String.format("Target collection not recognised: %s", targetCollection);
       }
 
     } catch (IOException e) {
       log.error("Error processing CSV", e);
-      return Mono.error(new RuntimeException(String.format("Failed to load CSV file: %s", filename), e));
+      return String.format("Failed to load CSV file: %s", filename);
     }
   }
 
@@ -178,8 +188,9 @@ public class ExperimentalService {
     log.info("Folder path identified as -> {}", dir);    
     Path filepath = dir.resolve(filename);
     log.info("Filepath identified as -> {}", filepath.toString());
+
     List<Product> productsList = IterableUtils.toList(productRepository.findAll());
-    log.info("List of products loaded -> {}", productsList.toString().substring(0, 200) + "...");
+    
     List<CsvColumn> productColumns = new CsvColumnConfigurations().getProductColumns();
 
     // Reference: https://medium.com/@carlocarlen/export-java-beans-to-csv-without-using-annotations-558389639596

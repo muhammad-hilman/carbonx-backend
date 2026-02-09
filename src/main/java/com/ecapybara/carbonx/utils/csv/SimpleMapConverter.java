@@ -22,8 +22,8 @@ public class SimpleMapConverter extends AbstractBeanField<Map<String, Double>, S
         
         // Handle both single pair and multiple pairs
         String[] pairs;
-        if (trimmed.contains(";")) {
-            pairs = trimmed.split(";");
+        if (trimmed.contains(",")) {
+            pairs = trimmed.split(",");
         } else {
             // Single pair case: CO2:2.0 -> ["CO2:2.0"]
             pairs = new String[]{trimmed};
@@ -31,7 +31,7 @@ public class SimpleMapConverter extends AbstractBeanField<Map<String, Double>, S
         
         for (String pair : pairs) {
             if (pair.trim().isEmpty()) continue;
-            String[] kv = pair.split(":");
+            String[] kv = pair.split("=");
             if (kv.length == 2) {
                 String key = kv[0].trim();
                 Double val = Double.valueOf(kv[1].trim());

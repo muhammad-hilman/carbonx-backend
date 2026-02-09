@@ -18,14 +18,16 @@ public class ComplexMapConverter extends AbstractBeanField<Map<String, Map<Strin
         String trimmed = value.trim();
         if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
             trimmed = trimmed.substring(1, trimmed.length() - 1); // Remove outer {}
+        } else if (trimmed.startsWith("'{") && trimmed.endsWith("}'")) {
+            trimmed = trimmed.substring(2, trimmed.length() - 2);
         }
 
         Map<String, Map<String, Double>> result = new HashMap<>();
-        String[] outerPairs = trimmed.contains(";") ? trimmed.split(";") : new String[]{trimmed};
+        String[] outerPairs = trimmed.contains(",") ? trimmed.split("(?<=})+[,]") : new String[]{trimmed}; // THIS SPECIFIC REGEX SPLITS THE STRING SECTIONS OF MAPS IDENTIFIED BY '}' and ','
         
         for (String outerPair : outerPairs) {
             if (outerPair.trim().isEmpty()) continue;
-            String[] outerKV = outerPair.split(":");
+            String[] outerKV = outerPair.trim().split("=", 2); // THIS LINE IS VERY IMPORTANT, ESPECIALLY THE NUMBER TO PREVENT FURTHER SPLITTING OF ADDITIONAL ':' CHARACTERS IN THE STRING 
             if (outerKV.length != 2) continue;
             
             String gasName = outerKV[0].trim();  // "CO2", "CH4"
@@ -37,15 +39,20 @@ public class ComplexMapConverter extends AbstractBeanField<Map<String, Map<Strin
             }
             
             // Expect exactly one pair: unit:value
-            String[] unitValue = innerStr.split(":");
-            if (unitValue.length == 2) {
-                String unit = unitValue[0].trim();  // "kg"
-                Double amount = Double.parseDouble(unitValue[1].trim());  // 1.0
-                
-                Map<String, Double> innerMap = new HashMap<>();
-                innerMap.put(unit, amount);
-                result.put(gasName, innerMap);
+            String[] innerPairs = innerStr.split(","); // THIS LINE IS VERY IMPORTANT, ESPECIALLY THE NUMBER TO PREVENT FURTHER SPLITTING OF ADDITIONAL ':' CHARACTERS IN THE STRING
+            Map<String, Double> innerMap = new HashMap<>();
+            for (String innerPair : innerPairs) {
+                if (innerPair.trim().isEmpty()) continue;
+                String[] innerKV = innerPair.trim().split("="); // THIS LINE IS VERY IMPORTANT, ESPECIALLY THE NUMBER TO PREVENT FURTHER SPLITTING OF ADDITIONAL ':' CHARACTERS IN THE STRING 
+                if (innerKV.length == 2) {
+                    String unit = innerKV[0].trim();  // "kg"
+                    Double amount = Double.parseDouble(innerKV[1].trim());  // 1.0
+        
+                    innerMap.put(unit, amount);
+                }
             }
+            
+            result.put(gasName, innerMap);
         }
         
         return result;

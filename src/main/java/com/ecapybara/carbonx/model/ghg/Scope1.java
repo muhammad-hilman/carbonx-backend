@@ -13,9 +13,8 @@ import lombok.experimental.SuperBuilder;
 
 @Data @NoArgsConstructor @AllArgsConstructor @SuperBuilder(toBuilder = true)
 public class Scope1 {
-  @Builder.Default
   @CsvCustomBindByName(column = "emissionInformation.scope1.stationaryCombustion", converter = ComplexMapConverter.class)
-  private Map<String, Map<String, Double>> stationaryCombustion = null;
+  private Map<String, Map<String, Double>> stationaryCombustion;
 
   @Builder.Default
   @CsvCustomBindByName(column = "emissionInformation.scope1.mobileCombustion", converter = ComplexMapConverter.class)

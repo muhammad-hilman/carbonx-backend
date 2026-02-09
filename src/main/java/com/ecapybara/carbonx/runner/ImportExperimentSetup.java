@@ -20,14 +20,16 @@ public class ImportExperimentSetup implements CommandLineRunner {
   
   @Override
   public void run(final String... args) throws Exception {
-    System.out.println("------------- # SETUP BEGIN # -------------");
+    System.out.println("-------------- # SETUP BEGIN # --------------");
     // first drop the database so that we can run this multiple times with the same dataset
     operations.dropDatabase();
 
     // Import complexProducts.csv
-    Mono<?> outcome = experimentalService.importComplexCSV("products", "complexProducts.csv");
+    String outcome = experimentalService.importComplexCSV("products", "test2.csv");
 
     // Display outcome
-    log.info("{}", outcome);
+    log.info("Import experiment outcome -> {}", outcome);
+
+    System.out.println("------------- # SETUP COMPLETED # -------------");
   }
 }
