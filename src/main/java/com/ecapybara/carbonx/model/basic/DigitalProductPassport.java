@@ -30,7 +30,7 @@ public class DigitalProductPassport {
   private String key;
 
   @NonNull
-  @CsvBindByName
+  @CsvBindByName(column = "dpp.name")
   private String name; // e.g Model X
   
   @NonNull

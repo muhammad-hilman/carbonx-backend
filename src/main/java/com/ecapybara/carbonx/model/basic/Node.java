@@ -28,7 +28,7 @@ public class Node {
   private String key;
 
   @NonNull
-  @CsvBindByName
+  @CsvBindByName(column = "name")
   private String name;
 
   @NonNull

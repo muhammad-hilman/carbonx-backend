@@ -131,9 +131,42 @@ public class ExperimentalService {
       return Mono.error(new RuntimeException(String.format("Failed to load CSV file: %s", filename), e));
     }
   }
-  // ------- UNFINISHED: Test Function to import a single CSV file within system folder
-  public Mono<?> importComplexCSV() {
-    return Mono.just("something");
+  // ------- Test Function to import a single CSV file within system folder
+  public Mono<?> importComplexCSV(String targetCollection, String filename) {
+    String projectRoot = System.getProperty("user.dir");
+    log.info("Root folder identified as -> {}", projectRoot);
+    Path dir = Paths.get(projectRoot, "temp");
+    log.info("Folder path identified as -> {}", dir);
+    Path filepath = dir.resolve(filename);
+    log.info("Filepath identified as -> {}", filepath.toString());
+
+    try {
+      Reader reader = Files.newBufferedReader(filepath);
+
+      // Convert CSV to product objects
+      List<Product> products = new CsvToBeanBuilder<Product>(reader)
+            .withType(Product.class)
+            .withIgnoreLeadingWhiteSpace(true)
+            .build()
+            .parse();
+
+      switch (targetCollection) {
+        case "products":
+          for (Product product: products) {
+            // Save products into productRepository
+            productRepository.save(product);
+          }
+          return Mono.just(String.format("%s successfully imported into %s", filename, targetCollection));        
+        
+        default:
+          log.error("Target collection not recognised: {}", targetCollection);
+          return Mono.just(String.format("Target collection not recognised: %s", targetCollection));
+      }
+
+    } catch (IOException e) {
+      log.error("Error processing CSV", e);
+      return Mono.error(new RuntimeException(String.format("Failed to load CSV file: %s", filename), e));
+    }
   }
 
   // Test Function to export a single CSV file to the system file folder

@@ -13,6 +13,5 @@ public class Emission {
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String name; // eg. "CO"
 
-  @CsvRecurse
   private Metric metric; // eg. 22.5
 }
