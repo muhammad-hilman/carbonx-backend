@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecapybara.carbonx.model.issb.Product;
 import com.ecapybara.carbonx.service.ExperimentalService;
+import com.ecapybara.carbonx.service.ImportService;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 
@@ -24,6 +25,8 @@ public class ExperimentController {
 
   @Autowired
   ExperimentalService experimentalService;
+   @Autowired
+  ImportService importService;
   @Autowired
   ProductController productController;
 
@@ -48,7 +51,7 @@ public class ExperimentController {
 
   @PostMapping("/export")
   public Mono<?> exportComplexCSV() throws Exception {
-    return experimentalService.exportComplexCSV("test2.csv");
+    return importService.exportCSV("processes", "complexProcesses.csv");
   }
 
   @PostMapping("/import")

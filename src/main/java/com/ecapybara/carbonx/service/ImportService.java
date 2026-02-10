@@ -142,17 +142,17 @@ public class ImportService {
     }
   }
 
-  public Mono<?> exportComplexCSV(String targetCollection, String filename) throws Exception {
-    try {
-      // Find CSV file save location
-      String projectRoot = System.getProperty("user.dir");
-      Path dir = Paths.get(projectRoot, "temp");
-      Files.createDirectories(dir);
-      Path filepath = dir.resolve(filename);
-
+  public Mono<?> exportCSV(String targetCollection, String filename) throws Exception {
+    
+    // Find CSV file save location
+    String projectRoot = System.getProperty("user.dir");
+    Path dir = Paths.get(projectRoot, "temp");
+    Files.createDirectories(dir);
+    Path filepath = dir.resolve(filename);
+    
+    try (Writer writer = new FileWriter(filepath.toString());
+        CsvDozerBeanWriter beanWriter = new CsvDozerBeanWriter(writer, CsvPreference.STANDARD_PREFERENCE);) {
       // Read, convert and save database into CSV file according to request type
-      Writer writer = new FileWriter(filepath.toString());
-      CsvDozerBeanWriter beanWriter = new CsvDozerBeanWriter(writer, CsvPreference.STANDARD_PREFERENCE);
       switch (targetCollection) {
         case "products":
           List<CsvColumn> productColumns = new CsvColumnConfigurations().getProductColumns();
@@ -171,6 +171,7 @@ public class ImportService {
 
           List<Process> processList = IterableUtils.toList(processRepository.findAll());
           for (Process process : processList) { processWriterWrapper.writeBean(process); }
+          System.out.println("Completed writing Process beans!");
 
           return Mono.just(String.format("Successfully exported PROCESS database into '%s'!", filename));
 

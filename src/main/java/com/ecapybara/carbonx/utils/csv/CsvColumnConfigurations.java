@@ -15,7 +15,7 @@ public class CsvColumnConfigurations {
 
   public CsvColumnConfigurations() {
     this.productColumns = Arrays.asList(
-            CsvColumn.of("_id").withHeader("id"),
+            // CsvColumn.of("_id").withHeader("id"),
             CsvColumn.of("name").withHeader("name"),
             CsvColumn.of("type").withHeader("type"),
             CsvColumn.of("quantifiableUnit").withHeader("quantifiableUnit"),
@@ -57,14 +57,13 @@ public class CsvColumnConfigurations {
     );
 
     this.processColumns = Arrays.asList(
-            CsvColumn.of("_id").withHeader("_id"),
+            // CsvColumn.of("_id").withHeader("_id"),
             CsvColumn.of("name").withHeader("name"),
             CsvColumn.of("type").withHeader("type"),
             CsvColumn.of("quantifiableUnit").withHeader("quantifiableUnit"),
             CsvColumn.of("quantityValue").withHeader("quantityValue"),
             CsvColumn.of("serviceProvider").withHeader("serviceProvider"),
             CsvColumn.of("userId").withHeader("owner"),
-            CsvColumn.of("uploadedFile").withHeader("uploadedFile"),
             CsvColumn.of("emissionInformation.description").withHeader("emissionInformation.description"),
             CsvColumn.of("emissionInformation.scope1.stationaryCombustion").withHeader("emissionInformation.scope1.stationaryCombustion"),
             CsvColumn.of("emissionInformation.scope1.mobileCombustion").withHeader("emissionInformation.scope1.mobileCombustion"),

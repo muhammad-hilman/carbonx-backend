@@ -1,7 +1,6 @@
 package com.ecapybara.carbonx.runner;
 
 import lombok.extern.slf4j.Slf4j;
-import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,7 +25,7 @@ import com.ecapybara.carbonx.service.ImportService;
 
 @Slf4j
 @ComponentScan("com.ecapybara.carbonx")
-public class TestSetup implements CommandLineRunner {
+public class OldSetup implements CommandLineRunner {
   @Autowired
   private ArangoOperations operations;
   @Autowired
@@ -49,8 +48,8 @@ public class TestSetup implements CommandLineRunner {
     operations.dropDatabase();
 
     // Create and save products
-    importService.importCSV("products", "complexProducts.csv");
-    log.info("-> {} PRODUCT entries created", productRepository.count());
+    Collection<Product> createProducts = createProducts();
+    productRepository.saveAll(createProducts);
 
     // Create and save processes
     Collection<Process> createProcesses = createProcesses();
@@ -122,11 +121,30 @@ public class TestSetup implements CommandLineRunner {
 
     // Export files
     // importService.exportCSV("processes", "complexProcesses.csv").doOnError(error -> log.error("Failed to export PROCESSES -> ", error));
-    // log.info("-> Successfully exported PROCESSES into complexProcesses.csv");
     // importService.exportCSV("inputs", "complexInputs.csv").doOnError(error -> log.error("Failed to export INPUTS -> ", error));
     // importService.exportCSV("outputs", "complexOutputs.csv").doOnError(error -> log.error("Failed to export OUTPUTS -> ", error));
     
     System.out.println("------------- # SETUP COMPLETED # -------------");
+  }
+
+  public static Collection<Product> createProducts() {
+    return Arrays.asList(
+      Product.builder().name("spaghetti").type("dish").build(),
+      Product.builder().name("raw pasta").type("ingredient").build(),
+      Product.builder().name("pasta").type("ingredient").build(),
+      Product.builder().name("tomato sauce").type("ingredient").build(),
+      Product.builder().name("hot dogs").type("ingredient").build(),
+      Product.builder().name("salt").type("ingredient").build(),
+      Product.builder().name("pepper").type("ingredient").build(),
+      Product.builder().name("sugar").type("ingredient").build(),
+      Product.builder().name("garlic").type("ingredient").build(),
+      Product.builder().name("onions").type("ingredient").build(),
+      Product.builder().name("cheese").type("ingredient").build(),
+      Product.builder().name("tomato paste").type("ingredient").build(),
+      Product.builder().name("olive oil").type("ingredient").build(),
+      Product.builder().name("clean water").type("ingredient").build(),
+      Product.builder().name("waste water").type("waste").build()
+    );
   }
 
   public static Collection<Process> createProcesses() {
