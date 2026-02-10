@@ -25,7 +25,7 @@ public class ImportExperimentSetup implements CommandLineRunner {
     operations.dropDatabase();
 
     // Import complexProducts.csv
-    String outcome = experimentalService.importComplexCSV("products", "test2.csv");
+    String outcome = experimentalService.importComplexCSV("products", "complexProducts.csv");
 
     // Display outcome
     log.info("Import experiment outcome -> {}", outcome);
