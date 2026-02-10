@@ -17,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 
 @Data @NoArgsConstructor @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true) 
 @Document("processes")
-@PersistentIndex(fields = {"id","key","name", "type", "serviceProvider"})
+@PersistentIndex(fields = {"id","key","name", "type", "serviceProvider", "userId"})
 public class Process extends Node {
 
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
