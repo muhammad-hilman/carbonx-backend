@@ -30,7 +30,6 @@ public class Product extends Node {
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String uploadedFile; // Filename of uploaded BOM file
 
-  @CsvBindByName
   @Relations(edges = Output.class, lazy=true)
   private Collection<Process> procedure;
   /* 

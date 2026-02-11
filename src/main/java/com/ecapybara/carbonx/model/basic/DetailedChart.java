@@ -1,13 +1,16 @@
 package com.ecapybara.carbonx.model.basic;
 
-import lombok.Getter;
+import com.opencsv.bean.CsvBindByName;
+
+import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 
-@Getter @SuperBuilder(toBuilder = true)
+@Data @SuperBuilder(toBuilder = true)
 public class DetailedChart {
   @NonNull
-  private final String description;
+  @CsvBindByName(column = "emissionInformation.description")
+  private String description;
 
   public DetailedChart(String description) {
     this.description = description;

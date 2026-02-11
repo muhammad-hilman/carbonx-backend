@@ -10,12 +10,14 @@ import com.opencsv.bean.CsvRecurse;
 import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
 import com.opencsv.bean.processor.PreAssignmentProcessor;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 
-@Data @NoArgsConstructor @SuperBuilder(toBuilder = true)
+@Data @NoArgsConstructor @AllArgsConstructor @SuperBuilder(toBuilder = true)
 public class Node {
   @ArangoId // db document field: _id
   @JsonAlias({"_id"})
@@ -39,9 +41,11 @@ public class Node {
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private Double quantityValue;
 
+  @Builder.Default
   @CsvRecurse
-  private EmissionInformation emissionInformation; // e.g {"Scope 1" : ExtractionEmissionCharts, "Scope 2" : ProcessingEmissionCharts, "Scope 3" : TransportationEmissionCharts}
+  private EmissionInformation emissionInformation = new EmissionInformation(); // e.g {"Scope 1" : ExtractionEmissionCharts, "Scope 2" : ProcessingEmissionCharts, "Scope 3" : TransportationEmissionCharts}
   
+  @Builder.Default
   @CsvRecurse
-  private DigitalProductPassport DPP;
+  private DigitalProductPassport DPP = new DigitalProductPassport();
 }
