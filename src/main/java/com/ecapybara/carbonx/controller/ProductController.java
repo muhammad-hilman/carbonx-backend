@@ -92,7 +92,7 @@ public class ProductController {
     return revisedProducts;
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/{key}")
   public Mono<Product> getProduct(@PathVariable String key) {
     return documentService.getDocument("products", key)
             .bodyToMono(Product.class)
