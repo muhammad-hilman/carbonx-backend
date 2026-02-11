@@ -37,4 +37,14 @@ public class DatabaseService {
             .block();
     }
 
+    public String deleteDatabase(String name){
+ 
+        return webClient
+            .delete()
+            .uri("http://localhost:8529/_db/_system/_api/database/{name}",name)
+            .retrieve()
+            .bodyToMono(String.class)
+            .block();
+    }
+
 }

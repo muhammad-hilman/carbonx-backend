@@ -1,0 +1,15 @@
+meta {
+  name: deleteDatabase
+  type: http
+  seq: 10
+}
+
+delete {
+  url: {{host}}/api/database
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
