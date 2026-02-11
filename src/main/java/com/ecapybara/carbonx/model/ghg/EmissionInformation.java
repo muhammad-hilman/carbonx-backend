@@ -22,7 +22,7 @@ public class EmissionInformation {
   @CsvRecurse
   private Scope2 scope2 = new Scope2();
 
-  @Builder.Default  
+  @Builder.Default
   @CsvRecurse
   private Scope3 scope3 = new Scope3();
 }

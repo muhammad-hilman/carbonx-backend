@@ -1,7 +1,6 @@
 package com.ecapybara.carbonx.model.basic;
 
 import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvRecurse;
 import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
 import com.opencsv.bean.processor.PreAssignmentProcessor;
 
@@ -13,6 +12,5 @@ public class Emission {
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String name; // eg. "CO"
 
-  @CsvRecurse
   private Metric metric; // eg. 22.5
 }

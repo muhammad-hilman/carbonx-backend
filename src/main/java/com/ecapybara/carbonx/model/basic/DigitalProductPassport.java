@@ -30,17 +30,17 @@ public class DigitalProductPassport {
   private String key;
 
   @NonNull
-  @CsvBindByName
+  @CsvBindByName(column = "dpp.name")
   private String name; // e.g Model X
   
   @NonNull
-  @CsvBindByName
+  @CsvBindByName(column = "dpp.manufacturer")
   private String manufacturer; // e.g Tesla
 
-  @CsvBindByName
+  @CsvBindByName(column = "dpp.serialNumber")
   private String serialNumber;
 
-  @CsvBindByName
+  @CsvBindByName(column = "dpp.batchNumber")
   private String batchNumber;
 
   @Builder.Default

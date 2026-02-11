@@ -7,6 +7,7 @@ import com.arangodb.springframework.annotation.From;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.To;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.opencsv.bean.CsvBindByName;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class Input extends com.ecapybara.carbonx.model.basic.Edge {
   @NonNull
   @From
   @JsonAlias({"_from"})
+  @CsvBindByName(column = "_from")
   private Product product;
   
   @Setter(AccessLevel.NONE)
@@ -31,6 +33,7 @@ public class Input extends com.ecapybara.carbonx.model.basic.Edge {
   @NonNull
   @To
   @JsonAlias({"_to"})
+  @CsvBindByName(column = "_to")
   private Process process;
   
   @Setter(AccessLevel.NONE)

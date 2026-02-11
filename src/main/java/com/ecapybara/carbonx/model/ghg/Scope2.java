@@ -2,9 +2,8 @@ package com.ecapybara.carbonx.model.ghg;
 
 import java.util.Map;
 
-import org.apache.commons.collections4.MultiValuedMap;
-
-import com.opencsv.bean.CsvBindAndJoinByName;
+import com.ecapybara.carbonx.utils.csv.ComplexMapConverter;
+import com.opencsv.bean.CsvCustomBindByName;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,19 +13,19 @@ import lombok.NoArgsConstructor;
 @Data @NoArgsConstructor @AllArgsConstructor @Builder(toBuilder = true)
 public class Scope2 {
   @Builder.Default
-  @CsvBindAndJoinByName(column = "emissionInformation.scope2.purchasedElectricity.*", elementType = Map.class)
-  private MultiValuedMap<String, Map<String, Double>> purchasedElectricity = null;
+  @CsvCustomBindByName(column = "emissionInformation.scope2.purchasedElectricity", converter = ComplexMapConverter.class)
+  private Map<String, Map<String, Double>> purchasedElectricity = null;
 
   @Builder.Default
-  @CsvBindAndJoinByName(column = "emissionInformation.scope2.purchasedSteam.*", elementType = Map.class)
-  private MultiValuedMap<String, Map<String, Double>> purchasedSteam = null;
+  @CsvCustomBindByName(column = "emissionInformation.scope2.purchasedSteam", converter = ComplexMapConverter.class)
+  private Map<String, Map<String, Double>> purchasedSteam = null;
 
   @Builder.Default
-  @CsvBindAndJoinByName(column = "emissionInformation.scope2.purchasedHeating.*", elementType = Map.class)
-  private MultiValuedMap<String, Map<String, Double>> purchasedHeating = null;
+  @CsvCustomBindByName(column = "emissionInformation.scope2.purchasedHeating", converter = ComplexMapConverter.class)
+  private Map<String, Map<String, Double>> purchasedHeating = null;
 
   @Builder.Default
-  @CsvBindAndJoinByName(column = "emissionInformation.scope2.purchasedCooling.*", elementType = Map.class)
-  private MultiValuedMap<String, Map<String, Double>> purchasedCooling = null;
+  @CsvCustomBindByName(column = "emissionInformation.scope2.purchasedCooling", converter = ComplexMapConverter.class)
+  private Map<String, Map<String, Double>> purchasedCooling = null;
 }
 

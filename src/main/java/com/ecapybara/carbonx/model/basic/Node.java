@@ -21,6 +21,7 @@ import lombok.experimental.SuperBuilder;
 public class Node {
   @ArangoId // db document field: _id
   @JsonAlias({"_id"})
+  @CsvBindByName
   private String id;
 
   @Id // db document field: _key
@@ -40,6 +41,10 @@ public class Node {
 
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private Double quantityValue;
+
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
+  @CsvBindByName(column = "owner")
+  private String userId; // User who created/owns this document
 
   @Builder.Default
   @CsvRecurse

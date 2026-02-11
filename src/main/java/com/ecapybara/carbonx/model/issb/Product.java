@@ -23,10 +23,7 @@ public class Product extends Node {
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String productOrigin; // e.g supplier/user
 
-  // Additional fields for inventory management
-  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
-  private String userId; // User who owns this product
-  
+  // Additional fields for inventory management  
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String uploadedFile; // Filename of uploaded BOM file
 
