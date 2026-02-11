@@ -1,7 +1,5 @@
 package com.ecapybara.carbonx.utils.csv;
 
-import org.springframework.stereotype.Component;
-
 import com.ecapybara.carbonx.ApplicationContextHolder;
 import com.ecapybara.carbonx.model.issb.Process;
 import com.ecapybara.carbonx.repository.ProcessRepository;

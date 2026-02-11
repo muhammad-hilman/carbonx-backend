@@ -25,5 +25,7 @@ public interface UserRepository extends ArangoRepository<User, String> {
 
   List<User> findByActive(Sort sort, Boolean active);
 
+  List<User> findByEmailAndActive(Sort sort, String email, Boolean active);
+
   void removeById(String id);
 }

@@ -27,6 +27,6 @@ public class IdToProductConverter extends AbstractBeanField<Product, String> {
   @Override
   protected Product convert(String value) {
     ProductRepository repo = getProductRepository();
-    return productRepository.findById(value).orElse(null);
+    return repo.findById(value).orElse(null);
   }
 }

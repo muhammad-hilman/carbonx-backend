@@ -51,7 +51,7 @@ public class ProductController {
   final Sort sort = Sort.by(Direction.DESC, "id");
 
   @GetMapping
-  public List<Product> getProducts(@RequestParam(name = "name", required = false) String name,@RequestParam(name = "type", required = false) String type) {
+  public List<Product> getProducts(@RequestParam(name = "name", required = false) String name, @RequestParam(name = "type", required = false) String type) {
     if (name != null && !name.isEmpty() && type!=null && !type.isEmpty()) {
       return productRepository.findByNameAndType(sort, name, type);
     }
@@ -93,8 +93,8 @@ public class ProductController {
   }
 
   @GetMapping("/{id}")
-  public Mono<Product> getProduct(@PathVariable String id) {
-    return documentService.getDocument("products", id)
+  public Mono<Product> getProduct(@PathVariable String key) {
+    return documentService.getDocument("products", key)
             .bodyToMono(Product.class)
             .doOnNext(body -> log.info("API Response:\n{}", body));
   }
