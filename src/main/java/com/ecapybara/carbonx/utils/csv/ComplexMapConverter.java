@@ -14,17 +14,23 @@ public class ComplexMapConverter extends AbstractBeanField<Map<String, Map<Strin
         if (value == null || value.trim().isEmpty()) {
             return null;
         }
+        // System.out.println(String.format("Raw Input -> '%s'", value));
 
         String trimmed = value.trim();
         if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
             trimmed = trimmed.substring(1, trimmed.length() - 1); // Remove outer {}
+            // System.out.println(String.format("trimmed braces -> '%s'", trimmed));
+
         } else if (trimmed.startsWith("'{") && trimmed.endsWith("}'")) {
             trimmed = trimmed.substring(2, trimmed.length() - 2);
+            // System.out.println(String.format("trimmed braces and quotations -> '%s'", trimmed));
         }
 
         Map<String, Map<String, Double>> result = new HashMap<>();
+        // System.out.println(String.format("Before split -> '%s'", trimmed));
         String[] outerPairs = trimmed.contains(",") ? trimmed.split("(?<=})+[,]") : new String[]{trimmed}; // THIS SPECIFIC REGEX SPLITS THE STRING SECTIONS OF MAPS IDENTIFIED BY '}' and ','
-        
+        // System.out.println(String.format("After split -> '%s'", Arrays.toString(outerPairs)));
+
         for (String outerPair : outerPairs) {
             if (outerPair.trim().isEmpty()) continue;
             String[] outerKV = outerPair.trim().split("=", 2); // THIS LINE IS VERY IMPORTANT, ESPECIALLY THE NUMBER TO PREVENT FURTHER SPLITTING OF ADDITIONAL ':' CHARACTERS IN THE STRING 

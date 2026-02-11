@@ -23,7 +23,7 @@ public class Product extends Node {
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String productOrigin; // e.g supplier/user
 
-  // Additional fields for inventory management  
+  // Additional fields for inventory management
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String uploadedFile; // Filename of uploaded BOM file
 
@@ -33,4 +33,9 @@ public class Product extends Node {
   @Relations(edges = Input.class, lazy=true)
   private Collection<Process> usedIn;
   */
+
+  @Override
+  public String toString() {
+    return this.getId();
+  }
 }

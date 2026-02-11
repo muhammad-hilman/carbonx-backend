@@ -28,6 +28,6 @@ public class Process extends Node {
 
   @Override
   public String toString() {
-    return "Process [id= " + this.getId() + ", name= " + this.getName() + ", processType= " + this.getType() + "]";
+    return this.getId();
   }
 }

@@ -15,7 +15,7 @@ public class CsvColumnConfigurations {
 
   public CsvColumnConfigurations() {
     this.productColumns = Arrays.asList(
-            // CsvColumn.of("_id").withHeader("id"),
+            CsvColumn.of("id").withHeader("id"),
             CsvColumn.of("name").withHeader("name"),
             CsvColumn.of("type").withHeader("type"),
             CsvColumn.of("quantifiableUnit").withHeader("quantifiableUnit"),
@@ -57,7 +57,7 @@ public class CsvColumnConfigurations {
     );
 
     this.processColumns = Arrays.asList(
-            // CsvColumn.of("_id").withHeader("_id"),
+            CsvColumn.of("id").withHeader("id"),
             CsvColumn.of("name").withHeader("name"),
             CsvColumn.of("type").withHeader("type"),
             CsvColumn.of("quantifiableUnit").withHeader("quantifiableUnit"),
@@ -98,11 +98,20 @@ public class CsvColumnConfigurations {
     );
 
     this.inputColumns = Arrays.asList(
-            CsvColumn.of("_id").withHeader("id")            
+        CsvColumn.of("id").withHeader("id"),
+        CsvColumn.of("product").withHeader("from"),
+        CsvColumn.of("productName").withHeader("productName"),
+        CsvColumn.of("process").withHeader("to"),
+        CsvColumn.of("processName").withHeader("processName")    
+        
     );
 
     this.outputColumns = Arrays.asList(
-            CsvColumn.of("_id").withHeader("id")            
+        CsvColumn.of("id").withHeader("id"),
+        CsvColumn.of("process").withHeader("from"),
+        CsvColumn.of("processName").withHeader("processName"),
+        CsvColumn.of("product").withHeader("to"),
+        CsvColumn.of("productName").withHeader("productName")                              
     );
   }
 }

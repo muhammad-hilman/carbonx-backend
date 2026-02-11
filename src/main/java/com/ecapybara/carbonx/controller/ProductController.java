@@ -27,7 +27,7 @@ import com.ecapybara.carbonx.model.issb.Product;
 import com.ecapybara.carbonx.repository.ProductRepository;
 import com.ecapybara.carbonx.service.DocumentService;
 import com.ecapybara.carbonx.service.GraphService;
-import com.ecapybara.carbonx.service.ImportService;
+import com.ecapybara.carbonx.service.ImportExportService;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -38,7 +38,7 @@ import reactor.core.publisher.Mono;
 public class ProductController {
   
   @Autowired
-  private ImportService importService;
+  private ImportExportService importService;
   @Autowired
   private DocumentService documentService;
   @Autowired
