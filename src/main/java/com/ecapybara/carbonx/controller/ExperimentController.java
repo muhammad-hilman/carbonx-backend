@@ -38,7 +38,6 @@ public class ExperimentController {
   LCAService lcaService;
   @Autowired
   ArangoDocumentService documentService;
-
   @Autowired
   ProductController productController;
   @Autowired
