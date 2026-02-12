@@ -18,7 +18,8 @@ public class LCAService {
   @Autowired
   private ArangoQueryService queryService;
 
-  public <T extends Node> T calculateCarbonFootprint(T node, String graphName) {
+  // unfinished
+  public <T extends Node> T calculateRoughCarbonFootprint(T node, String graphName) {
     // 1. Get sum of leaf node values
     // String query = "FOR v, e, p IN 1..1000 INBOUND @startNode GRAPH @graphName OPTIONS { bfs: true, uniqueVertices: 'global', optimize: true } FILTER LENGTH(FOR neighbor, edge IN 1..1 INBOUND v GRAPH @graphName RETURN 1) == 0 COLLECT AGGREGATE total = SUM(v.quantityValue) RETURN v._id";
     String query = "FOR v, e, p IN 1..1000 INBOUND @startNode GRAPH @graphName \r\n" + //
@@ -70,5 +71,15 @@ public class LCAService {
     log.info("New DPP -> {}", node.getDPP());
 
     return node;
+  }
+
+  // ---- Unfinished
+  public <T extends Node> T calculateDetailedCarbonFootprint(T node, String graphName) {
+    return null;
+  }
+
+  // ---- Unfinished
+  public <T extends Node> T calculateEmissionInformation(T node, String graphName) {
+    return null;
   }
 }

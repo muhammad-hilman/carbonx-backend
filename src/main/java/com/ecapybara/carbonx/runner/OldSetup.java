@@ -38,8 +38,6 @@ public class OldSetup implements CommandLineRunner {
   private OutputRepository outputRepository;
   @Autowired
   private GraphService graphService;
-  @Autowired
-  private ImportExportService importService;
   
   @Override
   public void run(final String... args) throws Exception {

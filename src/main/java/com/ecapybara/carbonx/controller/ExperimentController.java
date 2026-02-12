@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ecapybara.carbonx.model.basic.Node;
 import com.ecapybara.carbonx.model.issb.Product;
 import com.ecapybara.carbonx.model.issb.Process;
 import com.ecapybara.carbonx.service.*;
@@ -86,7 +85,7 @@ public class ExperimentController {
         log.info("Raw document -> {}", rawDocument);
         Product product = objectMapper.convertValue(rawDocument, Product.class);
         log.info("Converted product -> {}", rawDocument);
-        product = lcaService.calculateCarbonFootprint(product, "default");
+        product = lcaService.calculateRoughCarbonFootprint(product, "default");
         productController.editProduct(product.getId(), product);
         return Mono.just(product.getDPP().getCarbonFootprint());
       case "processes":
@@ -94,7 +93,7 @@ public class ExperimentController {
                                           .map(rawMap -> objectMapper.convertValue(rawMap, Process.class))
                                           .block();
         log.info("Raw product DPP -> {}", process.getDPP());
-        process = lcaService.calculateCarbonFootprint(process, "default");
+        process = lcaService.calculateRoughCarbonFootprint(process, "default");
         processController.editProcess(process.getId(), process);
         return Mono.just(process.getDPP().getCarbonFootprint());
       default:
