@@ -40,19 +40,19 @@ public class InitialSetup implements CommandLineRunner {
     operations.dropDatabase();
 
     // Create and save products
-    importExportService.importCSV("products", "exportProducts.csv");
+    importExportService.importCSV("products", "testProducts.csv");
     log.info("-> {} PRODUCT entries created", productRepository.count());
 
     // Create and save processes
-    importExportService.importCSV("processes", "exportProcesses.csv");
+    importExportService.importCSV("processes", "testProcesses.csv");
     log.info("-> {} PROCESS entries created", processRepository.count());
 
     // Create and save input relationships between entities
-    importExportService.importCSV("inputs", "exportInputs.csv");
+    importExportService.importCSV("inputs", "testInputs.csv");
     log.info("-> {} INPUTS entries created", inputRepository.count());
 
     // Create and save input relationships between entities
-    importExportService.importCSV("outputs", "exportOutputs.csv");
+    importExportService.importCSV("outputs", "testOutputs.csv");
     log.info("-> {} OUTPUTS entries created", outputRepository.count());
 
     // Create graph

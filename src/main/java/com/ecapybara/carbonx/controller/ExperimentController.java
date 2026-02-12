@@ -1,5 +1,6 @@
 package com.ecapybara.carbonx.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,10 @@ import reactor.core.publisher.Mono;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
 
 
 @Slf4j
@@ -38,6 +43,8 @@ public class ExperimentController {
   LCAService lcaService;
   @Autowired
   ArangoDocumentService documentService;
+  @Autowired
+  ReportService reportService;
   @Autowired
   ProductController productController;
   @Autowired
@@ -99,4 +106,17 @@ public class ExperimentController {
         return Mono.error(new RuntimeException("Invalid target collection name!"));
     }
   }
+
+  @PostMapping("/report")
+  public Mono<?> generateReport() throws IOException {
+      Map<String,String> values = Map.of( "companyName", "carbonx",
+                                          "scope 1", "45.6",
+                                          "scope 2", "47.5",
+                                          "scope 3 category 1", "22.7",
+                                          "scope 3 category 2", "5");
+      
+      reportService.getReport(values);
+      
+      return Mono.just("i dont know");
+  }  
 }
