@@ -21,7 +21,6 @@ import com.ecapybara.carbonx.model.issb.Process;
 import com.ecapybara.carbonx.model.issb.Product;
 import com.ecapybara.carbonx.repository.*;
 import com.ecapybara.carbonx.service.GraphService;
-import com.ecapybara.carbonx.service.ImportExportService;
 
 @Slf4j
 @ComponentScan("com.ecapybara.carbonx")
