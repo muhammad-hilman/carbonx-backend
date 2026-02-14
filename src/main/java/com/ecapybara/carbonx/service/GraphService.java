@@ -47,4 +47,32 @@ public class GraphService {
             .doOnSuccess(removed -> log.info("Vertex deleted: {}", removed));
   }
 
+  public String getGraphMetadata(String name) {    
+    return webClient
+            .get()
+            .uri("/gharial/{name}",name)
+            .retrieve()
+            .bodyToMono(String.class)
+            .block();
+    }
+
+    public String getEdgeCollections(String name) {    
+    return webClient
+        .get()
+        .uri("/gharial/{name}/edge",name)
+        .retrieve()
+        .bodyToMono(String.class)
+        .block();
+    }
+    public String getNodeCollections(String name) {    
+    return webClient
+        .get()
+        .uri("/gharial/{name}/vertex",name)
+        .retrieve()
+        .bodyToMono(String.class)
+        .block();
+    }
+
+
+
 }

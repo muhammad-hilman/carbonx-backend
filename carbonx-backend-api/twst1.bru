@@ -1,0 +1,30 @@
+meta {
+  name: twst1
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:8529/_db/testCompany/_api/cursor
+  body: json
+  auth: basic
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:basic {
+  username: root
+  password: password
+}
+
+body:json {
+  {
+    "query": "FOR v IN products RETURN v"
+  }
+}
+
+settings {
+  encodeUrl: false
+}
