@@ -213,30 +213,7 @@ public class ExperimentalService {
     }
   }
 
-    //  send AQL query
-    public Map<String, Object> getGraph() {
-
-        String query = "LET nodes = (FOR v IN products RETURN { id: v._id, label: v.name, type: 'products' }) "
-                + "LET processNodes = (FOR v IN processes RETURN { id: v._id, label: v.name, type: 'process' }) "
-                + "LET inputLinks = (FOR e IN inputs RETURN { source: e._from, target: e._to, type: 'input' }) "
-                + "LET outputLinks = (FOR e IN outputs RETURN { source: e._from, target: e._to, type: 'output' }) "
-                + "RETURN { nodes: UNION(nodes, processNodes), links: UNION(inputLinks, outputLinks) }";
-        Map<String, String> body = Map.of("query", query);
-
-        Map response = webClient
-                .post()
-                .uri("/cursor")
-                .bodyValue(body)
-                .retrieve()
-                .bodyToMono(Map.class) // raw Map
-                .block();
-
-        // Extract "result" array
-        List<Map<String, Object>> result = (List<Map<String, Object>>) response.get("result");
-
-        // Return the first object or null if empty
-        return result.isEmpty() ? null : result.get(0);
-    }
+    
 
 
 

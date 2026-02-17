@@ -1,0 +1,24 @@
+meta {
+  name: Query
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{host}}/api/graph/query
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "database": "testCompany",
+    "query": "LET nodes = (FOR v IN products RETURN { id: v._id, label: v.name, type: 'products' }) LET processNodes = (FOR v IN processes RETURN { id: v._id, label: v.name, type: 'process' }) LET inputLinks = (FOR e IN inputs RETURN { source: e._from, target: e._to, type: 'input' }) LET outputLinks = (FOR e IN outputs RETURN { source: e._from, target: e._to, type: 'output' }) RETURN { nodes: UNION(nodes, processNodes), links: UNION(inputLinks, outputLinks) }"
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

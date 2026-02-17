@@ -62,9 +62,5 @@ public class ExperimentController {
     return Mono.just("Something");
   }
   
-  @PostMapping("/graph")
-    public Map<String, Object> getGraph(){
-    // String query = request.get("query");
-    return experimentalService.getGraph();
-    }
+
 }
