@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{host}}/api/graph/edges
+  url: {{host}}/api/graph/edges?name=default
   body: none
   auth: inherit
+}
+
+params:query {
+  name: default
 }
 
 settings {
