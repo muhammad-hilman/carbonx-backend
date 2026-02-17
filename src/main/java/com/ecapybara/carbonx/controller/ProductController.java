@@ -1,6 +1,7 @@
 package com.ecapybara.carbonx.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.slf4j.Logger;
@@ -25,9 +26,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.ecapybara.carbonx.config.AppLogger;
 import com.ecapybara.carbonx.model.issb.Product;
 import com.ecapybara.carbonx.repository.ProductRepository;
-import com.ecapybara.carbonx.service.DocumentService;
+import com.ecapybara.carbonx.service.arango.ArangoDocumentService;
 import com.ecapybara.carbonx.service.GraphService;
-import com.ecapybara.carbonx.service.ImportService;
+import com.ecapybara.carbonx.service.ImportExportService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -38,20 +40,22 @@ import reactor.core.publisher.Mono;
 public class ProductController {
   
   @Autowired
-  private ImportService importService;
+  private ImportExportService importService;
   @Autowired
-  private DocumentService documentService;
+  private ArangoDocumentService documentService;
   @Autowired
   private GraphService graphService;
   @Autowired
   private ProductRepository productRepository;
+  @Autowired
+  private ObjectMapper objectMapper;
   
 
   private static final Logger log = LoggerFactory.getLogger(AppLogger.class);
   final Sort sort = Sort.by(Direction.DESC, "id");
 
   @GetMapping
-  public List<Product> getProducts(@RequestParam(name = "name", required = false) String name,@RequestParam(name = "type", required = false) String type) {
+  public List<Product> getProducts(@RequestParam(name = "name", required = false) String name, @RequestParam(name = "type", required = false) String type) {
     if (name != null && !name.isEmpty() && type!=null && !type.isEmpty()) {
       return productRepository.findByNameAndType(sort, name, type);
     }
@@ -92,11 +96,12 @@ public class ProductController {
     return revisedProducts;
   }
 
-  @GetMapping("/{id}")
-  public Mono<Product> getProduct(@PathVariable String id) {
-    return documentService.getDocument("products", id)
-            .bodyToMono(Product.class)
-            .doOnNext(body -> log.info("API Response:\n{}", body));
+  @GetMapping("/{key}")
+  public Mono<Product> getProduct(@PathVariable String key) {
+    Map<String,Object> rawDocument = documentService.getDocument("products", key, null, null)
+                                                    .block();
+    Product product = objectMapper.convertValue(rawDocument, Product.class);
+    return Mono.just(product);
   }
 
   @PutMapping("/{id}")

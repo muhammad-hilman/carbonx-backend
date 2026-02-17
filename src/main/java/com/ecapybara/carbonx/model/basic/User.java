@@ -4,6 +4,7 @@ import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -12,16 +13,16 @@ import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
-@Data @Builder(toBuilder = true)
+@Data @AllArgsConstructor @Builder(toBuilder = true)
 @Document("users")
-@PersistentIndex(fields = {"email", "username", "firstName", "role"})
+@PersistentIndex(fields = {"id", "email", "username", "firstName", "role"})
 public class User {
 
-    @Id // db document field: _key
+    @ArangoId // db document field: _id
     private String id;
 
-    @ArangoId // db document field: _id
-    private String arangoId;
+    @Id // db document field: _key
+    private String key;    
 
     @NonNull
     private String username;
@@ -37,7 +38,8 @@ public class User {
 
     private String lastName;
     
-    @NonNull @Builder.Default
+    @Builder.Default
+    @NonNull
     private String role = "user"; // e.g., "admin", "user", "supplier"
 
     @NonNull
