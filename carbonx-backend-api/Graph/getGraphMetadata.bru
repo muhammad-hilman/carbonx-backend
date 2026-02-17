@@ -1,0 +1,20 @@
+meta {
+  name: getGraphMetadata
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/api/graph?name=default
+  body: none
+  auth: inherit
+}
+
+params:query {
+  name: default
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

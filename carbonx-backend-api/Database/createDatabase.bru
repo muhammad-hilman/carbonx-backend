@@ -1,0 +1,15 @@
+meta {
+  name: createDatabase
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{host}}/api/database
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
