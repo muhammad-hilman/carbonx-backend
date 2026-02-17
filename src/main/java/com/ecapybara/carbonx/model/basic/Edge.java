@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 public class Edge {
   @ArangoId // db document field: _id
   @JsonAlias({"_id"})
-  @CsvBindByName(column = "_id")
+  @CsvBindByName
   private String id;
 
   @Id // db document field: _key
