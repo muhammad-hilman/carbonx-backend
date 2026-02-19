@@ -7,8 +7,10 @@ import org.springframework.data.annotation.Id;
 import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
+import com.ecapybara.carbonx.utils.csv.SimpleMapConverter;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
 import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
 import com.opencsv.bean.processor.PreAssignmentProcessor;
 
@@ -40,6 +42,6 @@ public class GlobalWarmingPotential {
   private String chemicalGroup;
 
   @NonNull
-  @CsvBindByName
+  @CsvCustomBindByName(converter = SimpleMapConverter.class)
   private Map<String,Double> values; // e.g {AR5:245.55, AR6:177.6}
 }

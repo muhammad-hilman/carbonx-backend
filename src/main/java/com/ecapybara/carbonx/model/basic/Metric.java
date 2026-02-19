@@ -7,8 +7,10 @@ import org.springframework.data.annotation.Id;
 import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
+import com.ecapybara.carbonx.utils.csv.SimpleMapConverter;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
 import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
 import com.opencsv.bean.processor.PreAssignmentProcessor;
 
@@ -24,6 +26,7 @@ import lombok.NonNull;
 public class Metric {
   @ArangoId // db document field: _id
   @JsonAlias({"_id"})
+  @CsvBindByName
   private String id;
 
   @Id // db document field: _key
@@ -37,6 +40,6 @@ public class Metric {
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String description;
   
-  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
+  @CsvCustomBindByName(converter = SimpleMapConverter.class) @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private Map<String,Double> value; // {"unit": value}
 }

@@ -31,6 +31,13 @@ public class TestSetup implements CommandLineRunner {
   @Autowired
   private OutputRepository outputRepository;
   @Autowired
+  private ImpactCategoryRepository impactCategoryRepository;
+  @Autowired
+  private GWPRepository GWPRepository;
+  @Autowired
+  private MetricRepository metricRepository;
+
+  @Autowired
   private GraphService graphService;
   @Autowired
   private ImportExportService importExportService;
@@ -60,11 +67,29 @@ public class TestSetup implements CommandLineRunner {
     importExportService.importCSV(filepath, "inputs");
     log.info("-> {} INPUTS entries created", inputRepository.count());
 
-    // Create and save input relationships between entities
+    // Create and save outputs relationships between entities
     filename = "testOutputs.csv";
     filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
     importExportService.importCSV(filepath, "outputs");
     log.info("-> {} OUTPUTS entries created", outputRepository.count());
+
+    // Create and save impact categories
+    filename = "testImpactCategories.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
+    importExportService.importCSV(filepath, "impactCategories");
+    log.info("-> {} IMPACT CATEGORY entries created", impactCategoryRepository.count());
+
+    // Create and save GWPs
+    filename = "testGWPs.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
+    importExportService.importCSV(filepath, "gwp");
+    log.info("-> {} GWP entries created", GWPRepository.count());
+
+    // Create and save metrics
+    filename = "testMetrics.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
+    importExportService.importCSV(filepath, "metrics");
+    log.info("-> {} METRIC entries created", metricRepository.count());
 
     // Create graph
     EdgeDefinition inputs = new EdgeDefinition("inputs", List.of("products"), List.of("processes"));
