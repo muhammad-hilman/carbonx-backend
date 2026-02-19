@@ -1,6 +1,4 @@
-package com.ecapybara.carbonx.model.basic;
-
-import java.util.Map;
+package com.ecapybara.carbonx.model.lca;
 
 import org.springframework.data.annotation.Id;
 
@@ -19,24 +17,42 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Data @NoArgsConstructor @AllArgsConstructor @Builder(toBuilder = true)
-@Document("metrics")
-@PersistentIndex(fields = {"id", "key","name"})
-public class Metric {
+@Document("emissionfactors")
+@PersistentIndex(fields = {"id", "key","name","unit"})
+public class EmissionFactor {
   @ArangoId // db document field: _id
   @JsonAlias({"_id"})
+  @CsvBindByName
   private String id;
 
   @Id // db document field: _key
   @JsonAlias({"_key"})
   private String key;
 
-  @NonNull
-  @CsvBindByName
-  private String name;
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
+  private String sector;
 
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
-  private String description;
-  
+  private String industry;
+
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
-  private Map<String,Double> value; // {"unit": value}
+  private String category;
+
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
+  private String subCategory;
+
+  @NonNull
+  @CsvBindByName
+  private String name; // eg. Incineration of food waste
+
+  @NonNull
+  @CsvBindByName
+  private Double value;
+
+  @NonNull
+  @CsvBindByName
+  private String unit; // eg. kg
+
+
+
 }

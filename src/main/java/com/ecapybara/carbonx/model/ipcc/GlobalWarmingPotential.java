@@ -1,4 +1,4 @@
-package com.ecapybara.carbonx.model.basic;
+package com.ecapybara.carbonx.model.ipcc;
 
 import java.util.Map;
 
@@ -19,11 +19,13 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Data @NoArgsConstructor @AllArgsConstructor @Builder(toBuilder = true)
-@Document("metrics")
-@PersistentIndex(fields = {"id", "key","name"})
-public class Metric {
+@Document("gwp")
+@PersistentIndex(fields = {"id", "key","gasName","chemicalGroup"})
+public class GlobalWarmingPotential {
+
   @ArangoId // db document field: _id
   @JsonAlias({"_id"})
+  @CsvBindByName
   private String id;
 
   @Id // db document field: _key
@@ -32,11 +34,12 @@ public class Metric {
 
   @NonNull
   @CsvBindByName
-  private String name;
+  private String gasName;
 
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
-  private String description;
-  
-  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
-  private Map<String,Double> value; // {"unit": value}
+  private String chemicalGroup;
+
+  @NonNull
+  @CsvBindByName
+  private Map<String,Double> values; // e.g {AR5:245.55, AR6:177.6}
 }
