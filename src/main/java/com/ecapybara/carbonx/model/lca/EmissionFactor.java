@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Data @NoArgsConstructor @AllArgsConstructor @Builder(toBuilder = true)
-@Document("emissionfactors")
+@Document("emissionFactors")
 @PersistentIndex(fields = {"id", "key","name","unit"})
 public class EmissionFactor {
   @ArangoId // db document field: _id

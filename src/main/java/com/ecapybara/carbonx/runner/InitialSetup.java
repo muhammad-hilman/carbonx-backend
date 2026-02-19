@@ -2,6 +2,8 @@ package com.ecapybara.carbonx.runner;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,19 +42,28 @@ public class InitialSetup implements CommandLineRunner {
     operations.dropDatabase();
 
     // Create and save products
-    importExportService.importCSV("products", "testProducts.csv");
+    String dir = System.getProperty("user.dir");
+    String filename = "masterProducts.csv";
+    Path filepath = Paths.get(dir,"src", "main", "resources", "data", "default").resolve(filename);
+    importExportService.importCSV(filepath, "products");
     log.info("-> {} PRODUCT entries created", productRepository.count());
 
     // Create and save processes
-    importExportService.importCSV("processes", "testProcesses.csv");
+    filename = "masterProcesses.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "default").resolve(filename);
+    importExportService.importCSV(filepath, "processes");
     log.info("-> {} PROCESS entries created", processRepository.count());
 
     // Create and save input relationships between entities
-    importExportService.importCSV("inputs", "testInputs.csv");
+    filename = "masterInputs.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "default").resolve(filename);
+    importExportService.importCSV(filepath, "inputs");
     log.info("-> {} INPUTS entries created", inputRepository.count());
 
     // Create and save input relationships between entities
-    importExportService.importCSV("outputs", "testOutputs.csv");
+    filename = "masterOutputs.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "default").resolve(filename);
+    importExportService.importCSV(filepath, "outputs");
     log.info("-> {} OUTPUTS entries created", outputRepository.count());
 
     // Create graph

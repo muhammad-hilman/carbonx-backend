@@ -1,5 +1,7 @@
 package com.ecapybara.carbonx.controller;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -138,10 +140,13 @@ public class ProductController {
   // Experimental endpoint to call for backend import function for products
   @PostMapping("/import")
   public Mono<?> testImport() {
+    String dir = System.getProperty("user.dir");
+    Path filepath = Paths.get(dir,"temp");
+    
     List<String> files = List.of("templates.csv");
     
     return Flux.fromIterable(files)
-        .flatMap(filename -> importService.importCSV("products", filename))
+        .flatMap(filename -> importService.importCSV(filepath.resolve(filename), "products"))
         .then(Mono.just("Successfully imported JSON files!"))
         .onErrorReturn("Import failed - check logs");
   }

@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Data @NoArgsConstructor @AllArgsConstructor @Builder(toBuilder = true)
-@Document("gwp")
+@Document("impactCategories")
 @PersistentIndex(fields = {"id", "key","name","characterisationFactor","standardUnit"})
 public class ImpactCategory {
   

@@ -14,8 +14,8 @@ public class CarbonXApplication {
 	public static void main(String[] args) {
 		Class<?>[] runner = new Class<?>[]{
 			// OldSetup.class,
-			// TestSetup.class,
-			InitialSetup.class,
+			TestSetup.class,
+			// InitialSetup.class,
 			CarbonXApplication.class
 		};
 		// System.exit(SpringApplication.exit(SpringApplication.run(runner, args)));

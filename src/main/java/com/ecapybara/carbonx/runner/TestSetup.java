@@ -1,14 +1,20 @@
 package com.ecapybara.carbonx.runner;
 
 import lombok.extern.slf4j.Slf4j;
-import reactor.core.publisher.Mono;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ComponentScan;
 
 import com.arangodb.springframework.core.ArangoOperations;
-import com.ecapybara.carbonx.service.ExperimentalService;
+import com.ecapybara.carbonx.model.basic.EdgeDefinition;
+import com.ecapybara.carbonx.model.basic.Graph;
+import com.ecapybara.carbonx.repository.*;
+import com.ecapybara.carbonx.service.GraphService;
 import com.ecapybara.carbonx.service.ImportExportService;
 
 @Slf4j
@@ -17,22 +23,65 @@ public class TestSetup implements CommandLineRunner {
   @Autowired
   private ArangoOperations operations;
   @Autowired
-  private ExperimentalService experimentalService;
+  private ProductRepository productRepository;
   @Autowired
-  private ImportExportService importService;
+  private ProcessRepository processRepository;
+  @Autowired
+  private InputRepository inputRepository;
+  @Autowired
+  private OutputRepository outputRepository;
+  @Autowired
+  private GraphService graphService;
+  @Autowired
+  private ImportExportService importExportService;
   
   @Override
   public void run(final String... args) throws Exception {
-    System.out.println("-------------- # SETUP BEGIN # --------------");
+    System.out.println("------------- # SETUP BEGIN # -------------");
     // first drop the database so that we can run this multiple times with the same dataset
     operations.dropDatabase();
 
-    // Import complexProducts.csv
-    Mono<?> outcome = importService.importCSV("products", "complexProducts.csv");
+    // Create and save products
+    String dir = System.getProperty("user.dir");
+    String filename = "testProducts.csv";
+    Path filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
+    importExportService.importCSV(filepath, "products");
+    log.info("-> {} PRODUCT entries created", productRepository.count());
 
-    // Display outcome
-    log.info("Import experiment outcome -> {}", outcome);
+    // Create and save processes
+    filename = "testProcesses.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
+    importExportService.importCSV(filepath, "processes");
+    log.info("-> {} PROCESS entries created", processRepository.count());
 
+    // Create and save input relationships between entities
+    filename = "testInputs.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
+    importExportService.importCSV(filepath, "inputs");
+    log.info("-> {} INPUTS entries created", inputRepository.count());
+
+    // Create and save input relationships between entities
+    filename = "testOutputs.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
+    importExportService.importCSV(filepath, "outputs");
+    log.info("-> {} OUTPUTS entries created", outputRepository.count());
+
+    // Create graph
+    EdgeDefinition inputs = new EdgeDefinition("inputs", List.of("products"), List.of("processes"));
+    EdgeDefinition outputs = new EdgeDefinition("outputs", List.of("processes"), List.of("products"));
+    Graph defaultGraph = new Graph("default", List.of(inputs, outputs));
+    graphService.createGraph(defaultGraph)
+        .doOnSuccess(graph -> log.info("Graph created: {}", graph))
+        .doOnError(error -> log.error("Failed to create graph", error))
+        .block();  // Wait for completion (OK in CommandLineRunner); // IMPORTANT NOTE: I don't know why it works, but the .subscribe() is crucial to make the graph
+
+    // Export files
+    // importExportService.exportCSV("products", "exportProducts.csv").doOnError(error -> log.error("Failed to export PRODUCTS -> ", error));
+    // importExportService.exportCSV("processes", "exportProcesses.csv").doOnError(error -> log.error("Failed to export PROCESSES -> ", error));
+    // log.info("-> Successfully exported PROCESSES into complexProcesses.csv");
+    // importExportService.exportCSV("inputs", "exportInputs.csv").doOnError(error -> log.error("Failed to export INPUTS -> ", error));
+    // importExportService.exportCSV("outputs", "exportOutputs.csv").doOnError(error -> log.error("Failed to export OUTPUTS -> ", error));
+    
     System.out.println("------------- # SETUP COMPLETED # -------------");
   }
 }
