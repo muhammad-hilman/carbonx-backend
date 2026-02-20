@@ -1,13 +1,17 @@
 meta {
   name: getGraphVertices
   type: http
-  seq: 5
+  seq: 4
 }
 
 get {
-  url: {{host}}/api/graph/vertices
+  url: {{host}}/api/graph/vertices?name=default
   body: none
   auth: inherit
+}
+
+params:query {
+  name: default
 }
 
 settings {

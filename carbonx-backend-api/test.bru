@@ -1,0 +1,21 @@
+meta {
+  name: test
+  type: http
+  seq: 10
+}
+
+get {
+  url: http://localhost:8529/_admin/server/role
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: root
+  password: test
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}
