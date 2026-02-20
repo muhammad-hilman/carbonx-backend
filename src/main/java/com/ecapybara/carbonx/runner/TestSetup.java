@@ -5,17 +5,20 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ComponentScan;
 
+import com.arangodb.ArangoDatabase;
 import com.arangodb.springframework.core.ArangoOperations;
 import com.ecapybara.carbonx.model.basic.EdgeDefinition;
 import com.ecapybara.carbonx.model.basic.Graph;
 import com.ecapybara.carbonx.repository.*;
 import com.ecapybara.carbonx.service.GraphService;
 import com.ecapybara.carbonx.service.ImportExportService;
+import com.ecapybara.carbonx.service.arango.ArangoDatabaseService;
 
 @Slf4j
 @ComponentScan("com.ecapybara.carbonx")
@@ -38,6 +41,8 @@ public class TestSetup implements CommandLineRunner {
   private MetricRepository metricRepository;
 
   @Autowired
+  private ArangoDatabaseService databaseService;
+  @Autowired
   private GraphService graphService;
   @Autowired
   private ImportExportService importExportService;
@@ -45,6 +50,15 @@ public class TestSetup implements CommandLineRunner {
   @Override
   public void run(final String... args) throws Exception {
     System.out.println("------------- # SETUP BEGIN # -------------");
+    // Check for appropriate databases and create if not present
+    List<String> databases = (List<String>) databaseService.listDatabases().block().get("result");
+    if (!databases.contains("default")) { databaseService.createDatabase("default", null, null, null, null); }
+    if (!databases.contains("testCompany")) { databaseService.createDatabase("testCompany", null, null, null, null); }
+    
+    // For each database, nuke the existing dataset
+    
+    // Initialise new data
+
     // first drop the database so that we can run this multiple times with the same dataset
     operations.dropDatabase();
 
