@@ -109,13 +109,20 @@ public class ProductController {
     return revisedProducts;
   }
 
-  @GetMapping("/{key}")
-  public Mono<Product> getProduct(@PathVariable String key) {
-    Map<String,Object> rawDocument = documentService.getDocument("products", key, null, null)
-                                                    .block();
-    Product product = objectMapper.convertValue(rawDocument, Product.class);
-    return Mono.just(product);
-  }
+//   @GetMapping("/{key}")
+//   public Mono<Product> getProduct(@PathVariable String key) {
+//     Map<String,Object> rawDocument = documentService.getDocument("products", key, null, null)
+//                                                     .block();
+//     Product product = objectMapper.convertValue(rawDocument, Product.class);
+//     return Mono.just(product);
+//   }
+
+  @GetMapping("/{id}")
+  public String getProduct(@PathVariable String id,@RequestParam String fieldName) {
+        String value = productRepository.findFieldByProductId(id, fieldName);
+        return value != null ? value : "Field or Product not found";
+    }
+
 
   @PutMapping("/{id}")
   public Product editProduct(@PathVariable String id, @RequestBody Product revisedProduct) {
