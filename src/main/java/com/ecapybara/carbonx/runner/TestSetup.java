@@ -30,12 +30,12 @@ public class TestSetup implements CommandLineRunner {
   private InputRepository inputRepository;
   @Autowired
   private OutputRepository outputRepository;
-  @Autowired
-  private ImpactCategoryRepository impactCategoryRepository;
-  @Autowired
-  private GWPRepository GWPRepository;
-  @Autowired
-  private MetricRepository metricRepository;
+  // @Autowired
+  // private ImpactCategoryRepository impactCategoryRepository;
+  // @Autowired
+  // private GWPRepository GWPRepository;
+  // @Autowired
+  // private MetricRepository metricRepository;
 
   @Autowired
   private GraphService graphService;
@@ -73,6 +73,7 @@ public class TestSetup implements CommandLineRunner {
     importExportService.importCSV(filepath, "outputs");
     log.info("-> {} OUTPUTS entries created", outputRepository.count());
 
+    /*
     // Create and save impact categories
     filename = "testImpactCategories.csv";
     filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
@@ -90,6 +91,7 @@ public class TestSetup implements CommandLineRunner {
     filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
     importExportService.importCSV(filepath, "metrics");
     log.info("-> {} METRIC entries created", metricRepository.count());
+     */
 
     // Create graph
     EdgeDefinition inputs = new EdgeDefinition("inputs", List.of("products"), List.of("processes"));

@@ -1,0 +1,21 @@
+meta {
+  name: getEntireGraph
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{host}}/api/graph/entiregraph?database=testCompany&graphname=default
+  body: none
+  auth: inherit
+}
+
+params:query {
+  database: testCompany
+  graphname: default
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
