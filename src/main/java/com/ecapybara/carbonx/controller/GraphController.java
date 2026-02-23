@@ -113,8 +113,6 @@ public class GraphController {
     }
 
 
-
-
     @GetMapping ("/productgraph")
         public Object getProductGraph(@RequestParam String database, @RequestParam String productid) {
         //currently hardcoded to use products,processes,inputs and outputs, can be improved later

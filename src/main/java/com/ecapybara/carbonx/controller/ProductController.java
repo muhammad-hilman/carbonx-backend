@@ -2,6 +2,7 @@ package com.ecapybara.carbonx.controller;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
@@ -56,21 +58,30 @@ public class ProductController {
   private static final Logger log = LoggerFactory.getLogger(AppLogger.class);
   final Sort sort = Sort.by(Direction.DESC, "id");
 
-  @GetMapping
-  public List<Product> getProducts(@RequestParam(name = "name", required = false) String name, @RequestParam(name = "type", required = false) String type) {
-    if (name != null && !name.isEmpty() && type!=null && !type.isEmpty()) {
-      return productRepository.findByNameAndType(sort, name, type);
+//   @GetMapping
+//   public List<Product> getProducts(@RequestParam(name = "name", required = false) String name, @RequestParam(name = "type", required = false) String type) {
+//     if (name != null && !name.isEmpty() && type!=null && !type.isEmpty()) {
+//       return productRepository.findByNameAndType(sort, name, type);
+//     }
+//     else if (name != null && !name.isEmpty()) {
+//       return productRepository.findByName(sort, name);
+//     }
+//     else if (type != null && !type.isEmpty()) {
+//       return productRepository.findByType(sort, type);
+//     }
+//     else {
+//       return IterableUtils.toList(productRepository.findAll());
+//     }
+//   }
+
+    @GetMapping
+    public Iterable<Product> getProducts(Product criteria) {
+    Example<Product> example = Example.of(criteria);
+    Iterable<Product> iterable = productRepository.findAll(example);
+    List<Product> result = new ArrayList<>();
+    iterable.forEach(result::add);
+    return result;
     }
-    else if (name != null && !name.isEmpty()) {
-      return productRepository.findByName(sort, name);
-    }
-    else if (type != null && !type.isEmpty()) {
-      return productRepository.findByType(sort, type);
-    }
-    else {
-      return IterableUtils.toList(productRepository.findAll());
-    }
-  }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(value = HttpStatus.CREATED)
