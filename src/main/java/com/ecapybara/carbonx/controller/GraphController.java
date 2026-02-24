@@ -1,9 +1,12 @@
 package com.ecapybara.carbonx.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,11 +29,11 @@ public class GraphController {
         return graphService.getGraphMetadata(name);
     }
     @GetMapping("/edges")
-    public String getEdgeCollections(@RequestParam String name) {
-        return graphService.getEdgeCollections(name);
+    public List<String> getEdgeCollections(@RequestParam String name) {
+        return (graphService.getEdgeCollections(name));
     }
     @GetMapping("/vertices")
-    public String getNodeCollections(@RequestParam String name) {
+    public List<String> getNodeCollections(@RequestParam String name) {
         return graphService.getNodeCollections(name);
     }
 
@@ -48,14 +51,67 @@ public class GraphController {
         return response.get("result");
     }
 
-    // @GetMapping ("/getentiregraph")
-    // public Object getGraphbyName(@RequestParam String database, @RequestParam String graphname) {
-    
-    
-    //     Map<String, Object> response = graphService.executeQuery(database, query);
 
-    //     return response.get("result");
-    // }
+   @GetMapping("/entiregraph")
+    public Object getEntireGraph(@RequestParam String database, @RequestParam String graphname){
+    List<String> vertexCollections = graphService.getNodeCollections(graphname);
+    List<String> edgeCollections = graphService.getEdgeCollections(graphname);
+    StringBuilder query = new StringBuilder();
+
+    // ------------------ NODES ------------------
+    query.append("LET nodes = UNIQUE(FLATTEN([");
+
+    for (int i = 0; i < vertexCollections.size(); i++) {
+        String col = vertexCollections.get(i);
+
+        query.append("(")
+             .append("FOR v IN ").append(col).append(" ")
+             .append("RETURN { ")
+             .append("id: v._id, ")
+             .append("name: HAS(v, \"name\") ? v.name : v._key, ")
+             .append("type: \"").append(col).append("\" ")
+             .append("}")
+             .append(")");
+
+        if (i < vertexCollections.size() - 1) {
+            query.append(",");
+        }
+    }
+
+    query.append("])) ");
+
+    // ------------------ LINKS ------------------
+    query.append("LET links = UNIQUE(FLATTEN([");
+
+    for (int i = 0; i < edgeCollections.size(); i++) {
+        String col = edgeCollections.get(i);
+
+        query.append("(")
+             .append("FOR e IN ").append(col).append(" ")
+             .append("RETURN { ")
+             .append("source: e._from, ")
+             .append("target: e._to, ")
+             .append("type: \"").append(col).append("\" ")
+             .append("}")
+             .append(")");
+
+        if (i < edgeCollections.size() - 1) {
+            query.append(",");
+        }
+    }
+
+    query.append("])) ");
+
+    query.append("RETURN { nodes: nodes, links: links }");
+
+    System.out.println(query.toString());  // DEBUG
+
+    Map<String, Object> response =
+        graphService.executeQuery(database, query.toString());
+
+    return response.get("result");
+    }
+
 
     @GetMapping ("/productgraph")
         public Object getProductGraph(@RequestParam String database, @RequestParam String productid) {

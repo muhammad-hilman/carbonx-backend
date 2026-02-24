@@ -7,6 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -57,22 +58,26 @@ public class GraphService {
             .block();
     }
 
-    public String getEdgeCollections(String name) {    
-    return webClient
-        .get()
-        .uri("/gharial/{name}/edge",name)
-        .retrieve()
-        .bodyToMono(String.class)
-        .block();
+    public List<String> getEdgeCollections(String name) {    
+        Map<String, Object> response = webClient
+            .get()
+            .uri("/gharial/{name}/edge",name)
+            .retrieve()
+            .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+            .block();
+        return (List<String>) response.get("collections");
+        }
+
+    public List<String> getNodeCollections(String name) {   
+        Map<String, Object> response = webClient
+            .get()
+            .uri("/gharial/{name}/vertex",name)
+            .retrieve()
+            .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+            .block();
+        return (List<String>) response.get("collections");
     }
-    public String getNodeCollections(String name) {    
-    return webClient
-        .get()
-        .uri("/gharial/{name}/vertex",name)
-        .retrieve()
-        .bodyToMono(String.class)
-        .block();
-    }
+    
 
     //  send AQL query (Hardcoded version)
     // public Map<String, Object> getGraph() {
