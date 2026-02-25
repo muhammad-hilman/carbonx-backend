@@ -17,12 +17,10 @@ auth:basic {
 
 body:json {
   {
-    "query" : "FOR v IN 1..100 INBOUND @startNode GRAPH @graphName FILTER v._class == @vertexClass COLLECT AGGREGATE s1 = SUM(v.DPP.carbonFootprint.scope1.kgCO2e), s2 = SUM(v.DPP.carbonFootprint.scope2.kgCO2e), s3 = SUM(v.DPP.carbonFootprint.scope3.kgCO2e) RETURN {s1,s2,s3}",
+    "query" : "FOR v IN @@vertexCollections FILTER LENGTH( FOR e IN 1..1 INBOUND v GRAPH default RETURN 1 ) > 0 AND LENGTH( FOR e IN 1..1 OUTBOUND v GRAPH default RETURN 1 ) > 0 RETURN v._id",
     "bindVars": 
     {
-      "startNode": "products/1",
-      "graphName": "default",
-      "vertexClass": "com.ecapybara.carbonx.model.issb.Process"
+      "@vertexCollections": "processes"
     },
     "count" : true,
     "batchSize" : 10

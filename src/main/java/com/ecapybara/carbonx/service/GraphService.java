@@ -1,5 +1,7 @@
 package com.ecapybara.carbonx.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,14 +14,18 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.arangodb.springframework.repository.query.ArangoQueryMethod;
 import com.ecapybara.carbonx.config.AppLogger;
 import com.ecapybara.carbonx.model.basic.Graph;
+import com.ecapybara.carbonx.service.arango.ArangoQueryService;
 
 import reactor.core.publisher.Mono;
 
 @Service
 public class GraphService {
-
+  
+  @Autowired
+  private ArangoQueryService queryService;
   @Autowired
   private WebClient webClient;
   private static final Logger log = LoggerFactory.getLogger(AppLogger.class);
@@ -77,50 +83,69 @@ public class GraphService {
             .block();
         return (List<String>) response.get("collections");
     }
-    
 
-    //  send AQL query (Hardcoded version)
-    // public Map<String, Object> getGraph() {
+    // unfinished - "database" variable not wired up properly
+    public Collection<String> getLeafNodes(String database, String collection) {
+        String query = "FOR v IN @@collection \r\n" + //
+                        "FILTER LENGTH( \r\n" + //
+                        "    FOR e IN 1..1 INBOUND v GRAPH default \r\n" + //
+                        "    RETURN 1" + //
+                        ") == 0 \r\n" + //
+                        "RETURN v._id\r\n" + //
+                        "";
 
-    //     String query = "LET nodes = (FOR v IN products RETURN { id: v._id, label: v.name, type: 'products' }) "
-    //             + "LET processNodes = (FOR v IN processes RETURN { id: v._id, label: v.name, type: 'process' }) "
-    //             + "LET inputLinks = (FOR e IN inputs RETURN { source: e._from, target: e._to, type: 'input' }) "
-    //             + "LET outputLinks = (FOR e IN outputs RETURN { source: e._from, target: e._to, type: 'output' }) "
-    //             + "RETURN { nodes: UNION(nodes, processNodes), links: UNION(inputLinks, outputLinks) }";
-    //     Map<String, String> body = Map.of("query", query);
-
-    //     Map response = webClient
-    //             .post()
-    //             .uri("/cursor")
-    //             .bodyValue(body)
-    //             .retrieve()
-    //             .bodyToMono(Map.class) // raw Map
-    //             .block();
-
-    //     // Extract "result" array
-    //     List<Map<String, Object>> result = (List<Map<String, Object>>) response.get("result");
-
-    //     // Return the first object or null if empty
-    //     return result.isEmpty() ? null : result.get(0);
-    // }
-
-
-    public Map<String, Object> executeQuery(String database, String query) {
-
-    Map<String, String> body = Map.of("query", query);
-    String fullUrl = "http://localhost:8529/_db/" + database + "/_api/cursor"; //Find some way to use webclient
-
-    Map response = webClient
-            .post()
-            .uri(fullUrl)
-            .bodyValue(body)
-            .retrieve()
-            .bodyToMono(Map.class)
-            .block();
-
-    return response;
+        Map<String, String> bindVars = Map.of("@collection", collection);
+        Collection<String> result = (Collection<String>) queryService.executeQuery(query, bindVars, 100, null, null, null).block().get("result");
+        return result;
     }
 
+    // unfinished - "database" variable not wired up properly
+    public Collection<String> getRootNodes(String database, String collection) {
+        String query = "FOR v IN @@collection \r\n" + //
+                        "FILTER LENGTH( \r\n" + //
+                        "    FOR e IN 1..1 OUTBOUND v GRAPH default \r\n" + //
+                        "    RETURN 1" + //
+                        ") == 0 \r\n" + //
+                        "RETURN v._id\r\n" + //
+                        "";
 
+        Map<String, String> bindVars = Map.of("@collection", collection);
+        Collection<String> result = (Collection<String>) queryService.executeQuery(query, bindVars, 100, null, null, null).block().get("result");
+        return result;
+    }
 
+    // unfinished - "database" variable not wired up properly
+    public Collection<String> getIntermediateNodes(String database, String collection) {
+        String query = "FOR v IN @@collection \r\n" + //
+                        "FILTER LENGTH( \r\n" + //
+                        "    FOR e IN 1..1 INBOUND v GRAPH default \r\n" + //
+                        "    RETURN 1" + //
+                        ") > 0 AND LENGTH( \r\n" + //
+                        "    FOR e IN 1..1 OUTBOUND v GRAPH default \r\n" + //
+                        "    RETURN 1" + //
+                        ") > 0 \r\n" +
+                        "RETURN v._id\r\n" + //
+                        "";
+
+        Map<String, String> bindVars = Map.of("@collection", "products");
+        Collection<String> result = (Collection<String>) queryService.executeQuery(query, bindVars, 100, null, null, null).block().get("result");
+        return result;
+    }
+
+    public Map<String,ArrayList<String>> getComponentNodes(String nodeId) {
+        String query =  "FOR v, e, p IN 1..1000 INBOUND @startNode GRAPH default \r\n" + //
+                        "OPTIONS { bfs: true, uniqueVertices: 'global'} \r\n" + //
+                        "FILTER LENGTH(FOR neighbor, edge IN 1..1 INBOUND v GRAPH @graphName RETURN 1) == 0 \r\n" + //
+                        "COLLECT \r\n" + //
+                        "  AGGREGATE \r\n" + //
+                        "    rawS1 = SUM(v.DPP.carbonFootprint.scope1.kgCO2e),\r\n" + //
+                        "    rawS2 = SUM(v.DPP.carbonFootprint.scope2.kgCO2e),\r\n" + //
+                        "    rawS3 = SUM(v.DPP.carbonFootprint.scope3.kgCO2e)\r\n" + //
+                        "LET \r\n" + //
+                        "  s1 = ROUND(rawS1 * 100) / 100.0,\r\n" + //
+                        "  s2 = ROUND(rawS2 * 100) / 100.0,\r\n" + //
+                        "  s3 = ROUND(rawS3 * 100) / 100.0\r\n" + //
+                        "RETURN {s1, s2, s3}\r\n" + //
+                        "";
+    }
 }
