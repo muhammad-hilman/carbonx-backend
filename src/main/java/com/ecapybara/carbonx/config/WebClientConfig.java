@@ -14,7 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
 
-    private final String DATABASE_API_URL = "http://localhost:8529/_db/testCompany/_api";
+    private final String DATABASE_API_URL = "http://localhost:8529/_db/default/_api";
     @Value("${arangodb.spring.data.user}")
     private String username;
     @Value("${arangodb.spring.data.password}")
@@ -27,6 +27,14 @@ public class WebClientConfig {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeaders(headers -> headers.setBasicAuth(username, password))
                 .build();
+    }
+
+    public String buildUri(String path, String database) {
+        if (database == null || database.isBlank()) {
+            return path; // use default DB from baseUrl
+        } else {
+            return "http://localhost:8529/_db/" + database + "/_api" + path;
+        }
     }
 }
 
