@@ -13,6 +13,7 @@ import com.opencsv.bean.processor.PreAssignmentProcessor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 
 @Data @NoArgsConstructor @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true)
@@ -20,6 +21,25 @@ import lombok.experimental.SuperBuilder;
 @PersistentIndex(fields = {"id", "key","name","type","productOrigin","userId"})
 
 public class Product extends Node {
+  
+  @NonNull
+  @CsvBindByName
+  private String name;
+  
+  @NonNull
+  @CsvBindByName
+  private String type;
+
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
+  private String quantifiableUnit;
+
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
+  private Double quantityValue;
+
+  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
+  @CsvBindByName(column = "owner")
+  private String userId; // User who created/owns this document
+
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String productOrigin; // e.g supplier/user
 

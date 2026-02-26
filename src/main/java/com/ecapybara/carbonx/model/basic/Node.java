@@ -8,8 +8,6 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvRecurse;
-import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
-import com.opencsv.bean.processor.PreAssignmentProcessor;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +18,7 @@ import lombok.experimental.SuperBuilder;
 
 @Data @NoArgsConstructor @AllArgsConstructor @SuperBuilder(toBuilder = true)
 public class Node {
+  
   @ArangoId // db document field: _id
   @JsonAlias({"_id"})
   @CsvBindByName
@@ -28,24 +27,6 @@ public class Node {
   @Id // db document field: _key
   @JsonAlias({"_key"})
   private String key;
-
-  @NonNull
-  @CsvBindByName
-  private String name;
-
-  @NonNull
-  @CsvBindByName
-  private String type;
-
-  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
-  private String quantifiableUnit;
-
-  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
-  private Double quantityValue;
-
-  @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
-  @CsvBindByName(column = "owner")
-  private String userId; // User who created/owns this document
 
   @Builder.Default
   @CsvRecurse
