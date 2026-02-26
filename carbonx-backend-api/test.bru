@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: http://localhost:8529/_admin/server/role
+  url: {{host}}/api/templates?nodeType=all
   body: none
   auth: basic
+}
+
+params:query {
+  nodeType: all
 }
 
 auth:basic {

@@ -5,24 +5,21 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.arangodb.ArangoDatabase;
 import com.arangodb.springframework.core.ArangoOperations;
 import com.ecapybara.carbonx.model.basic.EdgeDefinition;
 import com.ecapybara.carbonx.model.basic.Graph;
 import com.ecapybara.carbonx.repository.*;
 import com.ecapybara.carbonx.service.GraphService;
 import com.ecapybara.carbonx.service.ImportExportService;
-import com.ecapybara.carbonx.service.arango.ArangoDatabaseService;
 
 @Slf4j
 @ComponentScan("com.ecapybara.carbonx")
-public class TestSetup implements CommandLineRunner {
+public class StableTestSetup implements CommandLineRunner {
   @Autowired
   private ArangoOperations operations;
   @Autowired
@@ -33,15 +30,6 @@ public class TestSetup implements CommandLineRunner {
   private InputRepository inputRepository;
   @Autowired
   private OutputRepository outputRepository;
-  // @Autowired
-  // private ImpactCategoryRepository impactCategoryRepository;
-  // @Autowired
-  // private GWPRepository GWPRepository;
-  // @Autowired
-  // private MetricRepository metricRepository;
-
-  @Autowired
-  private ArangoDatabaseService databaseService;
   @Autowired
   private GraphService graphService;
   @Autowired
@@ -50,15 +38,6 @@ public class TestSetup implements CommandLineRunner {
   @Override
   public void run(final String... args) throws Exception {
     System.out.println("------------- # SETUP BEGIN # -------------");
-    // Check for appropriate databases and create if not present
-    List<String> databases = (List<String>) databaseService.listDatabases().block().get("result");
-    if (!databases.contains("default")) { databaseService.createDatabase("default", null, null, null, null); }
-    if (!databases.contains("testCompany")) { databaseService.createDatabase("testCompany", null, null, null, null); }
-    
-    // For each database, nuke the existing dataset
-    
-    // Initialise new data
-
     // first drop the database so that we can run this multiple times with the same dataset
     operations.dropDatabase();
 
@@ -81,31 +60,11 @@ public class TestSetup implements CommandLineRunner {
     importExportService.importCSV(filepath, "inputs");
     log.info("-> {} INPUTS entries created", inputRepository.count());
 
-    // Create and save outputs relationships between entities
+    // Create and save input relationships between entities
     filename = "testOutputs.csv";
     filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
     importExportService.importCSV(filepath, "outputs");
     log.info("-> {} OUTPUTS entries created", outputRepository.count());
-
-    /*
-    // Create and save impact categories
-    filename = "testImpactCategories.csv";
-    filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
-    importExportService.importCSV(filepath, "impactCategories");
-    log.info("-> {} IMPACT CATEGORY entries created", impactCategoryRepository.count());
-
-    // Create and save GWPs
-    filename = "testGWPs.csv";
-    filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
-    importExportService.importCSV(filepath, "gwp");
-    log.info("-> {} GWP entries created", GWPRepository.count());
-
-    // Create and save metrics
-    filename = "testMetrics.csv";
-    filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
-    importExportService.importCSV(filepath, "metrics");
-    log.info("-> {} METRIC entries created", metricRepository.count());
-     */
 
     // Create graph
     EdgeDefinition inputs = new EdgeDefinition("inputs", List.of("products"), List.of("processes"));

@@ -17,11 +17,10 @@ auth:basic {
 
 body:json {
   {
-    "query" : "FOR v IN @@vertexCollections FILTER LENGTH( FOR e IN 1..1 INBOUND v GRAPH default RETURN 1 ) > 0 AND LENGTH( FOR e IN 1..1 OUTBOUND v GRAPH default RETURN 1 ) > 0 RETURN v._id",
-    "bindVars": 
-    {
-      "@vertexCollections": "processes"
-    },
+    "query" : "FOR v IN 1..100 INBOUND @startNode GRAPH default OPTIONS { bfs: true } FILTER v._id != @startNode RETURN v._id",
+    "bindVars" :  {
+                    "startNode" : "processes/2"
+                  },
     "count" : true,
     "batchSize" : 10
   }
