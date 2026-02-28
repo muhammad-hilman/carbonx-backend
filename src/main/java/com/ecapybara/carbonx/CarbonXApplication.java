@@ -14,8 +14,8 @@ public class CarbonXApplication {
 	public static void main(String[] args) {
 		Class<?>[] runner = new Class<?>[]{
 			// OldSetup.class,
-			 UnstableTestSetup.class,
-			// StableTestSetup.class,
+			// UnstableTestSetup.class,
+			 StableTestSetup.class,
 			// InitialSetup.class,
 			CarbonXApplication.class
 		};

@@ -99,18 +99,18 @@ public class CsvColumnConfigurations {
 
     this.inputColumns = Arrays.asList(
         CsvColumn.of("id").withHeader("id"),
-        CsvColumn.of("product").withHeader("from"),
+        CsvColumn.of("from").withHeader("from"),
         CsvColumn.of("productName").withHeader("productName"),
-        CsvColumn.of("process").withHeader("to"),
+        CsvColumn.of("to").withHeader("to"),
         CsvColumn.of("processName").withHeader("processName")    
         
     );
 
     this.outputColumns = Arrays.asList(
         CsvColumn.of("id").withHeader("id"),
-        CsvColumn.of("process").withHeader("from"),
+        CsvColumn.of("from").withHeader("from"),
         CsvColumn.of("processName").withHeader("processName"),
-        CsvColumn.of("product").withHeader("to"),
+        CsvColumn.of("to").withHeader("to"),
         CsvColumn.of("productName").withHeader("productName")                              
     );
   }

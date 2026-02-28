@@ -3,6 +3,7 @@ package com.ecapybara.carbonx.model.issb;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.ecapybara.carbonx.model.basic.Node;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.bean.CsvBindByName;
@@ -18,6 +19,7 @@ import lombok.experimental.SuperBuilder;
 @Data @NoArgsConstructor @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true) 
 @Document("processes")
 @PersistentIndex(fields = {"id","key","name", "type", "serviceProvider", "userId"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Process extends Node {
 
   @JsonProperty("_class")

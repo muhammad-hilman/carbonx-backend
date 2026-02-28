@@ -11,37 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.arangodb.ArangoCollection;
-import com.arangodb.ArangoDatabase;
-import com.arangodb.springframework.core.ArangoOperations;
-import com.ecapybara.carbonx.model.basic.EdgeDefinition;
-import com.ecapybara.carbonx.model.basic.Graph;
-import com.ecapybara.carbonx.repository.*;
 import com.ecapybara.carbonx.service.ImportExportService;
 import com.ecapybara.carbonx.service.arango.ArangoCollectionService;
 import com.ecapybara.carbonx.service.arango.ArangoDatabaseService;
-import com.ecapybara.carbonx.service.arango.ArangoDocumentService;
 import com.ecapybara.carbonx.service.arango.ArangoGraphService;
 
 @Slf4j
 @ComponentScan("com.ecapybara.carbonx")
 public class UnstableTestSetup implements CommandLineRunner {
-  @Autowired
-  private ArangoOperations operations;
-  @Autowired
-  private ProductRepository productRepository;
-  @Autowired
-  private ProcessRepository processRepository;
-  @Autowired
-  private InputRepository inputRepository;
-  @Autowired
-  private OutputRepository outputRepository;
-  // @Autowired
-  // private ImpactCategoryRepository impactCategoryRepository;
-  // @Autowired
-  // private GWPRepository GWPRepository;
-  // @Autowired
-  // private MetricRepository metricRepository;
 
   @Autowired
   private ArangoDatabaseService databaseService;

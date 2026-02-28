@@ -5,6 +5,7 @@ import org.springframework.data.annotation.PersistenceCreator;
 import com.arangodb.springframework.annotation.Edge;
 
 import com.arangodb.springframework.annotation.PersistentIndex;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.bean.CsvBindByName;
@@ -19,6 +20,7 @@ import lombok.experimental.SuperBuilder;
 @Data @NoArgsConstructor @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true)
 @Edge("inputs")
 @PersistentIndex(fields = {"id","key","productName","processName"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Input extends com.ecapybara.carbonx.model.basic.Edge {  
   
   @JsonProperty("_class")

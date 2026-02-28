@@ -108,7 +108,7 @@ public class TemplateController {
 
         Map<String, String> bindVars = Map.of("startNode", collection+"/"+key);
         log.info("bindvars -> {}", bindVars);
-        ArrayList<Map<String,ArrayList<Map<String,String>>>> response = (ArrayList<Map<String,ArrayList<Map<String,String>>>>) queryService.executeQuery(query, bindVars, 100, null, null, null).block().get("result");
+        ArrayList<Map<String,ArrayList<Map<String,String>>>> response = (ArrayList<Map<String,ArrayList<Map<String,String>>>>) queryService.executeQuery(database, query, bindVars, 100, null, null, null).block().get("result");
         log.info("response -> {}", response);
 
         return response.get(0);

@@ -10,13 +10,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.supercsv.io.dozer.CsvDozerBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
@@ -25,12 +25,12 @@ import com.ecapybara.carbonx.model.issb.Input;
 import com.ecapybara.carbonx.model.issb.Output;
 import com.ecapybara.carbonx.model.issb.Process;
 import com.ecapybara.carbonx.repository.*;
-import com.ecapybara.carbonx.service.arango.ArangoDocumentService;
 import com.ecapybara.carbonx.utils.csv.CsvColumn;
 import com.ecapybara.carbonx.utils.csv.CsvColumnConfigurations;
 import com.ecapybara.carbonx.utils.csv.CsvColumnWriterWithDozer;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvRecursionException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import reactor.core.publisher.Mono;
@@ -38,7 +38,7 @@ import reactor.core.publisher.Mono;
 @Service
 @Slf4j
 public class ImportExportService {
-  
+
   @Autowired
   private ProductRepository productRepository;
   @Autowired
@@ -48,7 +48,7 @@ public class ImportExportService {
   @Autowired
   private OutputRepository outputRepository;
   @Autowired
-  private ArangoDocumentService documentService;
+  private DocumentService documentService;
 
   // ------ UNCLEAN: Function to import a single JSON file within system folder
   public Mono<?> importJSON(String database, String targetCollection, String filename) {
@@ -144,6 +144,8 @@ public class ImportExportService {
     Files.createDirectories(dir);
     Path filepath = dir.resolve(filename);
     
+    ObjectMapper mapper = new ObjectMapper();
+    Map<String,Object> response;
     try (Writer writer = new FileWriter(filepath.toString());
         CsvDozerBeanWriter beanWriter = new CsvDozerBeanWriter(writer, CsvPreference.STANDARD_PREFERENCE);) {
       // Read, convert and save database into CSV file according to request type
@@ -153,7 +155,8 @@ public class ImportExportService {
           CsvColumnWriterWithDozer productWriterWrapper = new CsvColumnWriterWithDozer(productColumns, beanWriter, Product.class); // Reference: https://medium.com/@carlocarlen/export-java-beans-to-csv-without-using-annotations-558389639596
           productWriterWrapper.writeHeaders();
 
-          List<Product> productList = IterableUtils.toList(productRepository.findAll());
+          response = documentService.getAllDocuments("default", "products").block();
+          List<Product> productList = mapper.convertValue(response.get("result"), new TypeReference<List<Product>>() {});
           for (Product product : productList) { productWriterWrapper.writeBean(product); }
 
           return Mono.just(String.format("Successfully exported PRODUCT database into '%s'!", filename));
@@ -163,9 +166,9 @@ public class ImportExportService {
           CsvColumnWriterWithDozer processWriterWrapper = new CsvColumnWriterWithDozer(processColumns, beanWriter, Process.class); // Reference: https://medium.com/@carlocarlen/export-java-beans-to-csv-without-using-annotations-558389639596
           processWriterWrapper.writeHeaders();
 
-          List<Process> processList = IterableUtils.toList(processRepository.findAll());
+          response = documentService.getAllDocuments("default", "processes").block();
+          List<Process> processList = mapper.convertValue(response.get("result"), new TypeReference<List<Process>>() {});
           for (Process process : processList) { processWriterWrapper.writeBean(process); }
-          System.out.println("Completed writing Process beans!");
 
           return Mono.just(String.format("Successfully exported PROCESS database into '%s'!", filename));
 
@@ -174,7 +177,8 @@ public class ImportExportService {
           CsvColumnWriterWithDozer inputWriterWrapper = new CsvColumnWriterWithDozer(inputColumns, beanWriter, Input.class); // Reference: https://medium.com/@carlocarlen/export-java-beans-to-csv-without-using-annotations-558389639596
           inputWriterWrapper.writeHeaders();
 
-          List<Input> inputList = IterableUtils.toList(inputRepository.findAll());
+          response = documentService.getAllDocuments("default", "inputs").block();
+          List<Input> inputList = mapper.convertValue(response.get("result"), new TypeReference<List<Input>>() {});
           for (Input input : inputList) { inputWriterWrapper.writeBean(input); }
 
           return Mono.just(String.format("Successfully exported INPUT database into '%s'!", filename));
@@ -184,7 +188,8 @@ public class ImportExportService {
           CsvColumnWriterWithDozer outputWriterWrapper = new CsvColumnWriterWithDozer(outputColumns, beanWriter, Output.class); // Reference: https://medium.com/@carlocarlen/export-java-beans-to-csv-without-using-annotations-558389639596
           outputWriterWrapper.writeHeaders();
 
-          List<Output> outputList = IterableUtils.toList(outputRepository.findAll());
+          response = documentService.getAllDocuments("default", "outputs").block();
+          List<Output> outputList = mapper.convertValue(response.get("result"), new TypeReference<List<Output>>() {});
           for (Output output : outputList) { outputWriterWrapper.writeBean(output); }
 
           return Mono.just(String.format("Successfully exported OUTPUT database into '%s'!", filename));

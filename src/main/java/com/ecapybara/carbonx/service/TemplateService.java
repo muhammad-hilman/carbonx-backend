@@ -33,7 +33,7 @@ public class TemplateService {
 										"";
 
 		Map<String, String> bindVars = Map.of("@collection", collection);
-		Collection<String> result = (Collection<String>) queryService.executeQuery(query, bindVars, 100, null, null, null).block().get("result");
+		Collection<String> result = (Collection<String>) queryService.executeQuery(database, query, bindVars, 100, null, null, null).block().get("result");
 		return result;
 	}
 
@@ -48,7 +48,7 @@ public class TemplateService {
 										"";
 
 		Map<String, String> bindVars = Map.of("@collection", collection);
-		Collection<String> result = (Collection<String>) queryService.executeQuery(query, bindVars, 100, null, null, null).block().get("result");
+		Collection<String> result = (Collection<String>) queryService.executeQuery(database, query, bindVars, 100, null, null, null).block().get("result");
 		return result;
 	}
 
@@ -66,7 +66,7 @@ public class TemplateService {
 										"";
 
 		Map<String, String> bindVars = Map.of("@collection", collection);
-		Collection<String> result = (Collection<String>) queryService.executeQuery(query, bindVars, 100, null, null, null).block().get("result");
+		Collection<String> result = (Collection<String>) queryService.executeQuery(database, query, bindVars, 100, null, null, null).block().get("result");
 		return result;
 	}
 
@@ -76,7 +76,7 @@ public class TemplateService {
 										"RETURN v._id";
 
 		Map<String, String> bindVars = Map.of("@collection", collection);
-		Collection<String> result = (Collection<String>) queryService.executeQuery(query, bindVars, 100, null, null, null).block().get("result");
+		Collection<String> result = (Collection<String>) queryService.executeQuery(database, query, bindVars, 100, null, null, null).block().get("result");
 		return result;
 	}
 
@@ -88,7 +88,7 @@ public class TemplateService {
 										"RETURN v._id";
 		
 		Map<String, String> bindVars = Map.of("@startNode", nodeId);
-		Collection<String> result = (Collection<String>) queryService.executeQuery(query, bindVars, 100, null, null, null).block().get("result");
+		Collection<String> result = (Collection<String>) queryService.executeQuery(database, query, bindVars, 100, null, null, null).block().get("result");
 		return result;
 	}
 }

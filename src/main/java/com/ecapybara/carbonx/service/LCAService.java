@@ -38,7 +38,7 @@ public class LCAService {
             "";
     Map<String, String> bindVars = Map.of("startNode", node.getId(),
                                           "graphName", graphName);
-    ArrayList<Map<String,Double>> response = (ArrayList<Map<String,Double>>) queryService.executeQuery(query, bindVars, 100, null, null, null).block().get("result");
+    ArrayList<Map<String,Double>> response = (ArrayList<Map<String,Double>>) queryService.executeQuery("default", query, bindVars, 100, null, null, null).block().get("result");
     Map<String,Double> leafResult = response.get(0);
     log.info("Calculated values for leaf nodes -> {}", leafResult);
 
@@ -59,7 +59,7 @@ public class LCAService {
     bindVars = Map.of("startNode", node.getId(),
                       "graphName", graphName,
                       "vertexClass", "com.ecapybara.carbonx.model.issb.Process");
-    response = (ArrayList<Map<String,Double>>) queryService.executeQuery(query, bindVars, 100, null, null, null).block().get("result");
+    response = (ArrayList<Map<String,Double>>) queryService.executeQuery("default", query, bindVars, 100, null, null, null).block().get("result");
     Map<String,Double> processResult = response.get(0);
     log.info("Calculated values for process nodes -> {}", processResult);
 
