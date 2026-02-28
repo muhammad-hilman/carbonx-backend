@@ -14,7 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
 
-    private final String DATABASE_API_URL = "http://localhost:8529/_db/testCompany/_api";
+    private final String DATABASE_API_URL = "http://localhost:8529/";
     @Value("${arangodb.spring.data.user}")
     private String username;
     @Value("${arangodb.spring.data.password}")

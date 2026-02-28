@@ -23,13 +23,13 @@ public class ArangoDocumentService extends BaseArangoService {
      * Create a document
      * POST /_api/document/{collection}
      */
-    public Mono<Map> createDocument(String collection, Object document, 
+    public Mono<Map> createDocument( String database, String collection, Object document, 
                                      Boolean waitForSync, Boolean returnNew,
                                      Boolean returnOld, Boolean silent,
                                      String overwriteMode) {
         log.info("Creating document in collection: {}", collection);
         
-        StringBuilder uri = new StringBuilder("/document/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/document/" + collection);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -210,13 +210,13 @@ public class ArangoDocumentService extends BaseArangoService {
      * Create multiple documents
      * POST /_api/document/{collection}
      */
-    public Mono<List> createDocuments(String collection, List<Object> documents,
+    public Mono<List> createDocuments( String database, String collection, List<Object> documents,
                                        Boolean waitForSync, Boolean returnNew,
                                        Boolean returnOld, Boolean silent,
                                        String overwriteMode) {
         log.info("Creating {} documents in collection: {}", documents.size(), collection);
         
-        StringBuilder uri = new StringBuilder("/document/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/document/" + collection);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -239,7 +239,11 @@ public class ArangoDocumentService extends BaseArangoService {
             uri.append(separator).append("overwriteMode=").append(overwriteMode);
         }
 
-        return post(uri.toString(), documents, List.class)
+        return webClient.post()
+                .uri(uri.toString())
+                .bodyValue(documents)
+                .retrieve()
+                .bodyToMono(List.class)
                 .doOnSuccess(result -> log.info("Successfully created {} documents in collection: {}", documents.size(), collection));
     }
 

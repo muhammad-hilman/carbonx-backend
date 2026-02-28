@@ -9,23 +9,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvRecurse;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Data @NoArgsConstructor @AllArgsConstructor @SuperBuilder(toBuilder = true)
 public class Node {
-  
+
   @ArangoId // db document field: _id
-  @JsonAlias({"_id"})
+  @JsonProperty("_id")
   @CsvBindByName
   private String id;
 
   @Id // db document field: _key
-  @JsonAlias({"_key"})
+  @JsonProperty("_key")
+  @Setter(AccessLevel.NONE) // No setter generated for this field
   private String key;
 
   @Builder.Default
@@ -33,8 +36,11 @@ public class Node {
   private EmissionInformation emissionInformation = new EmissionInformation(); // e.g {"Scope 1" : ExtractionEmissionCharts, "Scope 2" : ProcessingEmissionCharts, "Scope 3" : TransportationEmissionCharts}
   
   @Builder.Default
-  @JsonProperty("DPP")
-  @JsonAlias({"DPP", "dpp"})
   @CsvRecurse
   private DigitalProductPassport DPP = new DigitalProductPassport();
+
+  public void setId(String id) {
+    this.id = id;
+    this.key = id.split("/")[1];
+  }
 }

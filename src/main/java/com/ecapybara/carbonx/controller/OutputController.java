@@ -82,8 +82,8 @@ public class OutputController {
     Output output = outputRepository.findById(id).orElse(null);
 
     if (output != null) {
-      output.setProcess(outputRevision.getProcess());
-      output.setProduct(outputRevision.getProduct());      
+      output.setFrom(outputRevision.getFrom());
+      output.setTo(outputRevision.getTo());      
       outputRepository.save(output);
     }
     

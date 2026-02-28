@@ -2,6 +2,7 @@ package com.ecapybara.carbonx.service.arango;
 
 import org.springframework.stereotype.Service;
 
+import io.vertx.ext.web.client.WebClient;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -27,7 +28,10 @@ public class ArangoCollectionService extends BaseArangoService {
         String uri = excludeSystem != null && excludeSystem 
             ? "/collection?excludeSystem=true" 
             : "/collection";
-        return get(uri, Map.class)
+        return webClient.get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(Map.class)
                 .doOnSuccess(result -> log.info("Successfully listed collections"));
     }
 
@@ -35,7 +39,7 @@ public class ArangoCollectionService extends BaseArangoService {
      * Create a new collection
      * POST /_api/collection
      */
-    public Mono<Map> createCollection(String name, Integer type, Boolean waitForSync,
+    public Mono<Map> createCollection( String database, String name, Integer type, Boolean waitForSync,
                                        Integer numberOfShards, Integer replicationFactor,
                                        Map<String, Object> keyOptions, String shardingStrategy) {
         log.info("Creating collection: {}", name);
@@ -49,8 +53,13 @@ public class ArangoCollectionService extends BaseArangoService {
         if (replicationFactor != null) body.put("replicationFactor", replicationFactor);
         if (keyOptions != null) body.put("keyOptions", keyOptions);
         if (shardingStrategy != null) body.put("shardingStrategy", shardingStrategy);
+        log.info("Request body: {}", body);
 
-        return post("/collection", body, Map.class)
+        return webClient.post()
+                .uri("/_db/" + database + "/_api/collection")
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(Map.class)
                 .doOnSuccess(result -> log.info("Successfully created collection: {}", name));
     }
 

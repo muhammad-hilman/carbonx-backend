@@ -83,8 +83,8 @@ public class InputController {
     Input input = inputRepository.findById(id).orElse(null);
 
     if (input != null) {
-      input.setProduct(inputRevision.getProduct());
-      input.setProcess(inputRevision.getProcess());
+      input.setFrom(inputRevision.getFrom());
+      input.setTo(inputRevision.getTo());
       inputRepository.save(input);
     }
     

@@ -45,25 +45,25 @@ public class StableTestSetup implements CommandLineRunner {
     String dir = System.getProperty("user.dir");
     String filename = "testProducts.csv";
     Path filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
-    importExportService.importCSV(filepath, "products");
+    importExportService.importCSV(filepath, "default", "products");
     log.info("-> {} PRODUCT entries created", productRepository.count());
 
     // Create and save processes
     filename = "testProcesses.csv";
     filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
-    importExportService.importCSV(filepath, "processes");
+    importExportService.importCSV(filepath, "default", "processes");
     log.info("-> {} PROCESS entries created", processRepository.count());
 
     // Create and save input relationships between entities
     filename = "testInputs.csv";
     filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
-    importExportService.importCSV(filepath, "inputs");
+    importExportService.importCSV(filepath, "default", "inputs");
     log.info("-> {} INPUTS entries created", inputRepository.count());
 
     // Create and save input relationships between entities
     filename = "testOutputs.csv";
     filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
-    importExportService.importCSV(filepath, "outputs");
+    importExportService.importCSV(filepath, "default", "outputs");
     log.info("-> {} OUTPUTS entries created", outputRepository.count());
 
     // Create graph

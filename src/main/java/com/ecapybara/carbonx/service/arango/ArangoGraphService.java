@@ -32,13 +32,13 @@ public class ArangoGraphService extends BaseArangoService {
      * Create a graph
      * POST /_api/gharial
      */
-    public Mono<Map> createGraph(String name, List<Map<String, Object>> edgeDefinitions,
+    public Mono<Map> createGraph( String database, String graphName, List<Map<String, Object>> edgeDefinitions,
                                   List<String> orphanCollections, Boolean isSmart,
                                   Boolean isDisjoint, Map<String, Object> options) {
-        log.info("Creating graph: {}", name);
+        log.info("Creating graph: {}", graphName);
         
         Map<String, Object> body = new HashMap<>();
-        body.put("name", name);
+        body.put("name", graphName);
         body.put("edgeDefinitions", edgeDefinitions);
         
         if (orphanCollections != null) body.put("orphanCollections", orphanCollections);
@@ -46,8 +46,12 @@ public class ArangoGraphService extends BaseArangoService {
         if (isDisjoint != null) body.put("isDisjoint", isDisjoint);
         if (options != null) body.put("options", options);
 
-        return post("/gharial", body, Map.class)
-                .doOnSuccess(result -> log.info("Successfully created graph: {}", name));
+        return webClient.post()
+                .uri("/_db/" + database + "/_api/gharial")
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(Map.class)
+                .doOnSuccess(result -> log.info("Successfully created graph: {}", graphName));
     }
 
     /**

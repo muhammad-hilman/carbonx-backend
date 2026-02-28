@@ -1,6 +1,7 @@
 package com.ecapybara.carbonx.service.arango;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -19,7 +20,6 @@ public class ArangoDatabaseService extends BaseArangoService {
 
     // Note: Database operations require _system database access
     // These endpoints don't use the default database from WebClient
-
     /**
      * List all databases
      * GET /_db/_system/_api/database
@@ -28,9 +28,6 @@ public class ArangoDatabaseService extends BaseArangoService {
         log.info("Listing all databases");
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .scheme("http")
-                        .host("localhost")
-                        .port(8529)
                         .path("/_db/_system/_api/database")
                         .build())
                 .retrieve()

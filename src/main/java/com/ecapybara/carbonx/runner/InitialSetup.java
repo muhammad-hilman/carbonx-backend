@@ -45,25 +45,25 @@ public class InitialSetup implements CommandLineRunner {
     String dir = System.getProperty("user.dir");
     String filename = "masterProducts.csv";
     Path filepath = Paths.get(dir,"src", "main", "resources", "data", "default").resolve(filename);
-    importExportService.importCSV(filepath, "products");
+    importExportService.importCSV(filepath, "default", "products");
     log.info("-> {} PRODUCT entries created", productRepository.count());
 
     // Create and save processes
     filename = "masterProcesses.csv";
     filepath = Paths.get(dir,"src", "main", "resources", "data", "default").resolve(filename);
-    importExportService.importCSV(filepath, "processes");
+    importExportService.importCSV(filepath, "default", "processes");
     log.info("-> {} PROCESS entries created", processRepository.count());
 
     // Create and save input relationships between entities
     filename = "masterInputs.csv";
     filepath = Paths.get(dir,"src", "main", "resources", "data", "default").resolve(filename);
-    importExportService.importCSV(filepath, "inputs");
+    importExportService.importCSV(filepath, "default", "inputs");
     log.info("-> {} INPUTS entries created", inputRepository.count());
 
     // Create and save input relationships between entities
     filename = "masterOutputs.csv";
     filepath = Paths.get(dir,"src", "main", "resources", "data", "default").resolve(filename);
-    importExportService.importCSV(filepath, "outputs");
+    importExportService.importCSV(filepath, "default", "outputs");
     log.info("-> {} OUTPUTS entries created", outputRepository.count());
 
     // Create graph

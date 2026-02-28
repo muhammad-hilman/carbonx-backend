@@ -17,9 +17,9 @@ auth:basic {
 
 body:json {
   {
-    "query" : "FOR v IN 1..100 INBOUND @startNode GRAPH default OPTIONS { bfs: true } FILTER v._id != @startNode RETURN v._id",
+    "query" : "FOR v IN @@collection RETURN v._id",
     "bindVars" :  {
-                    "startNode" : "processes/2"
+                    "@collection" : "products"
                   },
     "count" : true,
     "batchSize" : 10

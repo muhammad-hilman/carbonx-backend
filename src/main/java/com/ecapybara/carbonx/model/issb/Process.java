@@ -6,6 +6,7 @@ import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.arangodb.springframework.annotation.Relations;
 import com.ecapybara.carbonx.model.basic.Node;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
 import com.opencsv.bean.processor.PreAssignmentProcessor;
@@ -47,6 +48,11 @@ public class Process extends Node {
 
   @Override
   public String toString() {
-    return this.getId();
+    try {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(this);
+    } catch (Exception e) {
+        return super.toString(); // fallback
+    }
   }
 }

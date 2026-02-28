@@ -164,7 +164,7 @@ public class ProductController {
     List<String> files = List.of("templates.csv");
     
     return Flux.fromIterable(files)
-        .flatMap(filename -> importService.importCSV(filepath.resolve(filename), "products"))
+        .flatMap(filename -> importService.importCSV( filepath.resolve(filename), "testCompany", "products"))
         .then(Mono.just("Successfully imported JSON files!"))
         .onErrorReturn("Import failed - check logs");
   }
