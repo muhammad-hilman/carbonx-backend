@@ -1,11 +1,9 @@
 package com.ecapybara.carbonx.model.issb;
 
-import java.util.Collection;
-
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
-import com.arangodb.springframework.annotation.Relations;
 import com.ecapybara.carbonx.model.basic.Node;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
@@ -21,7 +19,10 @@ import lombok.experimental.SuperBuilder;
 @Document("processes")
 @PersistentIndex(fields = {"id","key","name", "type", "serviceProvider", "userId"})
 public class Process extends Node {
-  
+
+  @JsonProperty("_class")
+  private final String clazz = this.getClass().getTypeName();
+
   @NonNull
   @CsvBindByName
   private String name;
@@ -42,9 +43,6 @@ public class Process extends Node {
 
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String serviceProvider;
-
-  @Relations(edges = Input.class, lazy = true)
-  private Collection<Product> inputs;
 
   @Override
   public String toString() {

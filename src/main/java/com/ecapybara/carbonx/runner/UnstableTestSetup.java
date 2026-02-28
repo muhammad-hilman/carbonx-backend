@@ -54,7 +54,7 @@ public class UnstableTestSetup implements CommandLineRunner {
   
   @Override
   public void run(final String... args) throws Exception {
-    System.out.println("------------- # SETUP BEGIN # -------------");
+    log.info("------------- # SETUP BEGIN # -------------");
     // first drop the database so that we can run this multiple times with the same dataset
     List<String> databases = (List<String>) databaseService.listDatabases().block().get("result");
     if (databases.contains("default")) { databaseService.dropDatabase("default").block(); }
@@ -105,6 +105,6 @@ public class UnstableTestSetup implements CommandLineRunner {
     // importExportService.exportCSV("inputs", "exportInputs.csv").doOnError(error -> log.error("Failed to export INPUTS -> ", error));
     // importExportService.exportCSV("outputs", "exportOutputs.csv").doOnError(error -> log.error("Failed to export OUTPUTS -> ", error));
     
-    System.out.println("------------- # SETUP COMPLETED # -------------");
+    log.info("------------- # SETUP COMPLETED # -------------");
   }
 }

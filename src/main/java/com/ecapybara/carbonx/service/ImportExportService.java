@@ -38,9 +38,7 @@ import reactor.core.publisher.Mono;
 @Service
 @Slf4j
 public class ImportExportService {
-
-  @Autowired
-  private WebClient webClient;
+  
   @Autowired
   private ProductRepository productRepository;
   @Autowired
@@ -92,6 +90,7 @@ public class ImportExportService {
                                           .build()
                                           .parse();
           
+          
           documentService.createDocuments(database, "products", productList, null, null, null, null, null).block();
           return Mono.just(String.format("Import successful for '%s' into PRODUCT repository!", filename));
 
@@ -101,7 +100,7 @@ public class ImportExportService {
                                           .withIgnoreLeadingWhiteSpace(true)
                                           .withIgnoreEmptyLine(true)
                                           .build()
-                                          .parse();
+                                          .parse();                     
 
           documentService.createDocuments(database, "processes", processList, null, null, null, null, null).block();
           return Mono.just(String.format("Import successful for '%s' into PROCESS repository!", filename));

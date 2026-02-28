@@ -1,11 +1,9 @@
 package com.ecapybara.carbonx.model.issb;
 
-import java.util.Collection;
-
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
-import com.arangodb.springframework.annotation.Relations;
 import com.ecapybara.carbonx.model.basic.Node;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
@@ -20,9 +18,11 @@ import lombok.experimental.SuperBuilder;
 @Data @NoArgsConstructor @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true)
 @Document("products")
 @PersistentIndex(fields = {"id", "key","name","type","productOrigin","userId"})
-
 public class Product extends Node {
-  
+
+  @JsonProperty("_class")
+  private final String clazz = this.getClass().getTypeName();
+
   @NonNull
   @CsvBindByName
   private String name;
@@ -48,20 +48,13 @@ public class Product extends Node {
   @CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
   private String uploadedFile; // Filename of uploaded BOM file
 
-  @Relations(edges = Output.class, lazy=true)
-  private Collection<Process> procedure;
-  /* 
-  @Relations(edges = Input.class, lazy=true)
-  private Collection<Process> usedIn;
-  */
-
   @Override
   public String toString() {
     try {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(this);
+      ObjectMapper mapper = new ObjectMapper();
+      return mapper.writeValueAsString(this);
     } catch (Exception e) {
-        return super.toString(); // fallback
+      return super.toString(); // fallback
     }
   }
 }

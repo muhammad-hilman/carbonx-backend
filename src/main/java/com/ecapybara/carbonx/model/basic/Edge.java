@@ -16,7 +16,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Data @NoArgsConstructor @SuperBuilder(toBuilder = true) 
-public class Edge {
+public abstract class Edge {
   @ArangoId // db document field: _id
   @JsonProperty("_id")
   @CsvBindByName

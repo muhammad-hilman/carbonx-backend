@@ -5,19 +5,14 @@ import org.springframework.data.annotation.PersistenceCreator;
 import com.arangodb.springframework.annotation.Edge;
 
 import com.arangodb.springframework.annotation.PersistentIndex;
-import com.ecapybara.carbonx.utils.csv.IdToProcessConverter;
-import com.ecapybara.carbonx.utils.csv.IdToProductConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvCustomBindByName;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
@@ -26,6 +21,8 @@ import lombok.experimental.SuperBuilder;
 @PersistentIndex(fields = {"id","key","productName","processName"})
 public class Input extends com.ecapybara.carbonx.model.basic.Edge {  
   
+  @JsonProperty("_class")
+  private final String clazz = this.getClass().getTypeName();
   
   @Setter(AccessLevel.NONE)
   @CsvBindByName
