@@ -28,5 +28,13 @@ public class WebClientConfig {
                 .defaultHeaders(headers -> headers.setBasicAuth(username, password))
                 .build();
     }
+
+    public String buildUri(String path, String database) {
+        if (database == null || database.isBlank()) {
+            return path; // use default DB from baseUrl
+        } else {
+            return "http://localhost:8529/_db/" + database + "/_api" + path;
+        }
+    }
 }
 
