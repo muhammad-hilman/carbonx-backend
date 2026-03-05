@@ -83,30 +83,6 @@ public class ExperimentController {
     return Mono.just("Something");
   }
 
-  @GetMapping("/{targetCollection}/{documentKey}/lca")
-  public Mono<?> getLCA(@PathVariable String targetCollection, @PathVariable String documentKey) {
-    // Get the node
-    switch (targetCollection) {
-      case "products":
-        Map<String, Object> rawDocument = documentService.getDocument(targetCollection, documentKey, null, null).block();
-        log.info("Raw document -> {}", rawDocument);
-        Product product = objectMapper.convertValue(rawDocument, Product.class);
-        log.info("Converted product -> {}", rawDocument);
-        product = lcaService.calculateRoughCarbonFootprint(product, "default");
-        productController.editProduct(product.getId(), product);
-        return Mono.just(product.getDPP().getCarbonFootprint());
-      case "processes":
-        Process process = documentService.getDocument(targetCollection, documentKey, null, null)
-                                          .map(rawMap -> objectMapper.convertValue(rawMap, Process.class))
-                                          .block();
-        log.info("Raw product DPP -> {}", process.getDPP());
-        process = lcaService.calculateRoughCarbonFootprint(process, "default");
-        processController.editProcess(process.getId(), process);
-        return Mono.just(process.getDPP().getCarbonFootprint());
-      default:
-        return Mono.error(new RuntimeException("Invalid target collection name!"));
-    }
-  }
 
   @PostMapping("/report")
   public Mono<?> generateReport() throws IOException {
