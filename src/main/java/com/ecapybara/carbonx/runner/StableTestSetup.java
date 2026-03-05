@@ -43,6 +43,7 @@ public class StableTestSetup implements CommandLineRunner {
     collectionService.createCollection("default", "processes", 2, true, null, null, null, null).block();
     collectionService.createCollection("default", "inputs", 3, true, null, null, null, null).block();
     collectionService.createCollection("default", "outputs", 3, true, null, null, null, null).block();
+    collectionService.createCollection("default", "globalWarmingPotentials", 2, true, null, null, null, null).block();
 
     // Create edge definitions and graph
     Map<String,Object> inputs = Map.of( "collection", "inputs",
@@ -73,6 +74,13 @@ public class StableTestSetup implements CommandLineRunner {
     filename = "testOutputs.csv";
     filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
     importExportService.importCSV(filepath, "default", "outputs").block();
+
+    // GWP
+    filename = "globalWarmingPotentials.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "default").resolve(filename);
+    importExportService.importCSV(filepath, "default", "globalWarmingPotentials");
+    log.info("GWP created successfully");
+
 
     log.info("------------- # SETUP COMPLETED # -------------");
   }

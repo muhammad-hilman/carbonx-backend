@@ -1,0 +1,21 @@
+meta {
+  name: getEmissionLCA
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/api/lca/emission/:targetCollection/:documentKey
+  body: none
+  auth: inherit
+}
+
+params:path {
+  documentKey: 
+  targetCollection: 
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

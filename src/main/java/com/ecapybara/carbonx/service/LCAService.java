@@ -60,8 +60,62 @@ public class LCAService {
         return Mono.empty();
     }
 
-    // ---- Unfinished
     public <T extends Node> Mono<T> calculateEmissionInformation(T node, String graphName) {
-        return Mono.empty();
-    }
+    String query = 
+        "LET ei = DOCUMENT(@startNode).emissionInformation \n" +
+        "LET s1 = ( \n" +
+        "    (ei.scope1.stationaryCombustion.CO2.kg  * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +
+        "    (ei.scope1.mobileCombustion.CH4.kg      * DOCUMENT('globalWarmingPotentials/CH4').gwp) + \n" +
+        "    (ei.scope1.fugitiveEmissions.N2O.kg     * DOCUMENT('globalWarmingPotentials/N2O').gwp) + \n" +
+        "    (ei.scope1.processEmissions.CO2.kg      * DOCUMENT('globalWarmingPotentials/CO2').gwp) \n" +
+        ") \n" +
+        "LET s2 = ( \n" +
+        "    (ei.scope2.purchasedElectricity.CO2.kg  * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +
+        "    (ei.scope2.purchasedSteam.HFC134a.kg    * DOCUMENT('globalWarmingPotentials/HFC134a').gwp) + \n" +
+        "    (ei.scope2.purchasedHeating.CO2.kg      * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +
+        "    (ei.scope2.purchasedCooling.CO2.kg      * DOCUMENT('globalWarmingPotentials/CO2').gwp) \n" +
+        ") \n" +
+        "LET s3 = ( \n" +
+        "    (ei.scope3.category1.CO2.kg     * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +
+        "    (ei.scope3.category2.CH4.kg     * DOCUMENT('globalWarmingPotentials/CH4').gwp) + \n" +
+        "    (ei.scope3.category3.N2O.kg     * DOCUMENT('globalWarmingPotentials/N2O').gwp) + \n" +
+        "    (ei.scope3.category4.CO2.kg     * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +
+        "    (ei.scope3.category5.CO2.kg     * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +
+        "    (ei.scope3.category6.SF6.kg     * DOCUMENT('globalWarmingPotentials/SF6').gwp) + \n" +
+        "    (ei.scope3.category7.CO2.kg     * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +
+        "    (ei.scope3.category8.CH4.kg     * DOCUMENT('globalWarmingPotentials/CH4').gwp) + \n" +
+        "    (ei.scope3.category9.N2O.kg     * DOCUMENT('globalWarmingPotentials/N2O').gwp) + \n" +
+        "    (ei.scope3.category10.CO2.kg    * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +
+        "    (ei.scope3.category11.CO2.kg    * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +
+        "    (ei.scope3.category12.CO2.kg    * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +
+        "    (ei.scope3.category13.CO2.kg    * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +
+        "    (ei.scope3.category14.CO2.kg    * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +
+        "    (ei.scope3.category15.CO2.kg    * DOCUMENT('globalWarmingPotentials/CO2').gwp) \n" +
+        ") \n" +
+        "RETURN { \n" +
+        "    s1: ROUND(s1 * 100) / 100.0, \n" +
+        "    s2: ROUND(s2 * 100) / 100.0, \n" +
+        "    s3: ROUND(s3 * 100) / 100.0 \n" +
+        "}";
+
+    Map<String, String> bindVars = Map.of("startNode", node.getId());
+
+    return queryService.executeQuery("default", query, bindVars, 100, null, null, null)
+            .map(r -> ((ArrayList<Map<String, Object>>) r.get("result")).get(0))
+            .map(result -> {
+                double s1 = ((Number) result.get("s1")).doubleValue();
+                double s2 = ((Number) result.get("s2")).doubleValue();
+                double s3 = ((Number) result.get("s3")).doubleValue();
+
+                log.info("Emission info kgCO2e -> s1={}, s2={}, s3={}", s1, s2, s3);
+                log.info("Prior DPP -> {}", node.getDPP());
+
+                node.getDPP().getCarbonFootprint().setScope1(Map.of("kgCO2e", s1));
+                node.getDPP().getCarbonFootprint().setScope2(Map.of("kgCO2e", s2));
+                node.getDPP().getCarbonFootprint().setScope3(Map.of("kgCO2e", s3));
+
+                log.info("New DPP -> {}", node.getDPP());
+                return node;
+            });
+}
 }

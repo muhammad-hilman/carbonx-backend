@@ -16,6 +16,7 @@ import com.ecapybara.carbonx.model.basic.Graph;
 import com.ecapybara.carbonx.repository.*;
 import com.ecapybara.carbonx.service.GraphService;
 import com.ecapybara.carbonx.service.ImportExportService;
+import com.ecapybara.carbonx.service.arango.ArangoCollectionService;
 
 @Slf4j
 @ComponentScan("com.ecapybara.carbonx")
@@ -34,6 +35,8 @@ public class InitialSetup implements CommandLineRunner {
   private GraphService graphService;
   @Autowired
   private ImportExportService importExportService;
+  @Autowired
+  private ArangoCollectionService arangoCollectionService;
   
   @Override
   public void run(final String... args) throws Exception {
@@ -65,6 +68,15 @@ public class InitialSetup implements CommandLineRunner {
     filepath = Paths.get(dir,"src", "main", "resources", "data", "default").resolve(filename);
     importExportService.importCSV(filepath, "default", "outputs");
     log.info("-> {} OUTPUTS entries created", outputRepository.count());
+
+    // GWP
+    // Create gwp_factors collection (type 2 = document collection)
+    arangoCollectionService.createCollection("default", "globalWarmingPotentials", 2, true, null, null, null, null).block();
+    log.info("globalWarmingPotentials collection created");
+    filename = "globalWarmingPotentials.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "default").resolve(filename);
+    importExportService.importCSV(filepath, "default", "globalWarmingPotentials");
+    log.info("GWP created successfully");
 
     // Create graph
     EdgeDefinition inputs = new EdgeDefinition("inputs", List.of("products"), List.of("processes"));
