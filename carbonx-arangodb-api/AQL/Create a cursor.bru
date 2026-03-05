@@ -17,12 +17,10 @@ auth:basic {
 
 body:json {
   {
-    "query" : "FOR v IN @@collection RETURN v._id",
+    "query" : "FOR v IN @@collection RETURN v",
     "bindVars" :  {
                     "@collection" : "products"
-                  },
-    "count" : true,
-    "batchSize" : 10
+                  }
   }
 }
 

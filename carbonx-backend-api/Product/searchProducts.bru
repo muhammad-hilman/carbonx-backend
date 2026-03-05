@@ -1,7 +1,7 @@
 meta {
-  name: getProducts
+  name: searchProducts
   type: http
-  seq: 1
+  seq: 2
 }
 
 get {
@@ -13,6 +13,7 @@ get {
 params:query {
   ~name: mushroom
   ~type: ingredient
+  ~productOrigin: 
 }
 
 settings {

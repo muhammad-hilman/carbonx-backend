@@ -54,7 +54,7 @@ public class ExperimentController {
   @Autowired
   private ObjectMapper objectMapper;
 
-
+/* 
   @PostMapping("/httpExport")
   public Mono<?> exportComplexCSV(HttpServletResponse response) throws Exception {
     response.setContentType("text/csv");
@@ -72,6 +72,7 @@ public class ExperimentController {
 
     return Mono.just("Export successful!");
   }
+*/
 
   @PostMapping("/export")
   public Mono<?> exportComplexCSV() throws Exception {
