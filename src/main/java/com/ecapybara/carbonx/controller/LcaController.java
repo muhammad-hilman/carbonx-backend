@@ -115,4 +115,25 @@ public class LcaController {
             .map(node -> node.getDPP().getCarbonFootprint());
     }
 
+    @GetMapping("/detailed/{targetCollection}/{documentKey}")
+    public Mono<?> getDetailedLCA(@PathVariable String targetCollection, @PathVariable String documentKey) {
+        String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
+
+        Class<? extends Node> nodeClass = switch (targetCollection) {
+            case "products" -> Product.class;
+            case "processes" -> Process.class;
+            default -> throw new RuntimeException("Invalid target collection: " + targetCollection);
+        };
+
+        return documentService.getDocument(targetCollection, key, null, null)
+            .map(raw -> (Node) objectMapper.convertValue(raw, nodeClass))
+            .flatMap(node -> lcaService.calculateDetailedCarbonFootprint(node, "default"))
+            .flatMap(node ->
+                documentService.replaceDocument(targetCollection, key, node,
+                    null, null, null, null, null, null)
+                    .thenReturn(node)
+            )
+            .map(node -> node.getDPP().getCarbonFootprint());
+
+    }
 }
