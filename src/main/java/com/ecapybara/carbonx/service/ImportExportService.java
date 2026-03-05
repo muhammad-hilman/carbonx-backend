@@ -21,6 +21,7 @@ import org.supercsv.io.dozer.CsvDozerBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import com.ecapybara.carbonx.model.issb.Product;
+import com.ecapybara.carbonx.model.maritime.Ship;
 import com.ecapybara.carbonx.model.issb.Input;
 import com.ecapybara.carbonx.model.issb.Output;
 import com.ecapybara.carbonx.model.issb.Process;

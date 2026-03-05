@@ -21,10 +21,12 @@ import org.supercsv.io.dozer.CsvDozerBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import com.ecapybara.carbonx.model.issb.Product;
+import com.ecapybara.carbonx.model.maritime.Ship;
 import com.ecapybara.carbonx.model.issb.Input;
 import com.ecapybara.carbonx.model.issb.Output;
 import com.ecapybara.carbonx.model.issb.Process;
 import com.ecapybara.carbonx.repository.*;
+import com.ecapybara.carbonx.service.DocumentService;
 import com.ecapybara.carbonx.utils.csv.CsvColumn;
 import com.ecapybara.carbonx.utils.csv.CsvColumnConfigurations;
 import com.ecapybara.carbonx.utils.csv.CsvColumnWriterWithDozer;
@@ -48,36 +50,25 @@ public class MaritimeImportExportService {
   private InputRepository inputRepository;
   @Autowired
   private OutputRepository outputRepository;
+  @Autowired
+  private DocumentService documentService;
 
-  public Mono<?> importCSV(Path filepath, String targetCollection) {
+  public Mono<?> importCSV(Path filepath, String database, String targetCollection) {
     String filename = filepath.getFileName().toString();
     try {
       // Read, convert and save CSV file into database according to request type
       Reader reader = Files.newBufferedReader(filepath);
       switch (targetCollection) {
-        case "products":
-          List<Product> productList = new CsvToBeanBuilder<Product>(reader)
-                                          .withType(Product.class)
+        case "ships":
+          List<Object> shipList = new CsvToBeanBuilder<Object>(reader)
+                                          .withType(Ship.class)
                                           .withIgnoreLeadingWhiteSpace(true)
                                           .withIgnoreEmptyLine(true)
                                           .build()
                                           .parse();
-
-          productList.forEach(product -> productRepository.save(product)) ; // save each document into the correct repo
-
-          return Mono.just(String.format("Import successful for '%s' into PRODUCT repository!", filename));
-
-        case "outputs":
-          List<Output> outputList = new CsvToBeanBuilder<Output>(reader)
-                                          .withType(Output.class)
-                                          .withIgnoreLeadingWhiteSpace(true)
-                                          .withIgnoreEmptyLine(true)
-                                          .build()
-                                          .parse();
-
-          outputList.forEach(output -> outputRepository.save(output)); // save each document into the correct repo
-
-          return Mono.just(String.format("Import successful for '%s' into OUTPUT repository!", filename));
+          log.info("{}", shipList);
+          documentService.createDocuments(database, "ships", shipList, null, null, null, null, null).block();
+          return Mono.just(String.format("Import successful for '%s' into SHIP repository!", filename));
 
         default:
           throw new IOException(String.format("Target collection not recognised: %s", targetCollection));

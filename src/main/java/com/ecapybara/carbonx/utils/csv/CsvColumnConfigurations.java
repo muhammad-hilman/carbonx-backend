@@ -12,6 +12,7 @@ public class CsvColumnConfigurations {
   private final List<CsvColumn> processColumns;
   private final List<CsvColumn> inputColumns;
   private final List<CsvColumn> outputColumns;
+  private final List<CsvColumn> shipColumns;
 
   public CsvColumnConfigurations() {
     this.productColumns = Arrays.asList(
@@ -109,6 +110,14 @@ public class CsvColumnConfigurations {
     this.outputColumns = Arrays.asList(
         CsvColumn.of("id").withHeader("id"),
         CsvColumn.of("from").withHeader("from"),
+        CsvColumn.of("processName").withHeader("processName"),
+        CsvColumn.of("to").withHeader("to"),
+        CsvColumn.of("productName").withHeader("productName")                              
+    );
+
+    this.shipColumns = Arrays.asList(
+        CsvColumn.of("timestamp").withHeader("timestamp"),
+        CsvColumn.of("MMSI").withHeader("MMSI"),
         CsvColumn.of("processName").withHeader("processName"),
         CsvColumn.of("to").withHeader("to"),
         CsvColumn.of("productName").withHeader("productName")                              

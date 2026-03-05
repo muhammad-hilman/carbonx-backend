@@ -15,6 +15,7 @@ import com.ecapybara.carbonx.service.ImportExportService;
 import com.ecapybara.carbonx.service.arango.ArangoCollectionService;
 import com.ecapybara.carbonx.service.arango.ArangoDatabaseService;
 import com.ecapybara.carbonx.service.arango.ArangoGraphService;
+import com.ecapybara.carbonx.service.industry.maritime.MaritimeImportExportService;
 
 @Slf4j
 @ComponentScan("com.ecapybara.carbonx")
@@ -28,6 +29,9 @@ public class UnstableTestSetup implements CommandLineRunner {
   private ArangoGraphService graphService;
   @Autowired
   private ImportExportService importExportService;
+
+  @Autowired
+  private MaritimeImportExportService maritimeImportExportService;
   
   @Override
   public void run(final String... args) throws Exception {
@@ -44,6 +48,7 @@ public class UnstableTestSetup implements CommandLineRunner {
     collectionService.createCollection("default", "processes", 2, true, null, null, null, null).block();
     collectionService.createCollection("default", "inputs", 3, true, null, null, null, null).block();
     collectionService.createCollection("default", "outputs", 3, true, null, null, null, null).block();
+    collectionService.createCollection("testCompany", "ships", 2, true, null, null, null, null).block();
 
     // Create edge definitions and graph
     Map<String,Object> inputs = Map.of( "collection", "inputs",
@@ -74,6 +79,11 @@ public class UnstableTestSetup implements CommandLineRunner {
     filename = "testOutputs.csv";
     filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
     importExportService.importCSV(filepath, "default", "outputs").block();
+
+    // Create and save ships
+    filename = "2020-12-15_SG.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "samples", "ships").resolve(filename);
+    maritimeImportExportService.importCSV(filepath, "testCompany", "ships");
 
     // Export files
     // importExportService.exportCSV("products", "exportProducts.csv").doOnError(error -> log.error("Failed to export PRODUCTS -> ", error));
