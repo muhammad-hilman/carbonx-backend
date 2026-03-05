@@ -15,6 +15,7 @@ import java.util.Map;
 @Slf4j
 @Service
 public class ArangoDocumentService extends BaseArangoService {
+    private static final String ARANGODB = "default";
 
     // ==================== Single Document Operations ====================
 
@@ -64,7 +65,7 @@ public class ArangoDocumentService extends BaseArangoService {
         log.info("Getting document from collection: {}, key: {}", collection, key);
         
         return webClient.get()
-                .uri("/document/{collection}/{key}", collection, key)
+                .uri("_db/{ARANGODB}/_api/document/{collection}/{key}", ARANGODB,collection, key)
                 .headers(headers -> {
                     if (ifNoneMatch != null) headers.set("If-None-Match", ifNoneMatch);
                     if (ifMatch != null) headers.set("If-Match", ifMatch);
