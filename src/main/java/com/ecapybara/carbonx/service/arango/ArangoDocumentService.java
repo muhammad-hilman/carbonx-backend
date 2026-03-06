@@ -15,6 +15,7 @@ import java.util.Map;
 @Slf4j
 @Service
 public class ArangoDocumentService extends BaseArangoService {
+    private static final String ARANGODB = "default";
 
     // ==================== Single Document Operations ====================
 
@@ -64,7 +65,7 @@ public class ArangoDocumentService extends BaseArangoService {
         log.info("Getting document from collection: {}, key: {}", collection, key);
         
         return webClient.get()
-                .uri("/document/{collection}/{key}", collection, key)
+                .uri("_db/{ARANGODB}/_api/document/{collection}/{key}", ARANGODB,collection, key)
                 .headers(headers -> {
                     if (ifNoneMatch != null) headers.set("If-None-Match", ifNoneMatch);
                     if (ifMatch != null) headers.set("If-Match", ifMatch);
@@ -102,7 +103,7 @@ public class ArangoDocumentService extends BaseArangoService {
                                       String ifMatch, Boolean ignoreRevs) {
         log.info("Replacing document: {}/{}", collection, key);
         
-        StringBuilder uri = new StringBuilder("/document/" + collection + "/" + key);
+        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+ "/_api/document/" + collection + "/" + key);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -140,7 +141,7 @@ public class ArangoDocumentService extends BaseArangoService {
                                      String ifMatch, Boolean ignoreRevs) {
         log.info("Updating document: {}/{}", collection, key);
         
-        StringBuilder uri = new StringBuilder("/document/" + collection + "/" + key);
+        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+ "/_api/document/" + collection + "/" + key);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -184,7 +185,7 @@ public class ArangoDocumentService extends BaseArangoService {
                                      Boolean silent, String ifMatch) {
         log.info("Deleting document: {}/{}", collection, key);
         
-        StringBuilder uri = new StringBuilder("/document/" + collection + "/" + key);
+        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+ "/_api/document/" + collection + "/" + key);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -254,7 +255,7 @@ public class ArangoDocumentService extends BaseArangoService {
                                     Boolean ignoreRevs) {
         log.info("Getting {} documents from collection: {}", keys.size(), collection);
         
-        StringBuilder uri = new StringBuilder("/document/" + collection + "?onlyget=true");
+        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+ "/_api/document/" + collection + "?onlyget=true");
         if (ignoreRevs != null) {
             uri.append("&ignoreRevs=").append(ignoreRevs);
         }
@@ -272,7 +273,7 @@ public class ArangoDocumentService extends BaseArangoService {
                                         Boolean returnOld, Boolean ignoreRevs) {
         log.info("Replacing {} documents in collection: {}", documents.size(), collection);
         
-        StringBuilder uri = new StringBuilder("/document/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+"/_api/document/" + collection);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -305,7 +306,7 @@ public class ArangoDocumentService extends BaseArangoService {
                                        Boolean mergeObjects, Boolean ignoreRevs) {
         log.info("Updating {} documents in collection: {}", documents.size(), collection);
         
-        StringBuilder uri = new StringBuilder("/document/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+"/_api/document/" + collection);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -345,7 +346,7 @@ public class ArangoDocumentService extends BaseArangoService {
                                        Boolean ignoreRevs) {
         log.info("Deleting {} documents from collection: {}", selectors.size(), collection);
         
-        StringBuilder uri = new StringBuilder("/document/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+ "/_api/document/" + collection);
         String separator = "?";
         
         if (waitForSync != null) {

@@ -25,6 +25,7 @@ import com.ecapybara.carbonx.model.maritime.Ship;
 import com.ecapybara.carbonx.model.issb.Input;
 import com.ecapybara.carbonx.model.issb.Output;
 import com.ecapybara.carbonx.model.issb.Process;
+import com.ecapybara.carbonx.model.ghg.GwpFactor;
 import com.ecapybara.carbonx.repository.*;
 import com.ecapybara.carbonx.utils.csv.CsvColumn;
 import com.ecapybara.carbonx.utils.csv.CsvColumnConfigurations;
@@ -127,6 +128,18 @@ public class ImportExportService {
 
           documentService.createDocuments(database, "outputs", outputList, null, null, null, null, null).block();
           return Mono.just(String.format("Import successful for '%s' into OUTPUT repository!", filename));
+        
+        
+        case "globalWarmingPotentials":
+            List<Object> gwpList = new CsvToBeanBuilder<Object>(reader)
+                                        .withType(GwpFactor.class)
+                                        .withIgnoreLeadingWhiteSpace(true)
+                                        .withIgnoreEmptyLine(true)
+                                        .build()
+                                        .parse();
+            documentService.createDocuments(database, "globalWarmingPotentials", gwpList, null, null, null, null, null).block();
+            return Mono.just(String.format("Import successful for '%s' into GWP_FACTORS collection!", filename));
+
 
         default:
           throw new IOException(String.format("Target collection not recognised: %s", targetCollection));

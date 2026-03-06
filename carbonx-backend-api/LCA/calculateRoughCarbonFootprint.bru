@@ -1,0 +1,21 @@
+meta {
+  name: calculateRoughCarbonFootprint
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{host}}/api/lca/:targetCollection/:documentkey
+  body: none
+  auth: inherit
+}
+
+params:path {
+  documentkey: 3
+  targetCollection: products
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
