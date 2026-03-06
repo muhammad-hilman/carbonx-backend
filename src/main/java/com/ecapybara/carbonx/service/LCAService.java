@@ -130,7 +130,7 @@ public class LCAService {
                         return node;
                     });
         }
-    public <T extends Node> Mono<T> calculateEmissionInformation(T node, String graphName) {
+    public <T extends Node> Mono<T> calculateEmissionInformation(T node) {
         //For now it only accounts for kg and g
         String query =
         "LET gwpMap = MERGE( \n" +
@@ -187,6 +187,7 @@ public class LCAService {
                     return node;
                 });
     }
+
   
   /*
   // unfinished
@@ -249,3 +250,5 @@ public class LCAService {
     return node;
   }
   */
+
+}

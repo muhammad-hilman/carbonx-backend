@@ -73,7 +73,7 @@ public class LcaController {
     //     }
     // }
 
-    @GetMapping("/{targetCollection}/{documentKey}")
+    @GetMapping("rough/{targetCollection}/{documentKey}")
     public Mono<?> getLCA(@PathVariable String targetCollection, @PathVariable String documentKey) {
         String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
 
@@ -94,7 +94,7 @@ public class LcaController {
             .map(node -> node.getDPP().getCarbonFootprint());
     }
 
-    @GetMapping("/emission/{targetCollection}/{documentKey}")
+    @GetMapping("/{targetCollection}/{documentKey}")
     public Mono<?> getEmissionLCA(@PathVariable String targetCollection, @PathVariable String documentKey) {
         String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
 
@@ -106,14 +106,14 @@ public class LcaController {
 
         return documentService.getDocument(targetCollection, key, null, null)
             .map(raw -> (Node) objectMapper.convertValue(raw, nodeClass))
-            .flatMap(node -> lcaService.calculateEmissionInformation(node, "default"))
-            .flatMap(node ->
-                documentService.replaceDocument(targetCollection, key, node,
+            .flatMap(n -> lcaService.calculateEmissionInformation(n))
+            .flatMap(n ->
+                documentService.replaceDocument(targetCollection, key, n,
                     null, null, null, null, null, null)
-                    .thenReturn(node)
+                    .thenReturn(n)
             )
-            .map(node -> node.getDPP().getCarbonFootprint());
-    }
+            .map(n -> n.getDPP().getCarbonFootprint());
+            }
 
     @GetMapping("/detailed/{targetCollection}/{documentKey}")
     public Mono<?> getDetailedLCA(@PathVariable String targetCollection, @PathVariable String documentKey) {
