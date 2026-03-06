@@ -27,9 +27,7 @@ public class ArangoDatabaseService extends BaseArangoService {
     public Mono<Map> listDatabases() {
         log.info("Listing all databases");
         return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/_db/_system/_api/database")
-                        .build())
+                .uri("/_db/_system/_api/database")
                 .retrieve()
                 .bodyToMono(Map.class)
                 .doOnSuccess(result -> log.info("Successfully listed databases"));
