@@ -1,6 +1,8 @@
 package com.ecapybara.carbonx.controller;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,7 @@ public class ExperimentController {
   @Autowired
   ExperimentalService experimentalService;
   @Autowired
-  ImportExportService importService;
+  ImportExportService importExportService;
   @Autowired
   LCAService lcaService;
   @Autowired
@@ -54,7 +56,7 @@ public class ExperimentController {
   @Autowired
   private ObjectMapper objectMapper;
 
-
+/* 
   @PostMapping("/httpExport")
   public Mono<?> exportComplexCSV(HttpServletResponse response) throws Exception {
     response.setContentType("text/csv");
@@ -72,10 +74,11 @@ public class ExperimentController {
 
     return Mono.just("Export successful!");
   }
+*/
 
   @PostMapping("/export")
   public Mono<?> exportComplexCSV() throws Exception {
-    return importService.exportCSV("inputs", "exportInputs.csv");
+    return importExportService.exportCSV("inputs", "exportInputs.csv");
   }
 
   @PostMapping("/import")
@@ -84,6 +87,7 @@ public class ExperimentController {
   }
 
 
+  // ---- UNFINISHED ----
   @PostMapping("/report")
   public Mono<?> generateReport() throws IOException {
       Map<String,String> values = Map.of( "companyName", "carbonx",
@@ -95,5 +99,18 @@ public class ExperimentController {
       reportService.getReport(values);
       
       return Mono.just("i dont know");
-  }  
+  }
+
+  @GetMapping("/ships/lca")
+  public Mono<?> calcualateShipsLCA() throws IOException {
+      Map<String,String> values = Map.of( "companyName", "carbonx",
+                                          "scope 1", "45.6",
+                                          "scope 2", "47.5",
+                                          "scope 3 category 1", "22.7",
+                                          "scope 3 category 2", "5");
+      
+      reportService.getReport(values);
+      
+      return Mono.just("i dont know");
+  }
 }

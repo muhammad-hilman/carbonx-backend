@@ -1,0 +1,22 @@
+meta {
+  name: searchProducts
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/api/products
+  body: none
+  auth: inherit
+}
+
+params:query {
+  ~name: mushroom
+  ~type: ingredient
+  ~productOrigin: 
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
