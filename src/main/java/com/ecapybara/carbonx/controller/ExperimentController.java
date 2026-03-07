@@ -16,6 +16,7 @@ import com.ecapybara.carbonx.model.issb.Product;
 import com.ecapybara.carbonx.model.issb.Process;
 import com.ecapybara.carbonx.service.*;
 import com.ecapybara.carbonx.service.arango.ArangoDocumentService;
+import com.ecapybara.carbonx.service.industry.maritime.MaritimeLCAService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
@@ -54,7 +55,7 @@ public class ExperimentController {
   ProcessController processController;
 
   @Autowired
-  private ObjectMapper objectMapper;
+  private MaritimeLCAService maritimeLCAService;
 
 /* 
   @PostMapping("/httpExport")
@@ -102,15 +103,8 @@ public class ExperimentController {
   }
 
   @GetMapping("/ships/lca")
-  public Mono<?> calcualateShipsLCA() throws IOException {
-      Map<String,String> values = Map.of( "companyName", "carbonx",
-                                          "scope 1", "45.6",
-                                          "scope 2", "47.5",
-                                          "scope 3 category 1", "22.7",
-                                          "scope 3 category 2", "5");
-      
-      reportService.getReport(values);
-      
-      return Mono.just("i dont know");
+  public Mono<Map> calculateShipsLCA() throws IOException {
+      Map<String,Object> result = maritimeLCAService.calculateRoughCarbonFootprint("testCompany", "563014970");
+      return Mono.just(result);
   }
 }

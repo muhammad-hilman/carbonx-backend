@@ -26,7 +26,7 @@ public class Ship extends Node {
 
 	@Id // db document field: _key
 	@JsonProperty("_key")
-	@JsonAlias("MMSI")
+	@JsonAlias("mmsi")
 	@CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
 	private String key;
 

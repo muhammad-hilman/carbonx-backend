@@ -73,11 +73,20 @@ public class MaritimeImportExportService {
                                           .parse();
           documentService.createDocuments(database, "shiplogs", shipLogs, null, null, null, null, null).block();
 
-          String query = "FOR log IN shiplogs COLLECT MMSI = log.mmsi, flag = log.flag RETURN { MMSI, flag }";
+          String query = "FOR log IN shiplogs COLLECT mmsi = log.mmsi, flag = log.flag RETURN { mmsi, flag }";
           Map<String,Object> response = queryService.executeQuery(database, query, null, null, null, null, null).block();
           log.info("response -> {}", response);
           List<Ship> shipList = mapper.convertValue(response.get("result"), new TypeReference<List<Ship>>() {});
           return documentService.createDocuments(database, "ships", shipList, null, null, null, null, null).block();
+
+        case "ships":
+          List<Object> ships = new CsvToBeanBuilder<Object>(reader)
+                                          .withType(Ship.class)
+                                          .withIgnoreLeadingWhiteSpace(true)
+                                          .withIgnoreEmptyLine(true)
+                                          .build()
+                                          .parse();
+          return documentService.createDocuments(database, "ships", ships, null, null, null, null, null).block();
 
         default:
           throw new IOException(String.format("Target collection not recognised: %s", targetCollection));
