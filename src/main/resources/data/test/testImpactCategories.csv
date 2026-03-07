@@ -1,2 +1,2 @@
-id,name,characterisationFactor,standardUnit,relevantMetrics
-impactCategories/1,Climate Change,Global Warming Potential(GWP),kgCO2e,
+key,name,characterisationFactor,standardUnit,relevantMetrics
+1,Climate Change,Global Warming Potential(GWP),kgCO2e,

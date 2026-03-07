@@ -5,6 +5,7 @@ import org.springframework.data.annotation.PersistenceCreator;
 import com.arangodb.springframework.annotation.Edge;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.bean.CsvBindByName;
@@ -55,7 +56,7 @@ public class Output extends com.ecapybara.carbonx.model.basic.Edge {
   @Override
   public String toString() {
     try {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return mapper.writeValueAsString(this);
     } catch (Exception e) {
         return super.toString(); // fallback

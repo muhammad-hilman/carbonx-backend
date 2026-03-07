@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ComponentScan;
 
+import com.ecapybara.carbonx.model.issb.Product;
 import com.ecapybara.carbonx.service.ImportExportService;
 import com.ecapybara.carbonx.service.arango.ArangoCollectionService;
 import com.ecapybara.carbonx.service.arango.ArangoDatabaseService;
 import com.ecapybara.carbonx.service.arango.ArangoGraphService;
 import com.ecapybara.carbonx.service.industry.maritime.MaritimeImportExportService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Slf4j
 @ComponentScan("com.ecapybara.carbonx")
@@ -32,6 +34,8 @@ public class UnstableTestSetup implements CommandLineRunner {
 
   @Autowired
   private MaritimeImportExportService maritimeImportExportService;
+
+  ObjectMapper mapper = new ObjectMapper();
   
   @Override
   public void run(final String... args) throws Exception {
@@ -83,7 +87,8 @@ public class UnstableTestSetup implements CommandLineRunner {
     // Create and save ships
     filename = "2020-12-15_SG.csv";
     filepath = Paths.get(dir,"src", "main", "resources", "data", "samples", "ships").resolve(filename);
-    maritimeImportExportService.importCSV(filepath, "testCompany", "ships");
+    List<?> response = maritimeImportExportService.importCSV(filepath, "testCompany", "ships");
+    log.info("Ship response -> {}", response);
 
     // Export files
     // importExportService.exportCSV("products", "exportProducts.csv").doOnError(error -> log.error("Failed to export PRODUCTS -> ", error));

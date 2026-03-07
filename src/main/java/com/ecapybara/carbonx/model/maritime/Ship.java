@@ -1,16 +1,12 @@
 package com.ecapybara.carbonx.model.maritime;
 
-import java.util.Collection;
-
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
-import com.arangodb.springframework.annotation.Relations;
 import com.ecapybara.carbonx.model.basic.Node;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
-import com.opencsv.bean.processor.PreAssignmentProcessor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,29 +19,32 @@ import lombok.experimental.SuperBuilder;
 @PersistentIndex(fields = {"id","key","name", "flag", "dateOnly"})
 public class Ship extends Node {
 
+	@JsonProperty("_class")
+  	private final String clazz = this.getClass().getTypeName();
+
 	@NonNull
 	@CsvBindByName(column = "MMSI")
 	private String name;
 
 	@NonNull
 	@CsvBindByName
-	private String latitude;
+	private Double latitude;
 
 	@NonNull
 	@CsvBindByName
-	private String longitude;
+	private Double longitude;
 
 	@NonNull
 	@CsvBindByName
-	private String speed;
+	private Double speed;
 
 	@NonNull
 	@CsvBindByName
-	private String course;
+	private Double course;
 
 	@NonNull
 	@CsvBindByName
-	private String heading;
+	private Double heading;
 
 	@NonNull
 	@CsvBindByName
@@ -62,7 +61,7 @@ public class Ship extends Node {
 	@Override
 	public String toString() {
 		try {
-			ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);;
+			ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 			return mapper.writeValueAsString(this);
 		} catch (Exception e) {
 			return super.toString(); // fallback

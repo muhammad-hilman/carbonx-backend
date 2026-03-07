@@ -241,7 +241,7 @@ public class ArangoDocumentService extends BaseArangoService {
 
         return webClient.post()
                 .uri(uri.toString())
-                .bodyValue(documents)
+                .bodyValue(documents.toString())
                 .retrieve()
                 .bodyToMono(List.class)
                 .doOnSuccess(result -> log.info("Successfully created {} documents in collection: {}", documents.size(), collection));

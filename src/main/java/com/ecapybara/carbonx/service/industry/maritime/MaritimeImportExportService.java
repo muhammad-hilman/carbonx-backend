@@ -53,7 +53,7 @@ public class MaritimeImportExportService {
   @Autowired
   private DocumentService documentService;
 
-  public Mono<?> importCSV(Path filepath, String database, String targetCollection) {
+  public List<?> importCSV(Path filepath, String database, String targetCollection) {
     String filename = filepath.getFileName().toString();
     try {
       // Read, convert and save CSV file into database according to request type
@@ -66,16 +66,17 @@ public class MaritimeImportExportService {
                                           .withIgnoreEmptyLine(true)
                                           .build()
                                           .parse();
-          log.info("{}", shipList);
-          documentService.createDocuments(database, "ships", shipList, null, null, null, null, null).block();
-          return Mono.just(String.format("Import successful for '%s' into SHIP repository!", filename));
+          for (Object ship : shipList) {
+            log.info("{}", ship);
+          }
+          return documentService.createDocuments(database, "ships", shipList, null, null, null, null, null).block();
 
         default:
           throw new IOException(String.format("Target collection not recognised: %s", targetCollection));
       }
     } catch (IOException e) {
       log.error("Error processing CSV", e);
-      return Mono.error(new RuntimeException(String.format("Failed to load CSV file: %s", filename), e));
+      return List.of("error importing " + filename);
     }
   }
 
