@@ -1,12 +1,17 @@
 package com.ecapybara.carbonx.model.maritime;
 
+import org.springframework.data.annotation.Id;
+
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.ecapybara.carbonx.model.basic.Node;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
+import com.opencsv.bean.processor.PreAssignmentProcessor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,44 +24,18 @@ import lombok.experimental.SuperBuilder;
 @PersistentIndex(fields = {"id","key","name", "flag", "dateOnly"})
 public class Ship extends Node {
 
+	@Id // db document field: _key
+	@JsonProperty("_key")
+	@JsonAlias("MMSI")
+	@CsvBindByName @PreAssignmentProcessor(processor = ConvertEmptyOrBlankStringsToNull.class)
+	private String key;
+
 	@JsonProperty("_class")
   	private final String clazz = this.getClass().getTypeName();
 
 	@NonNull
-	@CsvBindByName(column = "MMSI")
-	private String name;
-
-	@NonNull
-	@CsvBindByName
-	private Double latitude;
-
-	@NonNull
-	@CsvBindByName
-	private Double longitude;
-
-	@NonNull
-	@CsvBindByName
-	private Double speed;
-
-	@NonNull
-	@CsvBindByName
-	private Double course;
-
-	@NonNull
-	@CsvBindByName
-	private Double heading;
-
-	@NonNull
 	@CsvBindByName
 	private String flag;
-
-	@NonNull
-	@CsvBindByName
-	private String timestamp;
-
-	@NonNull
-	@CsvBindByName(column = "DateOnly")
-	private String dateOnly;
 
 	@Override
 	public String toString() {

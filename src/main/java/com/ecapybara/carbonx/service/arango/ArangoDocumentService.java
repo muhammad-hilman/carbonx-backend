@@ -210,7 +210,7 @@ public class ArangoDocumentService extends BaseArangoService {
      * Create multiple documents
      * POST /_api/document/{collection}
      */
-    public Mono<List> createDocuments( String database, String collection, List<Object> documents,
+    public Mono<List> createDocuments( String database, String collection, List<? extends Object> documents,
                                        Boolean waitForSync, Boolean returnNew,
                                        Boolean returnOld, Boolean silent,
                                        String overwriteMode) {

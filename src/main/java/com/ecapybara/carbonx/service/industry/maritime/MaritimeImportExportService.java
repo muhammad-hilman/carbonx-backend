@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,17 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.ecapybara.carbonx.model.issb.Product;
 import com.ecapybara.carbonx.model.maritime.Ship;
-import com.ecapybara.carbonx.model.issb.Input;
+import com.ecapybara.carbonx.model.maritime.ShipLog;
 import com.ecapybara.carbonx.model.issb.Output;
-import com.ecapybara.carbonx.model.issb.Process;
 import com.ecapybara.carbonx.repository.*;
 import com.ecapybara.carbonx.service.DocumentService;
+import com.ecapybara.carbonx.service.arango.ArangoQueryService;
 import com.ecapybara.carbonx.utils.csv.CsvColumn;
 import com.ecapybara.carbonx.utils.csv.CsvColumnConfigurations;
 import com.ecapybara.carbonx.utils.csv.CsvColumnWriterWithDozer;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvRecursionException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import reactor.core.publisher.Mono;
@@ -52,23 +54,29 @@ public class MaritimeImportExportService {
   private OutputRepository outputRepository;
   @Autowired
   private DocumentService documentService;
+  @Autowired
+  private ArangoQueryService queryService;
 
   public List<?> importCSV(Path filepath, String database, String targetCollection) {
     String filename = filepath.getFileName().toString();
+    ObjectMapper mapper = new ObjectMapper();
     try {
       // Read, convert and save CSV file into database according to request type
       Reader reader = Files.newBufferedReader(filepath);
       switch (targetCollection) {
-        case "ships":
-          List<Object> shipList = new CsvToBeanBuilder<Object>(reader)
-                                          .withType(Ship.class)
+        case "shiplogs":
+          List<Object> shipLogs = new CsvToBeanBuilder<Object>(reader)
+                                          .withType(ShipLog.class)
                                           .withIgnoreLeadingWhiteSpace(true)
                                           .withIgnoreEmptyLine(true)
                                           .build()
                                           .parse();
-          for (Object ship : shipList) {
-            log.info("{}", ship);
-          }
+          documentService.createDocuments(database, "shiplogs", shipLogs, null, null, null, null, null).block();
+
+          String query = "FOR log IN shiplogs COLLECT MMSI = log.mmsi, flag = log.flag RETURN { MMSI, flag }";
+          Map<String,Object> response = queryService.executeQuery(database, query, null, null, null, null, null).block();
+          log.info("response -> {}", response);
+          List<Ship> shipList = mapper.convertValue(response.get("result"), new TypeReference<List<Ship>>() {});
           return documentService.createDocuments(database, "ships", shipList, null, null, null, null, null).block();
 
         default:

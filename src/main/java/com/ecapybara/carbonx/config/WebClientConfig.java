@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
@@ -24,6 +25,12 @@ public class WebClientConfig {
     public WebClient webClient() {
         return WebClient.builder()
                 .baseUrl(DATABASE_API_URL)
+                .exchangeStrategies(ExchangeStrategies
+                    .builder()
+                    .codecs(codecs -> codecs
+                        .defaultCodecs()
+                        .maxInMemorySize(500 * 1024))
+                    .build())
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeaders(headers -> headers.setBasicAuth(username, password))
                 .build();

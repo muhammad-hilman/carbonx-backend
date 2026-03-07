@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.ecapybara.carbonx.model.issb.Product;
 import com.ecapybara.carbonx.service.ImportExportService;
 import com.ecapybara.carbonx.service.arango.ArangoCollectionService;
 import com.ecapybara.carbonx.service.arango.ArangoDatabaseService;
@@ -53,6 +52,7 @@ public class UnstableTestSetup implements CommandLineRunner {
     collectionService.createCollection("default", "inputs", 3, true, null, null, null, null).block();
     collectionService.createCollection("default", "outputs", 3, true, null, null, null, null).block();
     collectionService.createCollection("testCompany", "ships", 2, true, null, null, null, null).block();
+    collectionService.createCollection("testCompany", "shiplogs", 2, true, null, null, null, null).block();
 
     // Create edge definitions and graph
     Map<String,Object> inputs = Map.of( "collection", "inputs",
@@ -85,10 +85,10 @@ public class UnstableTestSetup implements CommandLineRunner {
     importExportService.importCSV(filepath, "default", "outputs").block();
 
     // Create and save ships
-    filename = "2020-12-15_SG.csv";
-    filepath = Paths.get(dir,"src", "main", "resources", "data", "samples", "ships").resolve(filename);
-    List<?> response = maritimeImportExportService.importCSV(filepath, "testCompany", "ships");
-    log.info("Ship response -> {}", response);
+    filename = "testShipLogs.csv";
+    filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
+    List<?> response = maritimeImportExportService.importCSV(filepath, "testCompany", "shiplogs");
+    // log.info("Ship response -> {}", response);
 
     // Export files
     // importExportService.exportCSV("products", "exportProducts.csv").doOnError(error -> log.error("Failed to export PRODUCTS -> ", error));
