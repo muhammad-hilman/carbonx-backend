@@ -11,10 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ComponentScan;
 
+import com.ecapybara.carbonx.controller.CompanyInfoController;
 import com.ecapybara.carbonx.service.ImportExportService;
 import com.ecapybara.carbonx.service.arango.ArangoCollectionService;
 import com.ecapybara.carbonx.service.arango.ArangoDatabaseService;
 import com.ecapybara.carbonx.service.arango.ArangoGraphService;
+import com.ecapybara.carbonx.service.industry.maritime.MaritimeImportExportService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Slf4j
 @ComponentScan("com.ecapybara.carbonx")
@@ -27,23 +30,23 @@ public class StableTestSetup implements CommandLineRunner {
     private ArangoGraphService graphService;
     @Autowired
     private ImportExportService importExportService;
+    @Autowired
+    private CompanyInfoController companyInfoController;
+    @Autowired
+    private MaritimeImportExportService maritimeImportExportService;
+
+    ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void run(final String... args) throws Exception {
         log.info("------------- # SETUP BEGIN # -------------");
-        // first drop the database so that we can run this multiple times with the same dataset
+        // Nuke ALL databases so that we can run this multiple times with the same dataset
         List<String> databases = (List<String>) databaseService.listDatabases().block().get("result");
         databases.remove("_system");
+        for (String database : databases) { databaseService.dropDatabase(database).block(); }
 
-        if (!databases.contains("default")) {
-            databaseService.createDatabase("default", null, null, null, null).block();
-            collectionService.createCollection("default", "companies", 2, true, null, null, null, null).block();
-        }
-        else {
-            graphService.dropGraph("default", "default", true).block();
-            collectionService.dropCollection("default", "metrics", null).block();
-            collectionService.dropCollection("default", "gwp", null).block();
-        }
+        // Create 'default' database
+        databaseService.createDatabase("default", null, null, null, null).block();
 
         // Create collections
         collectionService.createCollection("default", "products", 2, true, null, null, null, null).block();
@@ -52,6 +55,7 @@ public class StableTestSetup implements CommandLineRunner {
         collectionService.createCollection("default", "outputs", 3, true, null, null, null, null).block();
         collectionService.createCollection("default", "metrics", 2, true, null, null, null, null).block();
         collectionService.createCollection("default", "gwp", 2, true, null, null, null, null).block();
+        collectionService.createCollection("default", "companies", 2, true, null, null, null, null).block();
 
         // Create edge definitions and graph
         Map<String,Object> inputs = Map.of( "collection", "inputs",
@@ -83,6 +87,21 @@ public class StableTestSetup implements CommandLineRunner {
         filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
         importExportService.importCSV(filepath, "default", "outputs").block();
 
+        // Setup testCompany
+        companyInfoController.createCompany(Map.of( "name", "testCompany",
+                                                    "sector", "maritime"));
+
+        // Create and save ships
+        filename = "testShipLogs.csv";
+        filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
+        maritimeImportExportService.importCSV(filepath, "testCompany", "shipLogs");
+
+        // Export files
+        // importExportService.exportCSV("products", "exportProducts.csv").doOnError(error -> log.error("Failed to export PRODUCTS -> ", error));
+        // importExportService.exportCSV("processes", "exportProcesses.csv").doOnError(error -> log.error("Failed to export PROCESSES -> ", error));
+        // log.info("-> Successfully exported PROCESSES into complexProcesses.csv");
+        // importExportService.exportCSV("inputs", "exportInputs.csv").doOnError(error -> log.error("Failed to export INPUTS -> ", error));
+        // importExportService.exportCSV("outputs", "exportOutputs.csv").doOnError(error -> log.error("Failed to export OUTPUTS -> ", error));
 
         log.info("------------- # SETUP COMPLETED # -------------");
     }
