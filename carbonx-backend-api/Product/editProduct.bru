@@ -5,12 +5,13 @@ meta {
 }
 
 put {
-  url: {{host}}/api/products/:id
+  url: {{host}}/api/products/:companyName/:id
   body: json
   auth: inherit
 }
 
 params:path {
+  companyName: testCompany
   id: 98920
 }
 

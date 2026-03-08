@@ -21,7 +21,7 @@ public class ArangoDocumentService extends BaseArangoService {
 
     /**
      * Create a document
-     * POST /_api/document/{collection}
+     * POST /_db/{database-name}/_api/document/{collection}
      */
     public Mono<Map> createDocument( String database, String collection, Object document, 
                                      Boolean waitForSync, Boolean returnNew,
@@ -62,52 +62,52 @@ public class ArangoDocumentService extends BaseArangoService {
 
     /**
      * Get a document
-     * GET /_api/document/{collection}/{key}
+     * GET /_db/{database-name}/_api/document/{collection}/{key}
      */
-    public Mono<Map> getDocument(String collection, String key, 
-                                  String ifNoneMatch, String ifMatch) {
+    public Mono<Map> getDocument(String database, String collection, String key, 
+                                 String ifNoneMatch, String ifMatch) {
         log.info("Getting document from collection: {}, key: {}", collection, key);
         
         return webClient.get()
-                .uri("_db/{ARANGODB}/_api/document/{collection}/{key}", ARANGODB,collection, key)
-                .headers(headers -> {
-                    if (ifNoneMatch != null) headers.set("If-None-Match", ifNoneMatch);
-                    if (ifMatch != null) headers.set("If-Match", ifMatch);
-                })
-                .retrieve()
-                .bodyToMono(Map.class)
-                .doOnSuccess(result -> log.info("Successfully retrieved {}/{} -> {}", collection, key, result));
+                        .uri("/_db/" + database + "/_api/document/" + collection + "/" + key)
+                        .headers(headers -> {
+                            if (ifNoneMatch != null) headers.set("If-None-Match", ifNoneMatch);
+                            if (ifMatch != null) headers.set("If-Match", ifMatch);
+                        })
+                        .retrieve()
+                        .bodyToMono(Map.class)
+                        .doOnSuccess(result -> log.info("Successfully retrieved {}/{} -> {}", collection, key, result));
     }
 
     /**
      * Check if document exists (HEAD request)
-     * HEAD /_api/document/{collection}/{key}
+     * HEAD /_db/{database-name}/_api/document/{collection}/{key}
      */
-    public Mono<Boolean> documentExists(String collection, String key, 
+    public Mono<Boolean> documentExists( String database, String collection, String key, 
                                          String ifNoneMatch, String ifMatch) {
         log.info("Checking document existence: {}/{}", collection, key);
         
         return webClient.head()
-                .uri("/document/{collection}/{key}", collection, key)
-                .headers(headers -> {
-                    if (ifNoneMatch != null) headers.set("If-None-Match", ifNoneMatch);
-                    if (ifMatch != null) headers.set("If-Match", ifMatch);
-                })
-                .exchangeToMono(response -> Mono.just(response.statusCode().is2xxSuccessful()))
-                .doOnSuccess(exists -> log.info("Document {}/{} exists: {}", collection, key, exists));
+                        .uri("/document/{collection}/{key}", collection, key)
+                        .headers(headers -> {
+                            if (ifNoneMatch != null) headers.set("If-None-Match", ifNoneMatch);
+                            if (ifMatch != null) headers.set("If-Match", ifMatch);
+                        })
+                        .exchangeToMono(response -> Mono.just(response.statusCode().is2xxSuccessful()))
+                        .doOnSuccess(exists -> log.info("Document {}/{} exists: {}", collection, key, exists));
     }
 
     /**
      * Replace a document
-     * PUT /_api/document/{collection}/{key}
+     * PUT /_db/{database-name}/_api/document/{collection}/{key}
      */
-    public Mono<Map> replaceDocument(String collection, String key, Object document,
+    public Mono<Map> replaceDocument( String database, String collection, String key, Object document,
                                       Boolean waitForSync, Boolean returnNew,
                                       Boolean returnOld, Boolean silent,
                                       String ifMatch, Boolean ignoreRevs) {
         log.info("Replacing document: {}/{}", collection, key);
         
-        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+ "/_api/document/" + collection + "/" + key);
+        StringBuilder uri = new StringBuilder("/_db/"+ database + "/_api/document/" + collection + "/" + key);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -130,22 +130,26 @@ public class ArangoDocumentService extends BaseArangoService {
             uri.append(separator).append("ignoreRevs=").append(ignoreRevs);
         }
 
-        return put(uri.toString(), document, Map.class)
-                .doOnSuccess(result -> log.info("Successfully replaced document: {}/{}", collection, key));
+        return webClient.put()
+                        .uri(uri.toString())
+                        .bodyValue(document.toString())
+                        .retrieve()
+                        .bodyToMono(Map.class)
+                        .doOnSuccess(result -> log.info("Successfully replaced document: {}/{}", collection, key));
     }
 
     /**
      * Update (patch) a document
-     * PATCH /_api/document/{collection}/{key}
+     * PATCH /_db/{database-name}/_api/document/{collection}/{key}
      */
-    public Mono<Map> updateDocument(String collection, String key, Object document,
+    public Mono<Map> updateDocument( String database, String collection, String key, Object document,
                                      Boolean waitForSync, Boolean returnNew,
                                      Boolean returnOld, Boolean silent,
                                      Boolean keepNull, Boolean mergeObjects,
                                      String ifMatch, Boolean ignoreRevs) {
         log.info("Updating document: {}/{}", collection, key);
         
-        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+ "/_api/document/" + collection + "/" + key);
+        StringBuilder uri = new StringBuilder("/_db/"+ database + "/_api/document/" + collection + "/" + key);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -176,20 +180,24 @@ public class ArangoDocumentService extends BaseArangoService {
             uri.append(separator).append("ignoreRevs=").append(ignoreRevs);
         }
 
-        return patch(uri.toString(), document, Map.class)
-                .doOnSuccess(result -> log.info("Successfully updated document: {}/{}", collection, key));
+        return webClient.patch()
+                        .uri(uri.toString())
+                        .bodyValue(document.toString())
+                        .retrieve()
+                        .bodyToMono(Map.class)
+                        .doOnSuccess(result -> log.info("Successfully updated document: {}/{}", collection, key));
     }
 
     /**
      * Delete a document
-     * DELETE /_api/document/{collection}/{key}
+     * DELETE /_db/{database-name}/_api/document/{collection}/{key}
      */
-    public Mono<Map> deleteDocument(String collection, String key,
+    public Mono<Map> deleteDocument( String database, String collection, String key,
                                      Boolean waitForSync, Boolean returnOld,
                                      Boolean silent, String ifMatch) {
         log.info("Deleting document: {}/{}", collection, key);
         
-        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+ "/_api/document/" + collection + "/" + key);
+        StringBuilder uri = new StringBuilder("/_db/"+ database + "/_api/document/" + collection + "/" + key);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -204,15 +212,18 @@ public class ArangoDocumentService extends BaseArangoService {
             uri.append(separator).append("silent=").append(silent);
         }
 
-        return delete(uri.toString(), Map.class)
-                .doOnSuccess(result -> log.info("Successfully deleted document: {}/{}", collection, key));
+        return webClient.delete()
+                        .uri(uri.toString())
+                        .retrieve()
+                        .bodyToMono(Map.class)
+                        .doOnSuccess(result -> log.info("Successfully deleted document: {}/{}", collection, key));
     }
 
     // ==================== Multiple Document Operations ====================
 
     /**
      * Create multiple documents
-     * POST /_api/document/{collection}
+     * POST /_db/{database-name}/_api/document/{collection}
      */
     public Mono<List> createDocuments( String database, String collection, List<? extends Object> documents,
                                        Boolean waitForSync, Boolean returnNew,
@@ -255,7 +266,7 @@ public class ArangoDocumentService extends BaseArangoService {
      * Get multiple documents
      * PUT /_api/document/{collection}?onlyget=true
      */
-    public Mono<List> getDocuments(String collection, List<String> keys,
+    public Mono<List> getDocuments( String collection, List<String> keys,
                                     Boolean ignoreRevs) {
         log.info("Getting {} documents from collection: {}", keys.size(), collection);
         
@@ -264,20 +275,24 @@ public class ArangoDocumentService extends BaseArangoService {
             uri.append("&ignoreRevs=").append(ignoreRevs);
         }
 
-        return put(uri.toString(), keys, List.class)
-                .doOnSuccess(result -> log.info("Successfully retrieved {} documents from collection: {}", keys.size(), collection));
+        return webClient.put()
+                        .uri(uri.toString())
+                        .bodyValue(keys)
+                        .retrieve()
+                        .bodyToMono(List.class)
+                        .doOnSuccess(result -> log.info("Successfully retrieved {} documents from collection: {}", keys.size(), collection));
     }
 
     /**
      * Replace multiple documents
-     * PUT /_api/document/{collection}
+     * PUT /_db/{database-name}/_api/document/{collection}
      */
-    public Mono<List> replaceDocuments(String collection, List<Object> documents,
+    public Mono<List> replaceDocuments( String database, String collection, List<? extends Object> documents,
                                         Boolean waitForSync, Boolean returnNew,
                                         Boolean returnOld, Boolean ignoreRevs) {
         log.info("Replacing {} documents in collection: {}", documents.size(), collection);
         
-        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+"/_api/document/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/"+ database +"/_api/document/" + collection);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -296,21 +311,25 @@ public class ArangoDocumentService extends BaseArangoService {
             uri.append(separator).append("ignoreRevs=").append(ignoreRevs);
         }
 
-        return put(uri.toString(), documents, List.class)
-                .doOnSuccess(result -> log.info("Successfully replaced {} documents in collection: {}", documents.size(), collection));
+        return webClient.put()
+                        .uri(uri.toString())
+                        .bodyValue(documents.toString())
+                        .retrieve()
+                        .bodyToMono(List.class)
+                        .doOnSuccess(result -> log.info("Successfully replaced {} documents in collection: {}", documents.size(), collection));
     }
 
     /**
      * Update multiple documents
-     * PATCH /_api/document/{collection}
+     * PATCH /_db/{database-name}/_api/document/{collection}
      */
-    public Mono<List> updateDocuments(String collection, List<Object> documents,
-                                       Boolean waitForSync, Boolean returnNew,
-                                       Boolean returnOld, Boolean keepNull,
-                                       Boolean mergeObjects, Boolean ignoreRevs) {
+    public Mono<List> updateDocuments(  String database, String collection, List<? extends Object> documents,
+                                        Boolean waitForSync, Boolean returnNew,
+                                        Boolean returnOld, Boolean keepNull,
+                                        Boolean mergeObjects, Boolean ignoreRevs) {
         log.info("Updating {} documents in collection: {}", documents.size(), collection);
         
-        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+"/_api/document/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/"+ database +"/_api/document/" + collection);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -337,20 +356,24 @@ public class ArangoDocumentService extends BaseArangoService {
             uri.append(separator).append("ignoreRevs=").append(ignoreRevs);
         }
 
-        return patch(uri.toString(), documents, List.class)
-                .doOnSuccess(result -> log.info("Successfully updated {} documents in collection: {}", documents.size(), collection));
+        return webClient.patch()
+                        .uri(uri.toString())
+                        .bodyValue(documents.toString())
+                        .retrieve()
+                        .bodyToMono(List.class)
+                        .doOnSuccess(result -> log.info("Successfully updated {} documents in collection: {}", documents.size(), collection));
     }
 
     /**
      * Delete multiple documents
-     * DELETE /_api/document/{collection}
+     * DELETE /_db/{database-name}/_api/document/{collection}
      */
-    public Mono<List> deleteDocuments(String collection, List<Object> selectors,
+    public Mono<List> deleteDocuments( String database, String collection, List<Object> selectors,
                                        Boolean waitForSync, Boolean returnOld,
                                        Boolean ignoreRevs) {
         log.info("Deleting {} documents from collection: {}", selectors.size(), collection);
         
-        StringBuilder uri = new StringBuilder("/_db/"+ ARANGODB+ "/_api/document/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/"+ database + "/_api/document/" + collection);
         String separator = "?";
         
         if (waitForSync != null) {
@@ -367,10 +390,10 @@ public class ArangoDocumentService extends BaseArangoService {
 
         // DELETE with body uses a different approach
         return webClient.method(org.springframework.http.HttpMethod.DELETE)
-                .uri(uri.toString())
-                .bodyValue(selectors)
-                .retrieve()
-                .bodyToMono(List.class)
-                .doOnSuccess(result -> log.info("Successfully deleted {} documents from collection: {}", selectors.size(), collection));
+                        .uri(uri.toString())
+                        .bodyValue(selectors)
+                        .retrieve()
+                        .bodyToMono(List.class)
+                        .doOnSuccess(result -> log.info("Successfully deleted {} documents from collection: {}", selectors.size(), collection));
     }
 }

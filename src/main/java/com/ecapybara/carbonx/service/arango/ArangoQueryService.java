@@ -38,11 +38,11 @@ public class ArangoQueryService extends BaseArangoService {
         if (options != null) body.put("options", options);
 
         return webClient.post()
-                .uri("/_db/" + database + "/_api/cursor")
-                .bodyValue(body)
-                .retrieve()
-                .bodyToMono(Map.class)
-                .doOnSuccess(result -> log.info("Successfully executed query"));
+                        .uri("/_db/" + database + "/_api/cursor")
+                        .bodyValue(body)
+                        .retrieve()
+                        .bodyToMono(Map.class)
+                        .doOnSuccess(result -> log.info("Successfully executed query"));
     }
 
     /**

@@ -1,13 +1,17 @@
 meta {
   name: editProducts
   type: http
-  seq: 6
+  seq: 3
 }
 
 put {
-  url: {{host}}/api/products
+  url: {{host}}/api/products/:companyName
   body: json
   auth: inherit
+}
+
+params:path {
+  companyName: testCompany
 }
 
 body:json {
