@@ -17,9 +17,9 @@ auth:basic {
 
 body:json {
   {
-    "query" : "FOR doc IN shiplogs FILTER doc.mmsi == @mmsi COLLECT AGGREGATE speed = AVERAGE(doc.speed) RETURN speed",
+    "query" : "FOR doc IN products FILTER doc._key == @key RETURN doc",
     "bindVars" :  {
-                    "mmsi" : "563014970"
+                    "key" : "1"
                   }
   }
 }

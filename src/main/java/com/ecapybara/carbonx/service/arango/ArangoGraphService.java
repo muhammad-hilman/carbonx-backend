@@ -141,7 +141,7 @@ public class ArangoGraphService extends BaseArangoService {
         body.put("from", from);
         body.put("to", to);
 
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/edge/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/edge/" + collection);
         String separator = "?";
 
         if (waitForSync != null) {
@@ -168,7 +168,7 @@ public class ArangoGraphService extends BaseArangoService {
                                            Boolean waitForSync, Boolean dropCollections) {
         log.info("Removing edge definition from graph: {}, collection: {}", graphName, collection);
         
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/edge/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/edge/" + collection);
         String separator = "?";
         if (waitForSync != null) {
             uri.append(separator).append("waitForSync=").append(waitForSync);
@@ -194,7 +194,7 @@ public class ArangoGraphService extends BaseArangoService {
     public Mono<Map> listVertexCollections(String database, String graphName) {
         log.info("Listing vertex collections for graph: {}", graphName);
         return webClient.get()
-                        .uri("/_db/" + database + "_api/gharial/" + graphName + "/vertex")
+                        .uri("/_db/" + database + "/_api/gharial/" + graphName + "/vertex")
                         .retrieve()
                         .bodyToMono(Map.class)
                         .doOnSuccess(result -> log.info("Successfully listed vertex collections for graph: {}", graphName));
@@ -211,7 +211,7 @@ public class ArangoGraphService extends BaseArangoService {
         body.put("collection", collection);
 
         return webClient.post()
-                        .uri("/_db/" + database + "_api/gharial/" + graphName + "/vertex")
+                        .uri("/_db/" + database + "/_api/gharial/" + graphName + "/vertex")
                         .bodyValue(body)
                         .retrieve()
                         .bodyToMono(Map.class)
@@ -226,7 +226,7 @@ public class ArangoGraphService extends BaseArangoService {
                                             Boolean dropCollection) {
         log.info("Removing vertex collection from graph: {}, collection: {}", graphName, collection);
 
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/vertex/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/vertex/" + collection);
         String separator = "?";
 
         if (dropCollection != null) {
@@ -251,7 +251,7 @@ public class ArangoGraphService extends BaseArangoService {
                                    Boolean waitForSync, Boolean returnNew) {
         log.info("Creating vertex in graph: {}, collection: {}", graphName, collection);
         
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/vertex/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/vertex/" + collection);
         String separator = "?";
         if (waitForSync != null) {
             uri.append(separator).append("waitForSync=").append(waitForSync);
@@ -277,7 +277,7 @@ public class ArangoGraphService extends BaseArangoService {
                                 String rev, String ifMatch, String ifNoneMatch) {
         log.info("Getting vertex from graph: {}, collection: {}, key: {}", graphName, collection, vertexKey);
         
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/vertex/" + collection + "/" + vertexKey);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/vertex/" + collection + "/" + vertexKey);
         if (rev != null) {
             uri.append("?rev=").append(rev);
         }
@@ -298,7 +298,7 @@ public class ArangoGraphService extends BaseArangoService {
                                     Boolean returnOld, Boolean keepNull) {
         log.info("Replacing vertex in graph: {}, collection: {}, key: {}", graphName, collection, vertexKey);
         
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/vertex/" + collection + "/" + vertexKey);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/vertex/" + collection + "/" + vertexKey);
         String separator = "?";
         if (waitForSync != null) {
             uri.append(separator).append("waitForSync=").append(waitForSync);
@@ -333,7 +333,7 @@ public class ArangoGraphService extends BaseArangoService {
                                    Boolean returnOld, Boolean keepNull) {
         log.info("Updating vertex in graph: {}, collection: {}, key: {}", graphName, collection, vertexKey);
         
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/vertex/" + collection + "/" + vertexKey);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/vertex/" + collection + "/" + vertexKey);
         String separator = "?";
         if (waitForSync != null) {
             uri.append(separator).append("waitForSync=").append(waitForSync);
@@ -367,7 +367,7 @@ public class ArangoGraphService extends BaseArangoService {
                                    Boolean waitForSync, Boolean returnOld) {
         log.info("Deleting vertex from graph: {}, collection: {}, key: {}", graphName, collection, vertexKey);
         
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/vertex/" + collection + "/" + vertexKey);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/vertex/" + collection + "/" + vertexKey);
         String separator = "?";
         if (waitForSync != null) {
             uri.append(separator).append("waitForSync=").append(waitForSync);
@@ -394,7 +394,7 @@ public class ArangoGraphService extends BaseArangoService {
                                  Boolean waitForSync, Boolean returnNew) {
         log.info("Creating edge in graph: {}, collection: {}", graphName, collection);
         
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/edge/" + collection);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/edge/" + collection);
         String separator = "?";
         if (waitForSync != null) {
             uri.append(separator).append("waitForSync=").append(waitForSync);
@@ -420,7 +420,7 @@ public class ArangoGraphService extends BaseArangoService {
                               String rev, String ifMatch, String ifNoneMatch) {
         log.info("Getting edge from graph: {}, collection: {}, key: {}", graphName, collection, edgeKey);
         
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/edge/" + collection + "/" + edgeKey);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/edge/" + collection + "/" + edgeKey);
         if (rev != null) {
             uri.append("?rev=").append(rev);
         }
@@ -441,7 +441,7 @@ public class ArangoGraphService extends BaseArangoService {
                                   Boolean returnOld, Boolean keepNull) {
         log.info("Replacing edge in graph: {}, collection: {}, key: {}", graphName, collection, edgeKey);
         
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/edge/" + collection + "/" + edgeKey);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/edge/" + collection + "/" + edgeKey);
         String separator = "?";
         if (waitForSync != null) {
             uri.append(separator).append("waitForSync=").append(waitForSync);
@@ -476,7 +476,7 @@ public class ArangoGraphService extends BaseArangoService {
                                  Boolean returnOld, Boolean keepNull) {
         log.info("Updating edge in graph: {}, collection: {}, key: {}", graphName, collection, edgeKey);
         
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/edge/" + collection + "/" + edgeKey);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/edge/" + collection + "/" + edgeKey);
         String separator = "?";
         if (waitForSync != null) {
             uri.append(separator).append("waitForSync=").append(waitForSync);
@@ -510,7 +510,7 @@ public class ArangoGraphService extends BaseArangoService {
                                  Boolean waitForSync, Boolean returnOld) {
         log.info("Deleting edge from graph: {}, collection: {}, key: {}", graphName, collection, edgeKey);
         
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + graphName + "/edge/" + collection + "/" + edgeKey);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName + "/edge/" + collection + "/" + edgeKey);
         String separator = "?";
         if (waitForSync != null) {
             uri.append(separator).append("waitForSync=").append(waitForSync);
@@ -536,7 +536,7 @@ public class ArangoGraphService extends BaseArangoService {
     public Mono<Map> getEdges(String database, String collection, String vertex, String direction) {
         log.info("Getting edges for vertex: {} in collection: {}, direction: {}", vertex, collection, direction);
         
-        StringBuilder uri = new StringBuilder("/_db/" + database + "_api/gharial/" + "?vertex=" + vertex);
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + "?vertex=" + vertex);
         if (direction != null) {
             uri.append("&direction=").append(direction); // "in", "out", or "any"
         }

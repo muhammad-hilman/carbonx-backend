@@ -1,11 +1,11 @@
 meta {
-  name: import
+  name: listAllProcesses
   type: http
-  seq: 8
+  seq: 2
 }
 
-post {
-  url: {{host}}/api/products/import
+get {
+  url: {{host}}/api/processes/all
   body: none
   auth: inherit
 }

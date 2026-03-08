@@ -1,17 +1,13 @@
 meta {
   name: listAllProducts
   type: http
-  seq: 1
+  seq: 2
 }
 
 get {
-  url: {{host}}/api/products?targetDatabase=testCompany
+  url: {{host}}/api/products/all
   body: none
   auth: inherit
-}
-
-params:query {
-  targetDatabase: testCompany
 }
 
 settings {

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecapybara.carbonx.model.issb.Product;
@@ -72,18 +73,20 @@ public class LcaController {
     //             return Mono.error(new RuntimeException("Invalid target collection name!"));
     //     }
     // }
-
-    @GetMapping("/{targetCollection}/{documentKey}")
-    public Mono<?> getLCA(@PathVariable String targetCollection, @PathVariable String documentKey) {
+/*
+    @GetMapping("/rough")
+    public Mono<?> getRoughLCA( @RequestParam(required = false, defaultValue = "default") String database,
+                                @RequestParam(required = true) String collection,
+                                @RequestParam(required = true) String documentKey) {
         String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
 
-        Class<? extends Node> nodeClass = switch (targetCollection) {
+        Class<? extends Node> nodeClass = switch (collection) {
             case "products" -> Product.class;
             case "processes" -> Process.class;
-            default -> throw new RuntimeException("Invalid target collection: " + targetCollection);
+            default -> throw new RuntimeException("Invalid target collection: " + collection);
         };
 
-        return documentService.getDocument(targetCollection, key, null, null)
+        return documentService.getDocument(database, collection, key, null, null)
             .map(raw -> (Node) objectMapper.convertValue(raw, nodeClass))
             .flatMap(node -> lcaService.calculateRoughCarbonFootprint(node, "default"))
             .flatMap(node ->
@@ -94,46 +97,51 @@ public class LcaController {
             .map(node -> node.getDPP().getCarbonFootprint());
     }
 
-    @GetMapping("/emission/{targetCollection}/{documentKey}")
-    public Mono<?> getEmissionLCA(@PathVariable String targetCollection, @PathVariable String documentKey) {
+    @GetMapping("/emission")
+    public Mono<?> getEmissionLCA(@RequestParam(required = false, defaultValue = "default") String database,
+                                  @RequestParam(required = true) String collection,
+                                  @RequestParam(required = true) String documentKey) {
         String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
 
-        Class<? extends Node> nodeClass = switch (targetCollection) {
+        Class<? extends Node> nodeClass = switch (collection) {
             case "products" -> Product.class;
             case "processes" -> Process.class;
-            default -> throw new RuntimeException("Invalid target collection: " + targetCollection);
+            default -> throw new RuntimeException("Invalid target collection: " + collection);
         };
 
-        return documentService.getDocument(targetCollection, key, null, null)
+        return documentService.getDocument(collection, key, null, null)
             .map(raw -> (Node) objectMapper.convertValue(raw, nodeClass))
             .flatMap(node -> lcaService.calculateEmissionInformation(node, "default"))
             .flatMap(node ->
-                documentService.replaceDocument(targetCollection, key, node,
+                documentService.replaceDocument(collection, key, node,
                     null, null, null, null, null, null)
                     .thenReturn(node)
             )
             .map(node -> node.getDPP().getCarbonFootprint());
     }
 
-    @GetMapping("/detailed/{targetCollection}/{documentKey}")
-    public Mono<?> getDetailedLCA(@PathVariable String targetCollection, @PathVariable String documentKey) {
+    @GetMapping("/detailed")
+    public Mono<?> getDetailedLCA(@RequestParam(required = false, defaultValue = "default") String database,
+                                  @RequestParam(required = true) String collection,
+                                  @RequestParam(required = true) String documentKey) {
         String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
 
-        Class<? extends Node> nodeClass = switch (targetCollection) {
+        Class<? extends Node> nodeClass = switch (collection) {
             case "products" -> Product.class;
             case "processes" -> Process.class;
-            default -> throw new RuntimeException("Invalid target collection: " + targetCollection);
+            default -> throw new RuntimeException("Invalid target collection: " + collection);
         };
 
-        return documentService.getDocument(targetCollection, key, null, null)
+        return documentService.getDocument(collection, key, null, null)
             .map(raw -> (Node) objectMapper.convertValue(raw, nodeClass))
             .flatMap(node -> lcaService.calculateDetailedCarbonFootprint(node, "default"))
             .flatMap(node ->
-                documentService.replaceDocument(targetCollection, key, node,
+                documentService.replaceDocument(collection, key, node,
                     null, null, null, null, null, null)
                     .thenReturn(node)
             )
             .map(node -> node.getDPP().getCarbonFootprint());
 
     }
+*/
 }

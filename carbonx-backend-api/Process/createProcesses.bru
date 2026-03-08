@@ -5,9 +5,13 @@ meta {
 }
 
 post {
-  url: {{host}}/api/processes
+  url: {{host}}/api/processes/:companyName
   body: json
   auth: inherit
+}
+
+params:path {
+  companyName: testCompany
 }
 
 body:json {
