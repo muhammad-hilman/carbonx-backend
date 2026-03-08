@@ -41,18 +41,25 @@ public class UnstableTestSetup implements CommandLineRunner {
     log.info("------------- # SETUP BEGIN # -------------");
     // first drop the database so that we can run this multiple times with the same dataset
     List<String> databases = (List<String>) databaseService.listDatabases().block().get("result");
-    if (databases.contains("default")) { databaseService.dropDatabase("default").block(); }
-    databaseService.createDatabase("default", null, null, null, null).block(); 
-    if (databases.contains("testCompany")) { databaseService.dropDatabase("testCompany").block(); }
-    databaseService.createDatabase("testCompany", null, null, null, null).block();
+    databases.remove("_system");
+
+    if (!databases.contains("default")) {
+      databaseService.createDatabase("default", null, null, null, null).block();
+      collectionService.createCollection("default", "companies", 2, true, null, null, null, null).block();
+    }
+    else {
+      graphService.dropGraph("default", "default", true).block();
+      collectionService.dropCollection("default", "metrics", null).block();
+      collectionService.dropCollection("default", "gwp", null).block();
+    }
     
     // Create collections
     collectionService.createCollection("default", "products", 2, true, null, null, null, null).block();
     collectionService.createCollection("default", "processes", 2, true, null, null, null, null).block();
     collectionService.createCollection("default", "inputs", 3, true, null, null, null, null).block();
     collectionService.createCollection("default", "outputs", 3, true, null, null, null, null).block();
-    collectionService.createCollection("testCompany", "ships", 2, true, null, null, null, null).block();
-    collectionService.createCollection("testCompany", "shiplogs", 2, true, null, null, null, null).block();
+    collectionService.createCollection("default", "metrics", 2, true, null, null, null, null).block();
+    collectionService.createCollection("default", "gwp", 2, true, null, null, null, null).block();
 
     // Create edge definitions and graph
     Map<String,Object> inputs = Map.of( "collection", "inputs",
@@ -85,10 +92,9 @@ public class UnstableTestSetup implements CommandLineRunner {
     importExportService.importCSV(filepath, "default", "outputs").block();
 
     // Create and save ships
-    filename = "testShipLogs.csv";
-    filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
-    List<?> response = maritimeImportExportService.importCSV(filepath, "testCompany", "shiplogs");
-    // log.info("Ship response -> {}", response);
+    // filename = "testShipLogs.csv";
+    // filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
+    // maritimeImportExportService.importCSV(filepath, "testCompany", "shipLogs");
 
     // Export files
     // importExportService.exportCSV("products", "exportProducts.csv").doOnError(error -> log.error("Failed to export PRODUCTS -> ", error));

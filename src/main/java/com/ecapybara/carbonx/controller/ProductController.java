@@ -122,6 +122,7 @@ public class ProductController {
    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
    @ResponseStatus(value = HttpStatus.CREATED)
    public List<Product> createProducts(@RequestBody List<Product> productsList) {
+      documentService.createDocument("testCompany", null, productsList, null, null, null, null, null);
       
       for (Product product : productsList) {
          System.out.println("----- New product created:");

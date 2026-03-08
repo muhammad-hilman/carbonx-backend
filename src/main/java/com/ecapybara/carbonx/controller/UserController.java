@@ -27,10 +27,12 @@ import com.ecapybara.carbonx.repository.UserRepository;
 import com.ecapybara.carbonx.service.arango.ArangoDocumentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @RestController
-@RequestMapping("/api/company/users")
+@RequestMapping("/api/users")
 public class UserController {
   @Autowired
   private UserRepository userRepository;
@@ -39,7 +41,6 @@ public class UserController {
   @Autowired
   private ObjectMapper objectMapper;
 
-  private static final Logger log = LoggerFactory.getLogger(AppLogger.class);
   final Sort sort = Sort.by(Direction.DESC, "id");
 
   @GetMapping

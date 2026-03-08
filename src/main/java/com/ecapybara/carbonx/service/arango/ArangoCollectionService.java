@@ -65,15 +65,21 @@ public class ArangoCollectionService extends BaseArangoService {
 
     /**
      * Drop a collection
-     * DELETE /_api/collection/{collection-name}
+     * DELETE /_db/{database-name}/_api/collection/{collection-name}
      */
-    public Mono<Map> dropCollection(String collectionName, Boolean isSystem) {
-        log.info("Dropping collection: {}", collectionName);
-        String uri = isSystem != null && isSystem 
-            ? "/collection/" + collectionName + "?isSystem=true"
-            : "/collection/" + collectionName;
-        return delete(uri, Map.class)
-                .doOnSuccess(result -> log.info("Successfully dropped collection: {}", collectionName));
+    public Mono<Map> dropCollection(String database, String collection, Boolean isSystem) {
+        log.info("Dropping collection: {}", collection);
+
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/collection/" + collection);
+        String separator = "?";
+
+        if (isSystem != null) { uri.append(separator).append("isSystem=").append(isSystem); }
+
+        return webClient.delete()
+                        .uri(uri.toString())
+                        .retrieve()
+                        .bodyToMono(Map.class)
+                        .doOnSuccess(result -> log.info("Successfully dropped collection: {}", collection));
     }
 
     /**

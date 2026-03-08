@@ -52,8 +52,12 @@ public class ArangoDocumentService extends BaseArangoService {
             uri.append(separator).append("overwriteMode=").append(overwriteMode);
         }
 
-        return post(uri.toString(), document, Map.class)
-                .doOnSuccess(result -> log.info("Successfully created document in collection: {}", collection));
+        return webClient.post()
+                        .uri(uri.toString())
+                        .bodyValue(document.toString())
+                        .retrieve()
+                        .bodyToMono(Map.class)
+                        .doOnSuccess(result -> log.info("Successfully created document in collection: {}", collection));
     }
 
     /**
@@ -240,11 +244,11 @@ public class ArangoDocumentService extends BaseArangoService {
         }
 
         return webClient.post()
-                .uri(uri.toString())
-                .bodyValue(documents.toString())
-                .retrieve()
-                .bodyToMono(List.class)
-                .doOnSuccess(result -> log.info("Successfully created {} documents in collection: {}", documents.size(), collection));
+                        .uri(uri.toString())
+                        .bodyValue(documents.toString())
+                        .retrieve()
+                        .bodyToMono(List.class)
+                        .doOnSuccess(result -> log.info("Successfully created {} documents in collection: {}", documents.size(), collection));
     }
 
     /**

@@ -30,7 +30,7 @@ public class MaritimeLCAService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
 
         // Get the array of timestamps using AQL
-        String query =  "FOR log IN shiplogs \r\n" +
+        String query =  "FOR log IN shipLogs \r\n" +
                         "  FILTER log.mmsi == @mmsi \r\n" +
                         "  RETURN log.timestamp";
         Map<String, String> bindVars = Map.of(  "mmsi", mmsi);
@@ -51,7 +51,7 @@ public class MaritimeLCAService {
         long seconds = elapsed.getSeconds();
 
         // Determine average speed
-        query = "FOR log IN shiplogs \r\n" +
+        query = "FOR log IN shipLogs \r\n" +
                 "  FILTER log.mmsi == @mmsi \r\n" +
                 "  COLLECT AGGREGATE speed = AVERAGE(log.speed) \r\n" +
                 "  RETURN speed";

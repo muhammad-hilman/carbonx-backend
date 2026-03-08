@@ -54,12 +54,7 @@ public class ArangoDatabaseService extends BaseArangoService {
         if (!options.isEmpty()) body.put("options", options);
 
         return webClient.post()
-                .uri(uriBuilder -> uriBuilder
-                        .scheme("http")
-                        .host("localhost")
-                        .port(8529)
-                        .path("/_db/_system/_api/database")
-                        .build())
+                .uri("/_db/_system/_api/database")
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(Map.class)

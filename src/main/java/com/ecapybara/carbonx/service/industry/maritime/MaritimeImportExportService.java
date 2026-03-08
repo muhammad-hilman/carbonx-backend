@@ -64,18 +64,18 @@ public class MaritimeImportExportService {
       // Read, convert and save CSV file into database according to request type
       Reader reader = Files.newBufferedReader(filepath);
       switch (targetCollection) {
-        case "shiplogs":
+        case "shipLogs":
           List<Object> shipLogs = new CsvToBeanBuilder<Object>(reader)
                                           .withType(ShipLog.class)
                                           .withIgnoreLeadingWhiteSpace(true)
                                           .withIgnoreEmptyLine(true)
                                           .build()
                                           .parse();
-          documentService.createDocuments(database, "shiplogs", shipLogs, null, null, null, null, null).block();
+          documentService.createDocuments(database, "shipLogs", shipLogs, null, null, null, null, null).block();
 
-          String query = "FOR log IN shiplogs COLLECT mmsi = log.mmsi, flag = log.flag RETURN { mmsi, flag }";
+          String query = "FOR log IN shipLogs COLLECT mmsi = log.mmsi, flag = log.flag RETURN { mmsi, flag }";
           Map<String,Object> response = queryService.executeQuery(database, query, null, null, null, null, null).block();
-          log.info("response -> {}", response);
+          // log.info("response -> {}", response);
           List<Ship> shipList = mapper.convertValue(response.get("result"), new TypeReference<List<Ship>>() {});
           return documentService.createDocuments(database, "ships", shipList, null, null, null, null, null).block();
 

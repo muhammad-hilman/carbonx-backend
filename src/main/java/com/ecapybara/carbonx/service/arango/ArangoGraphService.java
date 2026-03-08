@@ -66,15 +66,21 @@ public class ArangoGraphService extends BaseArangoService {
 
     /**
      * Drop a graph
-     * DELETE /_api/gharial/{graph}
+     * DELETE /_db/{database-name}/_api/gharial/{graph}
      */
-    public Mono<Map> dropGraph(String graphName, Boolean dropCollections) {
+    public Mono<Map> dropGraph(String database, String graphName, Boolean dropCollections) {
         log.info("Dropping graph: {}, dropCollections: {}", graphName, dropCollections);
-        String uri = dropCollections != null && dropCollections 
-            ? "/gharial/" + graphName + "?dropCollections=true"
-            : "/gharial/" + graphName;
-        return delete(uri, Map.class)
-                .doOnSuccess(result -> log.info("Successfully dropped graph: {}", graphName));
+
+        StringBuilder uri = new StringBuilder("/_db/" + database + "/_api/gharial/" + graphName);
+        String separator = "?";
+
+        if (dropCollections != null) { uri.append(separator).append("dropCollections=").append(dropCollections); }
+        
+        return webClient.delete()
+                        .uri(uri.toString())
+                        .retrieve()
+                        .bodyToMono(Map.class)
+                        .doOnSuccess(result -> log.info("Successfully dropped graph: {}", graphName));
     }
 
     // ==================== Edge Collections ====================

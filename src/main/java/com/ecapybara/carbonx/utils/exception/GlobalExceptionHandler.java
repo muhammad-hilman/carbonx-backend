@@ -1,4 +1,4 @@
-package com.ecapybara.carbonx.service.exception;
+package com.ecapybara.carbonx.utils.exception;
 
 import com.ecapybara.carbonx.dto.ErrorResponse;
 
