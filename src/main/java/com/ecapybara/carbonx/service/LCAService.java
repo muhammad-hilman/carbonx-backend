@@ -25,8 +25,12 @@ public class LCAService {
 
     public <T extends Node> Mono<T> calculateRoughCarbonFootprint(T node, String graphName) {
 
-        String query = "FOR v, e, p IN 1..1000 INBOUND @startNode GRAPH @graphName \n" +
+    String query = "FOR v IN UNION( \n" +
+                "[DOCUMENT(@startNode)], \n" +
+                "(FOR v, e, p IN 1..1000 INBOUND @startNode GRAPH @graphName \n" +
                 "OPTIONS { bfs: true, uniqueVertices: 'global' } \n" +
+                "RETURN v) \n" +
+                ") \n" +
                 "COLLECT AGGREGATE \n" +
                 "  rawS1 = SUM(v.dpp.carbonFootprint.scope1.kgCO2e), \n" +
                 "  rawS2 = SUM(v.dpp.carbonFootprint.scope2.kgCO2e), \n" +
@@ -61,8 +65,12 @@ public class LCAService {
 
     public <T extends Node> Mono<T> calculateDetailedCarbonFootprint(T node, String graphName) {
 
-        String query = "FOR v, e, p IN 1..1000 INBOUND @startNode GRAPH @graphName \n" +
+    String query = "FOR v IN UNION( \n" +
+                "[DOCUMENT(@startNode)], \n" +
+                "(FOR v, e, p IN 1..1000 INBOUND @startNode GRAPH @graphName \n" +
                 "OPTIONS { bfs: true, uniqueVertices: 'global' } \n" +
+                "RETURN v) \n" +
+                ") \n" +
                 "LET s1 = v.dpp.carbonFootprint.scope1.kgCO2e == 0 OR v.dpp.carbonFootprint.scope1.kgCO2e == null \n" +
                 "    ? ( \n" +
                 "        (v.emissionInformation.scope1.stationaryCombustion.CO2.kg  * DOCUMENT('globalWarmingPotentials/CO2').gwp) + \n" +

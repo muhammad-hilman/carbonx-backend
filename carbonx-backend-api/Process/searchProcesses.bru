@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: {{host}}/api/processes?Type=chemical treatment
+  url: {{host}}/api/processes/search?type=cooking&Name=chemical treatment
   body: none
   auth: inherit
 }
 
 params:query {
-  Type: chemical treatment
-  ~Name: combining
+  type: cooking
+  Name: chemical treatment
 }
 
 settings {
