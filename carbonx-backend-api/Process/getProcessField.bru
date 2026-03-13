@@ -1,0 +1,26 @@
+meta {
+  name: getProcessField
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{host}}/api/processes/:id/field?fieldName=type&fieldName=name
+  body: none
+  auth: inherit
+}
+
+params:query {
+  fieldName: type
+  fieldName: name
+  ~fieldName: id
+}
+
+params:path {
+  id: 3
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

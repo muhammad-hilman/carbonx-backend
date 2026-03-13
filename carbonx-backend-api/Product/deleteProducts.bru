@@ -5,13 +5,13 @@ meta {
 }
 
 delete {
-  url: {{host}}/api/products/:id
-  body: none
+  url: {{host}}/api/products
+  body: json
   auth: inherit
 }
 
-params:path {
-  id: 147348
+body:json {
+  ["3", "4", "5"]
 }
 
 settings {

@@ -1,7 +1,10 @@
 package com.ecapybara.carbonx.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +23,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ecapybara.carbonx.config.AppLogger;
 import com.ecapybara.carbonx.model.issb.Process;
-import com.ecapybara.carbonx.repository.ProcessRepository;
+import com.ecapybara.carbonx.model.issb.Product;
+import com.ecapybara.carbonx.service.arango.ArangoDatabaseService;
 import com.ecapybara.carbonx.service.arango.ArangoDocumentService;
+import com.ecapybara.carbonx.service.arango.ArangoGraphService;
+import com.ecapybara.carbonx.service.arango.ArangoQueryService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ecapybara.carbonx.service.GraphService;
 
@@ -35,86 +43,185 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/processes")
 public class ProcessController {
 
-  @Autowired
-  private ArangoDocumentService documentService;
-  @Autowired
-  private GraphService graphService;
-  @Autowired
-  private ProcessRepository processRepository;
+    @Autowired
+    private ArangoDocumentService documentService;
+    @Autowired
+    private ArangoGraphService graphService;
+    @Autowired
+    private ArangoQueryService queryService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+    private static final Logger log = LoggerFactory.getLogger(AppLogger.class);
+    final Sort sort = Sort.by(Direction.DESC, "id");
+    private static final String ARANGO_DB = "default";
+    private static final String ARANGO_GRAPH = "default";
+    private static final String COLLECTION = "processes";
 
-  private static final Logger log = LoggerFactory.getLogger(AppLogger.class);
-  final Sort sort = Sort.by(Direction.DESC, "id");
+    @GetMapping
+    public List<Process> searchAllProcesses(
+        @RequestParam(required = false, defaultValue = ARANGO_DB) String targetDatabase) {
 
-  @GetMapping
-  public Iterable<Process> getProcesses(@RequestParam(name = "name", required = false) String name, @RequestParam(name = "type", required = false) String type) {
-    if (name!=null && !name.isEmpty() && type!=null && !type.isEmpty()) {
-      return processRepository.findByNameAndType(sort, name, type);
+        String aql = "FOR p IN " + COLLECTION + " RETURN p";
+        Map<String, Object> response = queryService.executeQuery(targetDatabase, aql, null, null, null, null, null).block();
+
+        if (response == null || !response.containsKey("result")) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No processes found in database: " + targetDatabase);
+        }
+
+        return objectMapper.convertValue(response.get("result"), new TypeReference<List<Process>>() {});
     }
-    else if (name!=null && !name.isEmpty()) {
-      return processRepository.findByName(sort, name);
+
+    @GetMapping("/search")
+    public List<Process> searchProcesses(
+        @RequestParam Map<String, String> filters,
+        @RequestParam(required = false, defaultValue = ARANGO_DB) String targetDatabase) {
+
+        filters.remove("targetDatabase");
+
+        if (filters.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "At least one search criteria is required");
+        }
+
+        StringBuilder aql = new StringBuilder("FOR p IN " + COLLECTION + " FILTER ");
+        Map<String, String> bindVars = new HashMap<>();
+        List<String> conditions = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : filters.entrySet()) {
+            String field = entry.getKey();
+            conditions.add("p." + field + " == @" + field);
+            bindVars.put(field, entry.getValue());
+        }
+
+        aql.append(String.join(" AND ", conditions)).append(" RETURN p");
+
+        Map<String, Object> response = queryService.executeQuery(targetDatabase, aql.toString(), bindVars, null, null, null, null).block();
+
+        if (response == null || !response.containsKey("result")) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No processes found");
+        }
+
+        return objectMapper.convertValue(response.get("result"), new TypeReference<List<Process>>() {});
     }
-    else if (type!=null && !type.isEmpty()) {
-      return processRepository.findByType(sort, type);
+
+    @GetMapping("/{key}")
+    public Process getProcess(
+        @PathVariable String key,
+        @RequestParam(required = false, defaultValue = ARANGO_DB) String targetDatabase) {
+
+        Map response = documentService.getDocument(COLLECTION, key, null, null).block();
+
+        if (response == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Process not found: " + key);
+        }
+
+        return objectMapper.convertValue(response, Process.class);
     }
-    else {
-      return processRepository.findAll();
+
+    @GetMapping("/{key}/field")
+    public Map<String, Object> getProcessFields(
+        @PathVariable String key,
+        @RequestParam List<String> fieldName,
+        @RequestParam(required = false, defaultValue = ARANGO_DB) String targetDatabase) {
+
+        String fields = fieldName.stream()
+            .map(f -> "\"" + f + "\": p." + f)
+            .collect(Collectors.joining(", "));
+
+        String aql = "FOR p IN " + COLLECTION + " FILTER p._key == @key RETURN {" + fields + "}";
+        Map<String, String> bindVars = new HashMap<>();
+        bindVars.put("key", key);
+
+        Map<String, Object> response = queryService.executeQuery(targetDatabase, aql, bindVars, null, null, null, null).block();
+
+        if (response == null || !response.containsKey("result")) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Process or field not found");
+        }
+
+        List<Map<String, Object>> result = (List<Map<String, Object>>) response.get("result");
+        return result.isEmpty() ? null : result.get(0);
     }
-  }
 
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(value = HttpStatus.CREATED)
-  public List<Process> createProcesses(@RequestBody List<Process> processesList) {
-    
-    for (Process process : processesList) {
-      System.out.println("----- New process created:");
-      System.out.println(process.toString());
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<Process> createProcesses(
+        @RequestBody List<Process> processesList,
+        @RequestParam(required = false, defaultValue = ARANGO_DB) String targetDatabase) {
 
-      processRepository.save(process);
-      process = processRepository.findByNameAndType(sort, process.getName(), process.getType()).get(0);
-      System.out.println("Created process saved into process database:");
-      System.out.println(process.toString());
+        List<Object> documents = processesList.stream()
+            .map(process -> {
+                Map<String, Object> doc = objectMapper.convertValue(process, new TypeReference<Map<String, Object>>() {});
+                if (doc.get("_key") == null) doc.remove("_key");
+                return (Object) doc;
+            })
+            .collect(Collectors.toList());
+
+        List<Map> response = (List<Map>) documentService.createDocuments(targetDatabase, COLLECTION, documents, null, true, null, null, null).block();
+
+        if (response == null) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create processes");
+        }
+
+        return response.stream()
+            .map(item -> objectMapper.convertValue(item.get("new"), Process.class))
+            .collect(Collectors.toList());
     }
-    
-    return processesList;
-  }
 
-  @PutMapping
-  public List<Process> editProcesses(@RequestBody List<Process> revisedProcesses) {
-    for (Process processRevision : revisedProcesses) {
-      Process process = editProcess(processRevision.getId(), processRevision);
-      processRevision = process;
+    @PutMapping
+    public List<Process> editProcesses(
+        @RequestBody List<Map<String, Object>> revisedProcesses,
+        @RequestParam(required = false, defaultValue = ARANGO_DB) String targetDatabase) {
+
+        List<Object> documents = revisedProcesses.stream()
+            .map(doc -> {
+                if (doc.get("_key") == null) doc.remove("_key");
+                return (Object) doc;
+            })
+            .collect(Collectors.toList());
+
+        List<Map> response = (List<Map>) documentService.updateDocuments(COLLECTION, documents, null, true, null, null, null, null).block();
+
+        if (response == null) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update processes");
+        }
+
+        return response.stream()
+            .map(item -> objectMapper.convertValue(item.get("new"), Process.class))
+            .collect(Collectors.toList());
     }
-    return revisedProcesses;
-  }
 
-  @GetMapping("/{key}")
-  public Mono<Process> getProcess(@PathVariable String key) {
-    Map<String,Object> rawDocument = documentService.getDocument("processes", key, null, null)
-                                                    .block();
-    Process process = objectMapper.convertValue(rawDocument, Process.class);                                             
-    return Mono.just(process);
-  }
+    @PutMapping("/{key}")
+    public Process editProcess(
+        @PathVariable String key,
+        @RequestBody Map<String, Object> doc,
+        @RequestParam(required = false, defaultValue = ARANGO_DB) String targetDatabase) {
 
-  @PutMapping("/{key}")
-  public Process editProcess(@PathVariable String key, @RequestBody Process revisedProcess) {
-    Process process = processRepository.findByKey(key).orElse(null);
+        doc.remove("_key");
 
-    if (process != null) {
-      process.setName(revisedProcess.getName());
-      process.setType(revisedProcess.getType());
-      process.setDPP(revisedProcess.getDPP());
-      processRepository.save(process);
+        Map response = documentService.updateDocument(COLLECTION, key, doc, null, true, null, null, null, null, null, null).block();
+
+        if (response == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Process not found: " + key);
+        }
+
+        return objectMapper.convertValue(response.get("new"), Process.class);
     }
-    
-    return processRepository.findByKey(key).orElse(null);
-  }
 
-  // Proper document deletion require the use of ArangoDB's Graph API since AQL does not cleanly delete hanging edges. Trust me, I've tried
-  @DeleteMapping("/{id}")
-  public Mono<Boolean> deleteProcess(@PathVariable String id) {
-    return graphService.deleteDocuments("processes", id);
-  }
+    @DeleteMapping("/{key}")
+    public Map<String, Object> deleteProcess(
+        @PathVariable String key,
+        @RequestParam(required = false, defaultValue = ARANGO_GRAPH) String graphName,
+        @RequestParam(required = false, defaultValue = ARANGO_DB) String targetDatabase) {
+
+        Map deleted = graphService.deleteVertex(targetDatabase, graphName, COLLECTION, key, null, true).block();
+
+        if (deleted == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Process not found: " + key);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "Process successfully deleted");
+        result.put("deleted", objectMapper.convertValue(deleted.get("old"), Process.class));
+        return result;
+    }
 }

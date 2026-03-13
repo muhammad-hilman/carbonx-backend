@@ -1,0 +1,21 @@
+meta {
+  name: searchProcesses
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/api/processes?Type=chemical treatment
+  body: none
+  auth: inherit
+}
+
+params:query {
+  Type: chemical treatment
+  ~Name: combining
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

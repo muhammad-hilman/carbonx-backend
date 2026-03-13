@@ -1,18 +1,17 @@
 meta {
-  name: getProcesses
+  name: searchAllProcesses
   type: http
   seq: 1
 }
 
 get {
-  url: {{host}}/api/processes?processType=drink mixing
+  url: {{host}}/api/processes
   body: none
   auth: inherit
 }
 
 params:query {
-  processType: drink mixing
-  ~processName: combining
+  ~targetDatabase: default
 }
 
 settings {
