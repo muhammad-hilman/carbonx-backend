@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: {{host}}/api/products?targetDatabase=testCompany
+  url: {{host}}/api/products
   body: none
   auth: inherit
 }
 
 params:query {
-  targetDatabase: testCompany
+  ~targetDatabase: default
 }
 
 settings {

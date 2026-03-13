@@ -1,7 +1,7 @@
 meta {
   name: createProducts
   type: http
-  seq: 4
+  seq: 5
 }
 
 post {
@@ -13,23 +13,19 @@ post {
 body:json {
   [
     {
-    "productNature": "ingredient",
-    "name": "lemon juice",
-    "productOrigin": null,
-    "functionalProperties": null,
-    "dpp": null,
-    "userId": null,
-    "uploadedFile": null
+      "type": "ingredient",
+      "name": "onion juice",
+      "productOrigin": "newsupplier",
+      "userId": "user123"
     },
     {
-    "productNature": "drink",
-    "name": "lemonade",
-    "productOrigin": null,
-    "functionalProperties": null,
-    "dpp": null,
-    "userId": null,
-    "uploadedFile": null
-  }
+      "type": "ingredient",
+      "name": "lemon juice",
+      "productOrigin": "newsupplier",
+      "userId": "user123"
+    }
+    
+   
   ]
 }
 

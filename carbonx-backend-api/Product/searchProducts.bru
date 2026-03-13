@@ -5,15 +5,16 @@ meta {
 }
 
 get {
-  url: {{host}}/api/products
+  url: {{host}}/api/products/search?productOrigin=newsupplier
   body: none
   auth: inherit
 }
 
 params:query {
-  ~name: mushroom
+  productOrigin: newsupplier
   ~type: ingredient
-  ~productOrigin: 
+  ~name: onion juice
+  ~quantityValue: 0.5
 }
 
 settings {

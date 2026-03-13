@@ -1,17 +1,17 @@
 meta {
-  name: getProduct
+  name: deleteProducts
   type: http
-  seq: 4
+  seq: 9
 }
 
-get {
+delete {
   url: {{host}}/api/products/:id
   body: none
   auth: inherit
 }
 
 params:path {
-  id: 3
+  id: 147348
 }
 
 settings {

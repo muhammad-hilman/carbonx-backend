@@ -306,11 +306,11 @@ public class ArangoGraphService extends BaseArangoService {
      * Delete a vertex
      * DELETE /_api/gharial/{graph}/vertex/{collection}/{vertex}
      */
-    public Mono<Map> deleteVertex(String graphName, String collection, String vertexKey,
+    public Mono<Map> deleteVertex(String database,String graphName, String collection, String vertexKey,
                                    Boolean waitForSync, Boolean returnOld) {
         log.info("Deleting vertex from graph: {}, collection: {}, key: {}", graphName, collection, vertexKey);
         
-        StringBuilder uri = new StringBuilder("/gharial/" + graphName + "/vertex/" + collection + "/" + vertexKey);
+        StringBuilder uri = new StringBuilder("/_db/"+ database +"/_api/gharial/" + graphName + "/vertex/" + collection + "/" + vertexKey);
         String separator = "?";
         if (waitForSync != null) {
             uri.append(separator).append("waitForSync=").append(waitForSync);
