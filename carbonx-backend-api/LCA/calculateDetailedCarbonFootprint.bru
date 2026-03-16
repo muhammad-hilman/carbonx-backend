@@ -1,5 +1,5 @@
 meta {
-  name: getDetailedLCA
+  name: calculateDetailedCarbonFootprint
   type: http
   seq: 3
 }
@@ -11,10 +11,11 @@ get {
 }
 
 params:path {
-  targetCollection: 
-  documentkey: 
+  targetCollection: products
+  documentkey: 15
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

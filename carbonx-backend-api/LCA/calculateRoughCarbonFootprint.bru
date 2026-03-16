@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: {{host}}/api/lca/:targetCollection/:documentkey
+  url: {{host}}/api/lca/rough/:targetCollection/:documentkey
   body: none
   auth: inherit
 }
 
 params:path {
-  documentkey: 3
   targetCollection: products
+  documentkey: 15
 }
 
 settings {
