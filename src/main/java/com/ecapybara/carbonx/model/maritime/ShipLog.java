@@ -5,11 +5,10 @@ import org.springframework.data.annotation.Id;
 import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
-import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.processor.ConvertEmptyOrBlankStringsToNull;
 import com.opencsv.bean.processor.PreAssignmentProcessor;
@@ -22,6 +21,7 @@ import lombok.experimental.SuperBuilder;
 @Data @NoArgsConstructor @SuperBuilder(toBuilder = true) 
 @Document("shiplogs")
 @PersistentIndex(fields = {"id","key","name", "flag", "dateOnly"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShipLog {
 
 	@ArangoId // db document field: _id

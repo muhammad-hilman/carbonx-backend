@@ -15,7 +15,7 @@ public class CarbonXApplication {
 		Class<?>[] runner = new Class<?>[]{
 			// OldSetup.class,
 			// UnstableTestSetup.class,
-			StableTestSetup.class,
+			 StableTestSetup.class,
 			// InitialSetup.class,
 			CarbonXApplication.class
 		};

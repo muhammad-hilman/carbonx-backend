@@ -89,12 +89,16 @@ public class StableTestSetup implements CommandLineRunner {
 
         // Setup testCompany
         companyInfoController.createCompany(Map.of( "name", "testCompany",
+                                                    "sector", "manufacturing"));
+
+        // Setup SingaporeMarine
+        companyInfoController.createCompany(Map.of( "name", "SingaporeMarine",
                                                     "sector", "maritime"));
 
         // Create and save ships
         filename = "testShipLogs.csv";
         filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
-        maritimeImportExportService.importCSV(filepath, "testCompany", "shipLogs");
+        maritimeImportExportService.importCSV(filepath, "SingaporeMarine", "shipLogs");
 
         // Export files
         // importExportService.exportCSV("products", "exportProducts.csv").doOnError(error -> log.error("Failed to export PRODUCTS -> ", error));

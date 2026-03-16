@@ -6,6 +6,7 @@ import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.ecapybara.carbonx.model.basic.Node;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,7 @@ import lombok.experimental.SuperBuilder;
 @Data @NoArgsConstructor @EqualsAndHashCode(callSuper = true) @SuperBuilder(toBuilder = true) 
 @Document("ships")
 @PersistentIndex(fields = {"id","key","name", "flag", "dateOnly"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Ship extends Node {
 
 	@Id // db document field: _key
