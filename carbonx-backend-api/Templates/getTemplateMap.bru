@@ -1,11 +1,11 @@
 meta {
   name: getTemplateMap
   type: http
-  seq: 2
+  seq: 4
 }
 
 get {
-  url: {{host}}/api/templates/:collection/:key?database=default
+  url: {{host}}/api/templates/:collection/:key/map?database=default
   body: none
   auth: inherit
 }

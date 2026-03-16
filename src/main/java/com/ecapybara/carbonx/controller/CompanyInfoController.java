@@ -75,16 +75,17 @@ public class CompanyInfoController {
                 collectionService.createCollection(companyName, "users", 2, true, null, null, null, null).block();
                 collectionService.createCollection(companyName, "applicableMetrics", 2, true, null, null, null, null).block();
                 collectionService.createCollection(companyName, "metrics", 2, true, null, null, null, null).block();
+                collectionService.createCollection(companyName, "products", 2, true, null, null, null, null).block();
                 collectionService.createCollection(companyName, "processes", 2, true, null, null, null, null).block();
                 collectionService.createCollection(companyName, "inputs", 3, true, null, null, null, null).block();
                 collectionService.createCollection(companyName, "outputs", 3, true, null, null, null, null).block();
 
                 Map<String,Object> inputs = Map.of( "collection", "inputs",
-                                                    "from", List.of("metrics"),
+                                                    "from", List.of("products"),
                                                     "to", List.of("processes"));
                 Map<String,Object> outputs = Map.of("collection", "outputs",
                                                     "from", List.of("processes"),
-                                                    "to", List.of("metrics"));
+                                                    "to", List.of("products"));
                 graphService.createGraph(companyName, "default", List.of(inputs, outputs), null, null, null, null).block();
                 
                 switch (companySector) {
