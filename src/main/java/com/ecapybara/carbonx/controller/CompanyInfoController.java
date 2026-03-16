@@ -46,7 +46,7 @@ public class CompanyInfoController {
 
     // UNFINISHED
     @GetMapping
-    public List<Company> getCompanies() {
+    public List<Company> listAllCompanies() {
         ObjectMapper mapper = new ObjectMapper();
         Map<String,Object> response = documentService.getAllDocuments("default", "companies").block();
         List<Company> companyList = mapper.convertValue(response.get("result"), new TypeReference<List<Company>>() {});
@@ -97,7 +97,7 @@ public class CompanyInfoController {
 
     @GetMapping("/{companyName}")
     public ResponseEntity<Object> getCompany(@PathVariable String companyName) {
-        List<Company> companyList = this.getCompanies();
+        List<Company> companyList = this.listAllCompanies();
         for (Company company : companyList) {
             if (company.getName().equals(companyName)) {
                 return new ResponseEntity<>(company, HttpStatus.OK);

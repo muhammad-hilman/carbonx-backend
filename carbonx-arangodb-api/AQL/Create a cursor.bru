@@ -17,9 +17,9 @@ auth:basic {
 
 body:json {
   {
-    "query" : "FOR doc IN products FILTER doc._key == @key RETURN doc",
+    "query" : "FOR doc IN products FILTER doc.name == @key RETURN doc",
     "bindVars" :  {
-                    "key" : "1"
+                    "key" : "spaghetti"
                   }
   }
 }

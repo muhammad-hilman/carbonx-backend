@@ -1,21 +1,15 @@
 package com.ecapybara.carbonx.controller;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,7 +30,7 @@ public class TemplateController {
 	// Get the entire network graph and assembles the data into the JSON-D3 format that frontend can use
 	@GetMapping
 	public Object listTemplates(@RequestParam(defaultValue = "default") String database,
-										 @RequestParam(defaultValue = "all") String nodeType) {
+								@RequestParam(defaultValue = "all") String nodeType) {
 
 		Map<String,?> result;
 		switch (nodeType) {
@@ -92,19 +86,19 @@ public class TemplateController {
 	// This fetches the specific product template and assembles the data into the JSON-D3 format that frontend can use
 	@GetMapping("/{collection}/{key}")
 	public Map<String,ArrayList<Map<String,String>>> getTemplate(@RequestParam(defaultValue = "default") String database, 
-																					@PathVariable String collection,
-																					@PathVariable String key) {
+																 @PathVariable String collection,
+																 @PathVariable String key) {
 
 		String query =  "LET nodes = ( \r\n" +
-							"    FOR v, e, p IN 1..100 INBOUND @startNode GRAPH default \r\n" +
-							"        COLLECT id = v._id, label = v.name, type = PARSE_IDENTIFIER(v._id).collection \r\n" +
-							"        RETURN { id, label, type }) \r\n" +
-							"LET edges = ( \r\n" +
-							"    FOR v, e, p IN 1..100 INBOUND @startNode GRAPH default \r\n" +
-							"        FILTER e != null \r\n" +
-							"        COLLECT source = e._from, target = e._to, type = PARSE_IDENTIFIER(e._id).collection \r\n" +
-							"        RETURN { source, target, type }) \r\n" +
-							"RETURN { nodes, edges }";
+						"    FOR v, e, p IN 1..100 INBOUND @startNode GRAPH default \r\n" +
+						"        COLLECT id = v._id, label = v.name, type = PARSE_IDENTIFIER(v._id).collection \r\n" +
+						"        RETURN { id, label, type }) \r\n" +
+						"LET edges = ( \r\n" +
+						"    FOR v, e, p IN 1..100 INBOUND @startNode GRAPH default \r\n" +
+						"        FILTER e != null \r\n" +
+						"        COLLECT source = e._from, target = e._to, type = PARSE_IDENTIFIER(e._id).collection \r\n" +
+						"        RETURN { source, target, type }) \r\n" +
+						"RETURN { nodes, edges }";
 
 		Map<String, String> bindVars = Map.of("startNode", collection+"/"+key);
 		log.info("bindvars -> {}", bindVars);

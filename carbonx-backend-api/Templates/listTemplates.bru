@@ -1,17 +1,18 @@
 meta {
-  name: getGraphEdges
+  name: listTemplates
   type: http
-  seq: 3
+  seq: 1
 }
 
 get {
-  url: {{host}}/api/graph/edges?name=default
+  url: {{host}}/api/templates
   body: none
   auth: inherit
 }
 
 params:query {
-  name: default
+  ~database: default
+  ~nodeType: low
 }
 
 settings {
