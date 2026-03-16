@@ -1,18 +1,13 @@
 meta {
-  name: getOutputs
+  name: calculateShipsLCA
   type: http
   seq: 1
 }
 
 get {
-  url: {{host}}/api/outputs?to=lemonade
+  url: {{host}}/api/experiments/ships/lca
   body: none
   auth: inherit
-}
-
-params:query {
-  to: lemonade
-  ~from: combining
 }
 
 settings {
