@@ -1,11 +1,11 @@
 meta {
-  name: getCompany
+  name: listCompanyMetrics
   type: http
-  seq: 3
+  seq: 7
 }
 
 get {
-  url: {{host}}/api/info/:companyName
+  url: {{host}}/api/info/:companyName/metrics/all
   body: none
   auth: inherit
 }

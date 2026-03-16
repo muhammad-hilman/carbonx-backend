@@ -1,17 +1,23 @@
 meta {
-  name: getCompanyMetrics
+  name: editCompanyMetrics
   type: http
-  seq: 4
+  seq: 6
 }
 
-get {
+put {
   url: {{host}}/api/info/:companyName/metrics
-  body: none
+  body: json
   auth: inherit
 }
 
 params:path {
   companyName: testCompany
+}
+
+body:json {
+  {
+    "name": "auausalakau"
+  }
 }
 
 settings {

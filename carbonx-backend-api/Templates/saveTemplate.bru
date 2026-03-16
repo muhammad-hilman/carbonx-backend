@@ -1,10 +1,10 @@
 meta {
-  name: getTemplate
+  name: saveTemplate
   type: http
-  seq: 3
+  seq: 4
 }
 
-get {
+post {
   url: {{host}}/api/templates/:collection/:key?database=default
   body: none
   auth: inherit
