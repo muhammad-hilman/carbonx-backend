@@ -73,11 +73,9 @@ public class LcaController {
     //             return Mono.error(new RuntimeException("Invalid target collection name!"));
     //     }
     // }
-/*
-    @GetMapping("/rough")
-    public Mono<?> getRoughLCA( @RequestParam(required = false, defaultValue = "default") String database,
-                                @RequestParam(required = true) String collection,
-                                @RequestParam(required = true) String documentKey) {
+
+    @GetMapping("rough/{targetCollection}/{documentKey}")
+    public Mono<?> getLCA(@PathVariable String targetCollection, @PathVariable String documentKey) {
         String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
 
         Class<? extends Node> nodeClass = switch (collection) {
@@ -97,10 +95,8 @@ public class LcaController {
             .map(node -> node.getDPP().getCarbonFootprint());
     }
 
-    @GetMapping("/emission")
-    public Mono<?> getEmissionLCA(@RequestParam(required = false, defaultValue = "default") String database,
-                                  @RequestParam(required = true) String collection,
-                                  @RequestParam(required = true) String documentKey) {
+    @GetMapping("/{targetCollection}/{documentKey}")
+    public Mono<?> getEmissionLCA(@PathVariable String targetCollection, @PathVariable String documentKey) {
         String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
 
         Class<? extends Node> nodeClass = switch (collection) {
@@ -111,14 +107,14 @@ public class LcaController {
 
         return documentService.getDocument(collection, key, null, null)
             .map(raw -> (Node) objectMapper.convertValue(raw, nodeClass))
-            .flatMap(node -> lcaService.calculateEmissionInformation(node, "default"))
-            .flatMap(node ->
-                documentService.replaceDocument(collection, key, node,
+            .flatMap(n -> lcaService.calculateEmissionInformation(n))
+            .flatMap(n ->
+                documentService.replaceDocument(targetCollection, key, n,
                     null, null, null, null, null, null)
-                    .thenReturn(node)
+                    .thenReturn(n)
             )
-            .map(node -> node.getDPP().getCarbonFootprint());
-    }
+            .map(n -> n.getDPP().getCarbonFootprint());
+            }
 
     @GetMapping("/detailed")
     public Mono<?> getDetailedLCA(@RequestParam(required = false, defaultValue = "default") String database,

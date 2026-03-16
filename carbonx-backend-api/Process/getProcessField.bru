@@ -1,0 +1,27 @@
+meta {
+  name: getProcessField
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{host}}/api/processes/:id/field?fieldName=dpp
+  body: none
+  auth: inherit
+}
+
+params:query {
+  fieldName: dpp
+  ~fieldName: type
+  ~fieldName: name
+  ~fieldName: id
+}
+
+params:path {
+  id: 350253
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
