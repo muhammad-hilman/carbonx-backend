@@ -89,7 +89,7 @@ public class UnstableTestSetup implements CommandLineRunner {
         importExportService.importCSV(filepath, "default", "outputs").block();
 
         // Setup testCompany
-        companyInfoController.createCompany(Map.of( "name", "testCompany",
+        companyInfoController.createCompany(Map.of( "name", "ST Maritime",
                                                     "sector", "maritime"));
 
         // Create and save ships

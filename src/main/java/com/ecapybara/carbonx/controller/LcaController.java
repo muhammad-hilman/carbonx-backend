@@ -1,10 +1,13 @@
 package com.ecapybara.carbonx.controller;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,70 +77,72 @@ public class LcaController {
     //     }
     // }
 
-    @GetMapping("rough/{targetCollection}/{documentKey}")
-    public Mono<?> getLCA(@PathVariable String targetCollection, @PathVariable String documentKey) {
+    @GetMapping("/rough")
+    public ResponseEntity<Object> getLCA(@RequestParam(required = false, defaultValue = "default") String database,
+                                         @RequestParam(required = true) String collection,
+                                         @RequestParam(required = true) String documentKey) {
+
         String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
+        String documentId = collection + "/" + key;
 
-        Class<? extends Node> nodeClass = switch (collection) {
-            case "products" -> Product.class;
-            case "processes" -> Process.class;
-            default -> throw new RuntimeException("Invalid target collection: " + collection);
-        };
-
-        return documentService.getDocument(database, collection, key, null, null)
-            .map(raw -> (Node) objectMapper.convertValue(raw, nodeClass))
-            .flatMap(node -> lcaService.calculateRoughCarbonFootprint(node, "default"))
-            .flatMap(node ->
-                documentService.replaceDocument(targetCollection, key, node,
-                    null, null, null, null, null, null)
-                    .thenReturn(node)
-            )
-            .map(node -> node.getDPP().getCarbonFootprint());
-    }
-
-    @GetMapping("/{targetCollection}/{documentKey}")
-    public Mono<?> getEmissionLCA(@PathVariable String targetCollection, @PathVariable String documentKey) {
-        String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
-
-        Class<? extends Node> nodeClass = switch (collection) {
-            case "products" -> Product.class;
-            case "processes" -> Process.class;
-            default -> throw new RuntimeException("Invalid target collection: " + collection);
-        };
-
-        return documentService.getDocument(collection, key, null, null)
-            .map(raw -> (Node) objectMapper.convertValue(raw, nodeClass))
-            .flatMap(n -> lcaService.calculateEmissionInformation(n))
-            .flatMap(n ->
-                documentService.replaceDocument(targetCollection, key, n,
-                    null, null, null, null, null, null)
-                    .thenReturn(n)
-            )
-            .map(n -> n.getDPP().getCarbonFootprint());
+        Map<String,Object> response = lcaService.calculateRoughCarbonFootprint(database, documentId);
+        
+        try {
+            if (response.containsKey("errorMessage")) {
+                throw new IllegalArgumentException("Error");
             }
 
-    @GetMapping("/detailed")
-    public Mono<?> getDetailedLCA(@RequestParam(required = false, defaultValue = "default") String database,
-                                  @RequestParam(required = true) String collection,
-                                  @RequestParam(required = true) String documentKey) {
-        String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
+            ArrayList<Map> result = (ArrayList<Map>) response.get("result");
+            return new ResponseEntity<>(result.get(0), HttpStatus.OK);
 
-        Class<? extends Node> nodeClass = switch (collection) {
-            case "products" -> Product.class;
-            case "processes" -> Process.class;
-            default -> throw new RuntimeException("Invalid target collection: " + collection);
-        };
-
-        return documentService.getDocument(collection, key, null, null)
-            .map(raw -> (Node) objectMapper.convertValue(raw, nodeClass))
-            .flatMap(node -> lcaService.calculateDetailedCarbonFootprint(node, "default"))
-            .flatMap(node ->
-                documentService.replaceDocument(collection, key, node,
-                    null, null, null, null, null, null)
-                    .thenReturn(node)
-            )
-            .map(node -> node.getDPP().getCarbonFootprint());
-
+        } catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		}
     }
-*/
+
+    @GetMapping("/emissions")
+    public ResponseEntity<Object> getEmissionLCA(@RequestParam(required = false, defaultValue = "default") String database,
+                                                 @RequestParam(required = true) String collection,
+                                                 @RequestParam(required = true) String documentKey) {
+
+        String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
+        String documentId = collection + "/" + key;
+
+        Map<String,Object> response = lcaService.calculateEmissionInformation(database, documentId);
+
+        try {
+            if (response.containsKey("errorMessage")) {
+                throw new IllegalArgumentException();
+            }
+
+            ArrayList<Map> result = (ArrayList<Map>) response.get("result");
+            return new ResponseEntity<>(result.get(0), HttpStatus.OK);
+
+        } catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		}
+    }
+
+    @GetMapping("/detailed")
+    public ResponseEntity<Object> getDetailedLCA(@RequestParam(required = false, defaultValue = "default") String database,
+                                                 @RequestParam(required = true) String collection,
+                                                 @RequestParam(required = true) String documentKey) {
+
+        String key = documentKey.contains("/") ? documentKey.split("/")[1] : documentKey;
+        String documentId = collection + "/" + key;
+
+        Map<String,Object> response = lcaService.calculateDetailedCarbonFootprint(database, documentId);
+
+        try {
+            if (response.containsKey("errorMessage")) {
+                throw new IllegalArgumentException();
+            }
+
+            ArrayList<Map> result = (ArrayList<Map>) response.get("result");
+            return new ResponseEntity<>(result.get(0), HttpStatus.OK);
+
+        } catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		}
+    }
 }
