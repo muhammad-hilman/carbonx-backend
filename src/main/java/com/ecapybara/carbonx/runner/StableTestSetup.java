@@ -12,6 +12,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ComponentScan;
 
 import com.ecapybara.carbonx.controller.CompanyInfoController;
+import com.ecapybara.carbonx.controller.UserController;
 import com.ecapybara.carbonx.service.ImportExportService;
 import com.ecapybara.carbonx.service.arango.ArangoCollectionService;
 import com.ecapybara.carbonx.service.arango.ArangoDatabaseService;
@@ -33,6 +34,8 @@ public class StableTestSetup implements CommandLineRunner {
     @Autowired
     private CompanyInfoController companyInfoController;
     @Autowired
+    private UserController userController;
+    @Autowired
     private MaritimeImportExportService maritimeImportExportService;
 
     ObjectMapper mapper = new ObjectMapper();
@@ -46,9 +49,10 @@ public class StableTestSetup implements CommandLineRunner {
         for (String database : databases) { databaseService.dropDatabase(database).block(); }
 
         // Create 'default' database
+        log.info("------------- # CREATING 'default' DATABASE # -------------");
         databaseService.createDatabase("default", null, null, null, null).block();
 
-        // Create collections
+        // --- Create collections
         collectionService.createCollection("default", "products", 2, true, null, null, null, null).block();
         collectionService.createCollection("default", "processes", 2, true, null, null, null, null).block();
         collectionService.createCollection("default", "inputs", 3, true, null, null, null, null).block();
@@ -57,7 +61,7 @@ public class StableTestSetup implements CommandLineRunner {
         collectionService.createCollection("default", "gwp", 2, true, null, null, null, null).block();
         collectionService.createCollection("default", "companies", 2, true, null, null, null, null).block();
 
-        // Create edge definitions and graph
+        // --- Create edge definitions and graph
         Map<String,Object> inputs = Map.of( "collection", "inputs",
                                             "from", List.of("products"),
                                             "to", List.of("processes"));
@@ -66,36 +70,52 @@ public class StableTestSetup implements CommandLineRunner {
                                             "to", List.of("products"));
         graphService.createGraph("default", "default", List.of(inputs, outputs), null, null, null, null).block();
 
-        // Create and save products
+        // --- Create and save products
         String dir = System.getProperty("user.dir");
         String filename = "testProducts.csv";
         Path filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
         importExportService.importCSV(filepath, "default", "products").block();
 
-        // Create and save processes
+        // --- Create and save processes
         filename = "testProcesses.csv";
         filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
         importExportService.importCSV(filepath, "default", "processes").block();
 
-        // Create and save input relationships between entities
+        // --- Create and save input relationships between entities
         filename = "testInputs.csv";
         filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
         importExportService.importCSV(filepath, "default", "inputs").block();
 
-        // Create and save input relationships between entities
+        // --- Create and save input relationships between entities
         filename = "testOutputs.csv";
         filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
         importExportService.importCSV(filepath, "default", "outputs").block();
-
-        // Setup testCompany
+        
+        // Setup 'testCompany'
+        log.info("------------- # CREATING 'default' DATABASE # -------------");
         companyInfoController.createCompany(Map.of( "name", "testCompany",
                                                     "sector", "manufacturing"));
+        
+        // --- Create and save users
+        Map<String,String> user = Map.of("username", "test1",
+                                         "email", "test1@gmail.com",
+                                         "firstName", "test1",
+                                         "companyName", "testCompany");
+        userController.createUser("testCompany", user);
 
-        // Setup SingaporeMarine
+        // Setup 'SingaporeMarine'
+        log.info("------------- # CREATING 'default' DATABASE # -------------");
         companyInfoController.createCompany(Map.of( "name", "SingaporeMarine",
                                                     "sector", "maritime"));
 
-        // Create and save ships
+        // --- Create and save users
+        user = Map.of("username", "test2",
+                      "email", "test2@gmail.com",
+                      "firstName", "test2",
+                      "companyName", "SingaporeMarine");
+        userController.createUser("SingaporeMarine", user);
+
+        // --- Create and save ships
         filename = "testShipLogs.csv";
         filepath = Paths.get(dir,"src", "main", "resources", "data", "test").resolve(filename);
         maritimeImportExportService.importCSV(filepath, "SingaporeMarine", "shipLogs");
