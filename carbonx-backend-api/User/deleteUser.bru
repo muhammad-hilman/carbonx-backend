@@ -1,18 +1,18 @@
 meta {
-  name: deleteProduct
+  name: deleteUser
   type: http
-  seq: 7
+  seq: 6
 }
 
 delete {
-  url: {{host}}/api/products/:companyName/:id
+  url: {{host}}/api/users/:companyName/:id
   body: none
   auth: inherit
 }
 
 params:path {
   companyName: testCompany
-  id: 1364402
+  id: 151764
 }
 
 settings {

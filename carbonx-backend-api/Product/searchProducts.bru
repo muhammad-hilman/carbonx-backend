@@ -5,12 +5,13 @@ meta {
 }
 
 get {
-  url: {{host}}/api/products/search?type=ingredient
+  url: {{host}}/api/products?type=ingredient
   body: none
   auth: inherit
 }
 
 params:query {
+  type: ingredient
   ~database: 
   ~key: 1
   ~name: chicken
